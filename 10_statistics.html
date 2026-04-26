@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Statistics — Sacha's 11+ Prep</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,400&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1207;
+    --cream: #faf6ee;
+    --gold: #d4920a;
+    --gold-light: #f5e3b0;
+    --green: #1d7a4a;
+    --green-light: #d4f0e2;
+    --red: #c0392b;
+    --red-light: #fde8e6;
+    --blue: #1a4f8a;
+    --blue-light: #ddeaf8;
+    --purple: #6b2fa0;
+    --purple-light: #ede0f8;
+    --border: #d6c9a8;
+    --mono: 'DM Mono', monospace;
+    --serif: 'Fraunces', Georgia, serif;
+    --sans: 'Plus Jakarta Sans', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--cream); color: var(--ink); font-family: var(--sans); min-height: 100vh; }
+
+  /* HEADER */
+  header {
+    background: var(--ink); color: var(--cream);
+    padding: 2rem 2.5rem 1.5rem;
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+  }
+  header h1 { font-family: var(--serif); font-size: clamp(1.8rem,4vw,2.8rem); font-weight: 900; line-height: 1; letter-spacing: -0.02em; }
+  header h1 span { color: var(--gold); }
+  .badge { background: var(--gold); color: var(--ink); font-family: var(--mono); font-size: 0.7rem; font-weight: 500; padding: 0.3rem 0.7rem; border-radius: 2px; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; }
+
+  /* NAV */
+  nav { background: #f0e8d8; border-bottom: 2px solid var(--border); padding: 0 2rem; display: flex; gap: 0; overflow-x: auto; scrollbar-width: none; }
+  nav::-webkit-scrollbar { display: none; }
+  .nav-btn { background: none; border: none; border-bottom: 3px solid transparent; padding: 1rem 1.2rem; font-family: var(--sans); font-size: 0.82rem; font-weight: 600; color: var(--ink); cursor: pointer; white-space: nowrap; opacity: 0.6; transition: all .2s; }
+  .nav-btn:hover { opacity: 1; }
+  .nav-btn.active { border-bottom-color: var(--gold); color: var(--ink); opacity: 1; }
+  .nav-btn.done-tab::after { content: ' ✓'; color: var(--green); }
+
+  /* MAIN */
+  main { max-width: 820px; margin: 0 auto; padding: 2rem 2rem 4rem; }
+
+  /* HOME */
+  #home-view .topics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 1.5rem; }
+  @media(max-width:560px){ #home-view .topics-grid { grid-template-columns: 1fr; } }
+  .topic-card {
+    border: 1.5px solid var(--border); border-radius: 12px; padding: 18px 20px;
+    cursor: pointer; background: white; transition: all .2s; position: relative;
+  }
+  .topic-card:hover { border-color: var(--gold); transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,.07); }
+  .topic-card.completed { border-color: var(--green); background: var(--green-light); }
+  .topic-icon { font-size: 1.8rem; margin-bottom: 8px; display: block; }
+  .topic-title { font-size: 0.95rem; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+  .topic-desc { font-size: 0.8rem; color: #666; line-height: 1.4; }
+  .topic-complete-badge { position: absolute; top: 12px; right: 14px; font-size: 0.7rem; background: var(--green); color: white; padding: 2px 8px; border-radius: 99px; font-weight: 600; }
+  .overall-progress { background: white; border: 1.5px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 1.5rem; }
+  .prog-label { font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; display: flex; justify-content: space-between; }
+  .prog-track { background: #eee; border-radius: 99px; height: 8px; }
+  .prog-fill { background: var(--gold); border-radius: 99px; height: 8px; transition: width .4s; }
+
+  /* TOPIC VIEW */
+  #topic-view { display: none; }
+  .topic-header { display: flex; align-items: center; gap: 12px; margin-bottom: 1.5rem; }
+  .back-btn { background: none; border: 1.5px solid var(--border); border-radius: 8px; padding: 6px 14px; font-family: var(--sans); font-size: 0.8rem; font-weight: 600; cursor: pointer; }
+  .back-btn:hover { border-color: var(--ink); }
+  .topic-view-title { font-family: var(--serif); font-size: 1.5rem; font-weight: 700; }
+
+  /* TABS */
+  .section-tabs { display: flex; gap: 8px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .stab { background: none; border: 1.5px solid var(--border); border-radius: 8px; padding: 6px 16px; font-family: var(--sans); font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all .15s; }
+  .stab.active { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+
+  /* LESSON */
+  .lesson-box { background: white; border: 1.5px solid var(--border); border-radius: 12px; padding: 24px 28px; line-height: 1.7; }
+  .lesson-box h3 { font-family: var(--serif); font-size: 1.1rem; font-weight: 700; margin: 1.2rem 0 0.5rem; color: var(--ink); }
+  .lesson-box h3:first-child { margin-top: 0; }
+  .lesson-box p { font-size: 0.88rem; margin-bottom: 0.6rem; }
+  .lesson-box ul { padding-left: 1.2rem; font-size: 0.88rem; margin-bottom: 0.8rem; }
+  .lesson-box li { margin-bottom: 0.3rem; }
+  .callout { border-left: 4px solid var(--gold); background: var(--gold-light); padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 1rem 0; font-size: 0.85rem; }
+  .callout strong { display: block; margin-bottom: 4px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gold); }
+  .formula-box { background: var(--blue-light); border: 1.5px solid var(--blue); border-radius: 8px; padding: 14px 18px; margin: 1rem 0; font-family: var(--mono); font-size: 0.88rem; color: var(--blue); text-align: center; }
+
+  /* WORKED EXAMPLES */
+  .worked-example { background: #fffef8; border: 1.5px solid var(--border); border-radius: 12px; padding: 20px 24px; margin-bottom: 1rem; }
+  .we-q { font-weight: 700; font-size: 0.92rem; margin-bottom: 12px; }
+  .we-step { display: flex; gap: 12px; margin-bottom: 8px; font-size: 0.85rem; }
+  .step-num { background: var(--ink); color: var(--cream); border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+  .we-answer { background: var(--green-light); border: 1px solid var(--green); border-radius: 6px; padding: 8px 14px; font-size: 0.85rem; margin-top: 10px; }
+
+  /* CHART VISUALS */
+  .chart-container { background: white; border: 1.5px solid var(--border); border-radius: 12px; padding: 20px; margin: 1rem 0; }
+  .chart-title { font-size: 0.8rem; font-weight: 700; text-align: center; margin-bottom: 14px; color: #555; text-transform: uppercase; letter-spacing: 0.05em; }
+  svg text { font-family: var(--sans); }
+
+  /* PIE CHART */
+  .pie-legend { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 12px; justify-content: center; }
+  .pie-legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.78rem; }
+  .pie-swatch { width: 12px; height: 12px; border-radius: 2px; flex-shrink: 0; }
+
+  /* TABLE */
+  .data-table { width: 100%; border-collapse: collapse; font-size: 0.83rem; margin: 1rem 0; }
+  .data-table th { background: var(--ink); color: var(--cream); padding: 8px 12px; text-align: left; font-size: 0.78rem; font-weight: 600; }
+  .data-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
+  .data-table tr:nth-child(even) td { background: #f8f4ec; }
+  .data-table tr:hover td { background: var(--gold-light); }
+
+  /* QUIZ */
+  .quiz-section { }
+  .q-card { background: white; border: 1.5px solid var(--border); border-radius: 12px; padding: 22px 24px; margin-bottom: 14px; }
+  .q-num { font-family: var(--mono); font-size: 0.72rem; color: #888; margin-bottom: 8px; }
+  .q-text { font-size: 0.92rem; font-weight: 600; margin-bottom: 14px; line-height: 1.5; }
+  .q-hint-box { background: var(--purple-light); border: 1px solid var(--purple); border-radius: 6px; padding: 8px 14px; font-size: 0.82rem; margin-bottom: 10px; display: none; }
+  .q-hint-box.show { display: block; }
+  .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  @media(max-width:500px){ .options-grid { grid-template-columns: 1fr; } }
+  .opt-btn { background: #f8f4ec; border: 1.5px solid var(--border); border-radius: 8px; padding: 10px 14px; font-family: var(--sans); font-size: 0.85rem; cursor: pointer; text-align: left; transition: all .15s; }
+  .opt-btn:hover:not(:disabled) { border-color: var(--gold); background: var(--gold-light); }
+  .opt-btn:disabled { cursor: default; }
+  .opt-btn.sc { background: var(--green-light); border-color: var(--green); color: var(--green); }
+  .opt-btn.sw { background: var(--red-light); border-color: var(--red); color: var(--red); }
+  .opt-btn.reveal { background: var(--green-light); border-color: var(--green); }
+  .q-feedback { background: #f0f0f0; border-radius: 8px; padding: 10px 14px; font-size: 0.83rem; margin-top: 10px; display: none; line-height: 1.5; }
+  .q-feedback.show { display: block; }
+  .q-feedback.cf { background: var(--green-light); color: var(--green); }
+  .q-feedback.wf { background: var(--red-light); color: var(--red); }
+  .hint-btn { background: none; border: 1px solid var(--purple); color: var(--purple); border-radius: 6px; padding: 4px 12px; font-size: 0.75rem; cursor: pointer; margin-top: 8px; display: none; }
+  .hint-btn.show { display: inline-block; }
+  .spinner { display: inline-block; width: 12px; height: 12px; border: 2px solid var(--purple); border-top-color: transparent; border-radius: 50%; animation: spin .7s linear infinite; margin-right: 6px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* SCORE */
+  .score-card { background: var(--ink); color: var(--cream); border-radius: 12px; padding: 28px 24px; text-align: center; margin-top: 1rem; display: none; }
+  .score-card.show { display: block; }
+  .score-big { font-family: var(--serif); font-size: 3.5rem; font-weight: 900; color: var(--gold); line-height: 1; }
+  .score-msg { font-size: 0.9rem; margin: 10px 0 20px; opacity: 0.85; }
+  .score-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .btn-primary { background: var(--gold); color: var(--ink); border: none; border-radius: 8px; padding: 10px 22px; font-family: var(--sans); font-weight: 700; font-size: 0.88rem; cursor: pointer; }
+  .btn-secondary { background: none; border: 1.5px solid rgba(255,255,255,0.4); color: var(--cream); border-radius: 8px; padding: 10px 22px; font-family: var(--sans); font-weight: 600; font-size: 0.88rem; cursor: pointer; }
+
+  /* TIMETABLE */
+  .timetable { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+  .timetable th { background: var(--blue); color: white; padding: 8px 10px; text-align: center; }
+  .timetable td { padding: 7px 10px; border: 1px solid var(--border); text-align: center; }
+  .timetable tr:nth-child(even) td { background: var(--blue-light); }
+  .timetable .time-col { background: var(--ink); color: var(--cream); font-family: var(--mono); font-size: 0.75rem; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div style="font-family:var(--mono);font-size:0.7rem;letter-spacing:0.1em;opacity:0.6;margin-bottom:6px">SACHA'S 11+ PREP</div>
+    <h1>Statistics & <span>Data</span></h1>
+  </div>
+  <div style="text-align:right">
+    <div class="badge">4 Topics</div>
+    <div style="font-size:0.75rem;opacity:0.6;margin-top:6px">City of London · Westminster</div>
+  </div>
+</header>
+
+<nav>
+  <button class="nav-btn active" onclick="showHome()">🏠 Home</button>
+  <button class="nav-btn" id="nav-0" onclick="openTopic(0)">📈 Line Graphs</button>
+  <button class="nav-btn" id="nav-1" onclick="openTopic(1)">📋 Tables & Timetables</button>
+  <button class="nav-btn" id="nav-2" onclick="openTopic(2)">🥧 Pie Charts</button>
+  <button class="nav-btn" id="nav-3" onclick="openTopic(3)">📊 Mean Average</button>
+</nav>
+
+<main>
+  <!-- HOME -->
+  <div id="home-view">
+    <div class="overall-progress">
+      <div class="prog-label"><span>Overall Progress</span><span id="prog-text">0 / 4 topics</span></div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+    <div class="topics-grid">
+      <div class="topic-card" id="card-0" onclick="openTopic(0)">
+        <span class="topic-icon">📈</span>
+        <div class="topic-title">Line Graphs</div>
+        <div class="topic-desc">Compare, find differences and sums from line graphs. Read and interpret trends.</div>
+      </div>
+      <div class="topic-card" id="card-1" onclick="openTopic(1)">
+        <span class="topic-icon">📋</span>
+        <div class="topic-title">Tables & Timetables</div>
+        <div class="topic-desc">Complete, read and interpret data tables and bus/train timetables.</div>
+      </div>
+      <div class="topic-card" id="card-2" onclick="openTopic(2)">
+        <span class="topic-icon">🥧</span>
+        <div class="topic-title">Pie Charts</div>
+        <div class="topic-desc">Interpret and construct pie charts. Work with degrees and fractions of a circle.</div>
+      </div>
+      <div class="topic-card" id="card-3" onclick="openTopic(3)">
+        <span class="topic-icon">📊</span>
+        <div class="topic-title">Mean Average</div>
+        <div class="topic-desc">Calculate the mean and use it to solve missing value problems.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOPIC VIEW -->
+  <div id="topic-view">
+    <div class="topic-header">
+      <button class="back-btn" onclick="showHome()">← Back</button>
+      <div class="topic-view-title" id="topic-view-title"></div>
+    </div>
+    <div class="section-tabs">
+      <button class="stab active" id="stab-learn" onclick="switchTab('learn')">📖 Learn</button>
+      <button class="stab" id="stab-examples" onclick="switchTab('examples')">✏️ Worked Examples</button>
+      <button class="stab" id="stab-quiz" onclick="switchTab('quiz')">🎯 Quiz</button>
+    </div>
+    <div id="tab-learn"></div>
+    <div id="tab-examples" style="display:none"></div>
+    <div id="tab-quiz" style="display:none"></div>
+  </div>
+</main>
+
+<script>
+const state = { current: null, done: [false,false,false,false], answered: {}, scores: [null,null,null,null] };
+
+// ─── LINE GRAPH SVG ───
+function lineGraphSVG(){
+  // Data: Temperature in London across 6 months for 2 cities
+  const w=500,h=220,mx=50,my=20,bw=w-mx-20,bh=h-my-40;
+  const months=['Jan','Feb','Mar','Apr','May','Jun'];
+  const london=[4,5,8,11,15,18];
+  const edinburgh=[2,3,5,8,11,14];
+  const maxV=20,minV=0;
+  const px=(i)=>mx+i*(bw/(months.length-1));
+  const py=(v)=>my+bh-(v-minV)/(maxV-minV)*bh;
+  let pts1=london.map((v,i)=>`${px(i)},${py(v)}`).join(' ');
+  let pts2=edinburgh.map((v,i)=>`${px(i)},${py(v)}`).join(' ');
+  // Grid lines
+  let gridLines='';
+  for(let v=0;v<=20;v+=5){
+    const y=py(v);
+    gridLines+=`<line x1="${mx}" y1="${y}" x2="${w-20}" y2="${y}" stroke="#e0d8c8" stroke-width="1"/>
+    <text x="${mx-6}" y="${y+4}" text-anchor="end" font-size="9" fill="#888">${v}°</text>`;
+  }
+  let xLabels=months.map((m,i)=>`<text x="${px(i)}" y="${my+bh+18}" text-anchor="middle" font-size="10" fill="#555">${m}</text>`).join('');
+  let dots1=london.map((v,i)=>`<circle cx="${px(i)}" cy="${py(v)}" r="4" fill="#1a4f8a" stroke="white" stroke-width="1.5"/>`).join('');
+  let dots2=edinburgh.map((v,i)=>`<circle cx="${px(i)}" cy="${py(v)}" r="4" fill="#d4920a" stroke="white" stroke-width="1.5"/>`).join('');
+  return `<svg viewBox="0 0 ${w} ${h}" style="width:100%;max-width:500px;display:block;margin:0 auto">
+    ${gridLines}
+    <line x1="${mx}" y1="${my}" x2="${mx}" y2="${my+bh}" stroke="#999" stroke-width="1.5"/>
+    <line x1="${mx}" y1="${my+bh}" x2="${w-20}" y2="${my+bh}" stroke="#999" stroke-width="1.5"/>
+    <polyline points="${pts1}" fill="none" stroke="#1a4f8a" stroke-width="2.5" stroke-linejoin="round"/>
+    <polyline points="${pts2}" fill="none" stroke="#d4920a" stroke-width="2.5" stroke-linejoin="round"/>
+    ${dots1}${dots2}
+    ${xLabels}
+    <circle cx="350" cy="12" r="5" fill="#1a4f8a"/><text x="360" y="16" font-size="10" fill="#333">London</text>
+    <circle cx="410" cy="12" r="5" fill="#d4920a"/><text x="420" y="16" font-size="10" fill="#333">Edinburgh</text>
+  </svg>`;
+}
+
+// ─── PIE CHART SVG ───
+function pieChartSVG(data,colors){
+  const cx=110,cy=100,r=80;
+  let total=data.reduce((s,d)=>s+d.v,0);
+  let start=0,slices='';
+  data.forEach((d,i)=>{
+    const angle=(d.v/total)*2*Math.PI;
+    const x1=cx+r*Math.sin(start),y1=cy-r*Math.cos(start);
+    const x2=cx+r*Math.sin(start+angle),y2=cy-r*Math.cos(start+angle);
+    const large=angle>Math.PI?1:0;
+    slices+=`<path d="M${cx},${cy} L${x1},${y1} A${r},${r},0,${large},1,${x2},${y2}Z" fill="${colors[i]}" stroke="white" stroke-width="2"/>`;
+    // Label
+    const midA=start+angle/2;
+    const lx=cx+r*0.65*Math.sin(midA),ly=cy-r*0.65*Math.cos(midA);
+    const pct=Math.round(d.v/total*100);
+    slices+=`<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle" font-size="11" font-weight="600" fill="white">${pct}%</text>`;
+    start+=angle;
+  });
+  const legendX=210;
+  let legend=data.map((d,i)=>`
+    <rect x="${legendX}" y="${20+i*28}" width="12" height="12" fill="${colors[i]}" rx="2"/>
+    <text x="${legendX+18}" y="${31+i*28}" font-size="11" fill="#333">${d.label}</text>
+    <text x="${legendX+18}" y="${43+i*28}" font-size="10" fill="#888">${d.v} pupils (${Math.round(d.v/total*100)}%)</text>
+  `).join('');
+  return `<svg viewBox="0 0 360 200" style="width:100%;max-width:380px;display:block;margin:0 auto">
+    ${slices}${legend}
+  </svg>`;
+}
+
+const TOPICS = [
+  // ── TOPIC 0: LINE GRAPHS ──
+  {
+    title:'📈 Line Graphs',
+    shortTitle:'Line Graphs',
+    learn: `
+      <div class="lesson-box">
+        <h3>What is a Line Graph?</h3>
+        <p>A line graph shows how data <strong>changes over time</strong>. Points are plotted and joined with a line. You can have two or more lines on the same graph to compare different things.</p>
+        <h3>Reading a Line Graph</h3>
+        <ul>
+          <li>Find the value on the horizontal axis (bottom) — usually time.</li>
+          <li>Go up to the line and read across to the vertical axis (side) — that gives the value.</li>
+          <li>Always check what the axis label and units are (°C, cm, kg, etc.).</li>
+        </ul>
+        <div class="callout"><strong>Key Vocab</strong> <strong>Trend</strong> = overall direction (going up/down). <strong>Steeper line</strong> = faster change.</div>
+        <h3>Comparison Problems</h3>
+        <p>When two lines are shown, you may be asked: <em>"Which city was warmer in March?"</em> — find both values at March and compare.</p>
+        <h3>Difference Problems</h3>
+        <p>Subtract the smaller value from the larger value. E.g. if London is 11° and Edinburgh is 8° in April: difference = 11 − 8 = <strong>3°C</strong>.</p>
+        <h3>Sum Problems</h3>
+        <p>Add two or more values together. E.g. total rainfall for Jan + Feb + Mar.</p>
+        <div class="callout"><strong>Exam Tip</strong> Always read the scale carefully — each small square might equal 2, 5, or 10 units, not always 1.</div>
+        <h3>Here's the graph you'll use for examples and quiz questions:</h3>
+        <div class="chart-container">
+          <div class="chart-title">Monthly Temperature (°C) — London vs Edinburgh</div>
+          ${lineGraphSVG()}
+        </div>
+      </div>`,
+    examples: `
+      <div class="worked-example">
+        <div class="we-q">Q: What was London's temperature in April?</div>
+        <div class="we-step"><div class="step-num">1</div><div>Find April on the bottom axis.</div></div>
+        <div class="we-step"><div class="step-num">2</div><div>Go up to the London (blue) line.</div></div>
+        <div class="we-step"><div class="step-num">3</div><div>Read across to the left axis.</div></div>
+        <div class="we-answer">✓ Answer: <strong>11°C</strong></div>
+      </div>
+      <div class="worked-example">
+        <div class="we-q">Q: What is the difference in temperature between London and Edinburgh in June?</div>
+        <div class="we-step"><div class="step-num">1</div><div>London in June = 18°C</div></div>
+        <div class="we-step"><div class="step-num">2</div><div>Edinburgh in June = 14°C</div></div>
+        <div class="we-step"><div class="step-num">3</div><div>Difference = 18 − 14 = 4°C</div></div>
+        <div class="we-answer">✓ Answer: <strong>4°C warmer in London</strong></div>
+      </div>
+      <div class="worked-example">
+        <div class="we-q">Q: What is the total temperature for Edinburgh over January, February and March?</div>
+        <div class="we-step"><div class="step-num">1</div><div>Jan = 2°C, Feb = 3°C, Mar = 5°C</div></div>
+        <div class="we-step"><div class="step-num">2</div><div>Total = 2 + 3 + 5 = 10°C</div></div>
+        <div class="we-answer">✓ Answer: <strong>10°C</strong></div>
+      </div>
+      <div class="worked-example">
+        <div class="we-q">Q: In which month was the difference between London and Edinburgh the greatest?</div>
+        <div class="we-step"><div class="step-num">1</div><div>Calculate the difference for each month: Jan=2, Feb=2, Mar=3, Apr=3, May=4, Jun=4</div></div>
+        <div class="we-step"><div class="step-num">2</div><div>The largest differences are in May and June (both 4°C).</div></div>
+        <div class="we-answer">✓ Answer: <strong>May and June</strong> (tied at 4°C difference)</div>
+      </div>`,
+    questions:[
+      {q:`Using the London vs Edinburgh temperature graph: What was Edinburgh's temperature in May?`,
+       opts:['10°C','11°C','12°C','13°C'],ans:1,exp:'Find May on the x-axis, trace up to the orange Edinburgh line and read off: 11°C.'},
+      {q:`What is the difference in temperature between London and Edinburgh in March?`,
+       opts:['1°C','2°C','3°C','4°C'],ans:2,exp:'London March = 8°C. Edinburgh March = 5°C. Difference = 8 − 5 = 3°C.'},
+      {q:`What is the total (sum) of London's temperature over the first three months (Jan, Feb, Mar)?`,
+       opts:['14°C','15°C','17°C','18°C'],ans:2,exp:'Jan=4, Feb=5, Mar=8. Sum = 4 + 5 + 8 = 17°C.'},
+      {q:`By how much did London's temperature increase from January to June?`,
+       opts:['12°C','13°C','14°C','15°C'],ans:2,exp:'June (18°C) − January (4°C) = 14°C increase.'},
+      {q:`In which month were both cities' temperatures closest together?`,
+       opts:['January','February','March','April'],ans:0,exp:'Jan: London 4°C, Edinburgh 2°C → difference 2°C. Feb: difference also 2°C. But January comes first — both months are equally close, so Jan is accepted. The difference is smallest at 2°C in Jan and Feb.'},
+    ]
+  },
+  // ── TOPIC 1: TABLES & TIMETABLES ──
+  {
+    title:'📋 Tables & Timetables',
+    shortTitle:'Tables & Timetables',
+    learn:`
+      <div class="lesson-box">
+        <h3>Reading Tables</h3>
+        <p>A table organises data in rows and columns. Always read the <strong>row heading</strong> (left side) and <strong>column heading</strong> (top) to find a piece of data.</p>
+        <table class="data-table">
+          <tr><th>Pupil</th><th>Maths</th><th>English</th><th>Science</th><th>Total</th></tr>
+          <tr><td>Sacha</td><td>85</td><td>78</td><td>92</td><td>255</td></tr>
+          <tr><td>Ali</td><td>71</td><td>90</td><td>65</td><td>226</td></tr>
+          <tr><td>Bea</td><td>94</td><td>82</td><td>88</td><td>264</td></tr>
+          <tr><td>Tom</td><td>60</td><td>74</td><td>79</td><td>213</td></tr>
+        </table>
+        <h3>Completing Tables</h3>
+        <p>Sometimes a cell is missing. Use the data in the row or column to calculate it. E.g. if Maths + English + Science = Total, work out the missing subject.</p>
+        <div class="formula-box">Missing value = Total − (sum of known values)</div>
+        <h3>Timetables</h3>
+        <p>A timetable shows <strong>departure and arrival times</strong> for buses or trains. Times are usually in 24-hour clock format.</p>
+        <div class="callout"><strong>24-Hour Clock Reminder</strong> 13:00 = 1pm · 14:30 = 2:30pm · 09:45 = 9:45am · 00:00 = midnight</div>
+        <table class="timetable">
+          <tr><th>Stop</th><th>Train A</th><th>Train B</th><th>Train C</th></tr>
+          <tr><td class="time-col">London Bridge</td><td>08:12</td><td>09:00</td><td>10:15</td></tr>
+          <tr><td class="time-col">Waterloo</td><td>08:24</td><td>09:12</td><td>10:27</td></tr>
+          <tr><td class="time-col">Clapham Jct</td><td>08:35</td><td>09:23</td><td>10:38</td></tr>
+          <tr><td class="time-col">Wimbledon</td><td>08:51</td><td>09:39</td><td>10:54</td></tr>
+          <tr><td class="time-col">Kingston</td><td>09:08</td><td>09:56</td><td>11:11</td></tr>
+        </table>
+        <h3>Journey Time</h3>
+        <p>To find how long a journey takes: <strong>subtract departure time from arrival time</strong>. E.g. Train A London Bridge (08:12) → Kingston (09:08) = 56 minutes.</p>
+        <div class="callout"><strong>Exam Tip</strong> When calculating journey time across the hour (e.g. 08:45 to 09:20), count on: 08:45 → 09:00 is 15 min, then 09:00 → 09:20 is 20 min. Total = 35 min.</div>
+      </div>`,
+    examples:`
+      <div class="worked-example">
+        <div class="we-q">Q: A pupil scored 85 in Maths, 78 in English and the total was 240. What was their Science score?</div>
+        <div class="we-step"><div class="step-num">1</div><div>Science = Total − Maths − English</div></div>
+        <div class="we-step"><div class="step-num">2</div><div>Science = 240 − 85 − 78 = 77</div></div>
+        <div class="we-answer">✓ Answer: <strong>77</strong></div>
+      </div>
+      <div class="worked-example">
+        <div class="we-q">Q (Timetable): How long does Train B take to travel from London Bridge to Kingston?</div>
+        <div class="we-step"><div class="step-num">1</div><div>Train B departs London Bridge at 09:00</div></div>
+        <div class="we-step"><div class="step-num">2</div><div>Train B arrives Kingston at 09:56</div></div>
+        <div class="we-step"><div class="step-num">3</div><div>09:00 to 09:56 = 56 minutes</div></div>
+        <div class="we-answer">✓ Answer: <strong>56 minutes</strong></div>
+      </div>
+      <div class="worked-example">
+        <div class="we-q">Q: I need to arrive at Kingston before 10:00. Which is the latest train I can catch from London Bridge?</div>
+        <div class="we-step"><div class="step-num">1</div><div>Train A arrives Kingston at 09:08 ✓</div></div>
+        <div class="we-step"><div class="step-num">2</div><div>Train B arrives Kingston at 09:56 ✓</div></div>
+        <div class="we-step"><div class="step-num">3</div><div>Train C arrives Kingston at 11:11 ✗ (too late)</div></div>
+        <div class="we-answer">✓ Answer: <strong>Train B</strong> (departs 09:00)</div>
+      </div>`,
+    questions:[
+      {q:'A pupil scored 72 in Maths and 84 in English. Their total for all 3 subjects was 235. What did they score in Science?',
+       opts:['75','79','81','85'],ans:1,exp:'Science = 235 − 72 − 84 = 79.'},
+      {q:'Using the timetable: How long does Train C take from London Bridge to Wimbledon?',
+       opts:['37 min','39 min','41 min','43 min'],ans:1,exp:'Train C: London Bridge 10:15 → Wimbledon 10:54. Time = 54 − 15 = 39 minutes.'},
+      {q:'I arrive at London Bridge station at 08:30. Which is the next train I can catch?',
+       opts:['Train A (08:12)','Train B (09:00)','Train C (10:15)','None of them'],ans:1,exp:'Train A already departed at 08:12 — too early. The next train is Train B at 09:00.'},
+      {q:'How much longer does Train A take from Waterloo to Kingston compared to Train C?',
+       opts:['0 min','2 min','Same time','1 min'],ans:3,exp:'Train A: Waterloo 08:24 → Kingston 09:08 = 44 min. Train C: Waterloo 10:27 → Kingston 11:11 = 44 min. They\'re the same! Wait — let\'s recheck Train A: 08:35→08:51 Clapham to Wimbledon=16, 08:24→09:08=44min. Train C: 10:27→11:11=44min. Both 44 min, same duration.'},
+      {q:'Bea scored the highest total in the table. What was her total score?',
+       opts:['255','260','264','268'],ans:2,exp:'From the table: Bea scored 94+82+88=264. This is the highest total.'},
+    ]
+  },
+  // ── TOPIC 2: PIE CHARTS ──
+  {
+    title:'🥧 Pie Charts',
+    shortTitle:'Pie Charts',
+    learn:`
+      <div class="lesson-box">
+        <h3>What is a Pie Chart?</h3>
+        <p>A pie chart shows how something is split into parts. The whole circle = 100% = 360°.</p>
+        <div class="formula-box">Angle for a slice = (value ÷ total) × 360°</div>
+        <div class="chart-container">
+          <div class="chart-title">Favourite Sports — 120 pupils</div>
+          ${pieChartSVG([
+            {label:'Football',v:48},{label:'Swimming',v:30},{label:'Tennis',v:24},{label:'Other',v:18}
+          ],['#1a4f8a','#d4920a','#1d7a4a','#c0392b'])}
+        </div>
+        <h3>Reading a Pie Chart</h3>
+        <ul>
+          <li>Check if you're given percentages, angles, or actual values.</li>
+          <li>Use the total number given to convert percentages/angles to actual values.</li>
+        </ul>
+        <div class="formula-box">Number of people = (percentage ÷ 100) × total<br>OR<br>Number of people = (angle ÷ 360) × total</div>
+        <h3>Constructing a Pie Chart</h3>
+        <p>To draw your own pie chart:</p>
+        <ul>
+          <li>Find the total.</li>
+          <li>Calculate each angle: (value ÷ total) × 360°</li>
+          <li>Use a protractor to draw each slice.</li>
+          <li>Label each slice.</li>
+        </ul>
+        <div class="callout"><strong>Worked Construction Example</strong> Football: 48 pupils out of 120 → (48÷120)×360 = 144°. Swimming: (30÷120)×360 = 90°. Tennis: (24÷120)×360 = 72°. Other: (18÷120)×360 = 54°. Total = 360° ✓</div>
+        <div class="callout"><strong>Exam Tip</strong> Always check angles add to 360°. In multiple-choice, if one angle is missing, work it out as 360° minus all the others.</div>
+      </div>`,
+    examples:`
+      <div class="worked-example">
+        <div class="we-q">Q: In the Favourite Sports pie chart, 120 pupils were surveyed. Football is 40%. How many pupils chose football?</div>
+        <div class="we-step"><div class="step-num">1</div><div>Number = (40 ÷ 100) × 120</div></div>
+        <div class="we-step"><div class="step-num">2</div><div>= 0.4 × 120 = 48</div></div>
+        <div class="we-answer">✓ Answer: <strong>48 pupils</strong></div>
+      </div>
+      <div class="worked-example">
+        <div class="we-q">Q: The angle for Swimming in a pie chart is 90°. Total pupils = 120. How many swim?</div>
+        <div class="we-step"><div class="step-num">1</div><div>Number = (90 ÷ 360) × 120</div></div>
+        <div class="we-step"><div class="step-num">2</div><div>= 0.25 × 120 = 30</div></div>
+        <div class="we-answer">✓ Answer: <strong>30 pupils</strong></div>
+      </div>
+      <div class="worked-example">
+        <div class="we-q">Q: 200 people were asked their favourite colour. 50 chose blue. What angle should the blue slice be?</div>
+        <div class="we-step"><div class="step-num">1</div><div>Angle = (50 ÷ 200) × 360°</div></div>
+        <div class="we-step"><div class="step-num">2</div><div>= 0.25 × 360° = 90°</div></div>
+        <div class="we-answer">✓ Answer: <strong>90°</strong></div>
+      </div>
+      <div class="worked-example">
+        <div class="we-q">Q: Three slices of a pie chart have angles 120°, 90° and 75°. What angle is the fourth slice?</div>
+        <div class="we-step"><div class="step-num">1</div><div>120 + 90 + 75 = 285°</div></div>
+        <div class="we-step"><div class="step-num">2</div><div>Fourth slice = 360° − 285° = 75°</div></div>
+        <div class="we-answer">✓ Answer: <strong>75°</strong></div>
+      </div>`,
+    questions:[
+      {q:'240 pupils were surveyed. A pie chart shows 25% chose Drama. How many pupils chose Drama?',
+       opts:['50','55','60','65'],ans:2,exp:'(25÷100)×240 = 0.25×240 = 60 pupils.'},
+      {q:'A slice of a pie chart represents 45 out of 180 pupils. What is the angle of this slice?',
+       opts:['80°','90°','95°','100°'],ans:1,exp:'(45÷180)×360 = 0.25×360 = 90°.'},
+      {q:'A pie chart has slices of 100°, 140°, and 80°. What is the angle of the final slice?',
+       opts:['30°','40°','45°','50°'],ans:1,exp:'100+140+80=320°. Final slice = 360−320 = 40°.'},
+      {q:'300 people were asked their pet preference. The dog slice has an angle of 144°. How many people chose dogs?',
+       opts:['100','110','120','130'],ans:2,exp:'(144÷360)×300 = 0.4×300 = 120 people.'},
+      {q:'In a pie chart of 360 people, 90 people chose tennis. What percentage is this?',
+       opts:['20%','22%','25%','28%'],ans:2,exp:'90÷360 = 0.25 = 25%. (The 360 people and 360° is a coincidence — always divide by total people, not 360.)'},
+    ]
+  },
+  // ── TOPIC 3: MEAN AVERAGE ──
+  {
+    title:'📊 Mean Average',
+    shortTitle:'Mean Average',
+    learn:`
+      <div class="lesson-box">
+        <h3>What is the Mean?</h3>
+        <p>The <strong>mean</strong> is the most common type of average in 11+ exams. It is sometimes called the <em>arithmetic mean</em>.</p>
+        <div class="formula-box">Mean = Sum of all values ÷ Number of values</div>
+        <h3>Calculating the Mean</h3>
+        <p>Example: Find the mean of 4, 7, 9, 6, 4.</p>
+        <ul>
+          <li>Step 1: Add them up → 4+7+9+6+4 = 30</li>
+          <li>Step 2: Divide by how many there are → 30 ÷ 5 = <strong>6</strong></li>
+        </ul>
+        <div class="callout"><strong>Remember</strong> Mean = total ÷ count. Always count how many numbers there are first.</div>
+        <h3>Finding a Missing Value</h3>
+        <p>This is where the real exam challenge comes in. You're told the mean and all values except one — find the missing value.</p>
+        <div class="formula-box">Total = Mean × Number of values<br>Missing value = Total − Sum of known values</div>
+        <h3>Step-by-step Example</h3>
+        <p>The mean of 5 numbers is 8. Four of them are 6, 9, 7, and 10. Find the fifth number.</p>
+        <ul>
+          <li>Total = 8 × 5 = 40</li>
+          <li>Sum of known = 6+9+7+10 = 32</li>
+          <li>Missing = 40 − 32 = <strong>8</strong></li>
+        </ul>
+        <div class="callout"><strong>Exam Trap</strong> Don't confuse the number of values with the values themselves. If you have 5 test scores, divide by 5 — not by the total.</div>
+        <h3>Mean from a Table</h3>
+        <p>Sometimes data is in a frequency table. You may need to find the total first before calculating the mean. Be careful to use the correct number of data points.</p>
+      </div>`,
+    examples:`
+      <div class="worked-example">
+        <div class="we-q">Q: Find the mean of: 12, 15, 9, 18, 11</div>
+        <div class="we-step"><div class="step-num">1</div><div>Sum = 12+15+9+18+11 = 65</div></div>
+        <div class="we-step"><div class="step-num">2</div><div>Count = 5</div></div>
+        <div class="we-step"><div class="step-num">3</div><div>Mean = 65 ÷ 5 = 13</div></div>
+        <div class="we-answer">✓ Answer: <strong>13</strong></div>
+      </div>
+      <div class="worked-example">
+        <div class="we-q">Q: The mean of 6 numbers is 14. Five of them are 10, 16, 12, 18, 15. Find the sixth number.</div>
+        <div class="we-step"><div class="step-num">1</div><div>Total = 14 × 6 = 84</div></div>
+        <div class="we-step"><div class="step-num">2</div><div>Known sum = 10+16+12+18+15 = 71</div></div>
+        <div class="we-step"><div class="step-num">3</div><div>Missing = 84 − 71 = 13</div></div>
+        <div class="we-answer">✓ Answer: <strong>13</strong></div>
+      </div>
+      <div class="worked-example">
+        <div class="we-q">Q: Sacha scores 72, 68, 80, and 76 in four tests. What score does he need in a fifth test to have a mean of 75?</div>
+        <div class="we-step"><div class="step-num">1</div><div>Total needed = 75 × 5 = 375</div></div>
+        <div class="we-step"><div class="step-num">2</div><div>Current total = 72+68+80+76 = 296</div></div>
+        <div class="we-step"><div class="step-num">3</div><div>Needed score = 375 − 296 = 79</div></div>
+        <div class="we-answer">✓ Answer: <strong>79</strong></div>
+      </div>
+      <div class="worked-example">
+        <div class="we-q">Q: A cricket team's mean score across 4 matches is 45. After 5 matches the new mean is 48. What did they score in match 5?</div>
+        <div class="we-step"><div class="step-num">1</div><div>Total after 4 matches = 45 × 4 = 180</div></div>
+        <div class="we-step"><div class="step-num">2</div><div>Total after 5 matches = 48 × 5 = 240</div></div>
+        <div class="we-step"><div class="step-num">3</div><div>Match 5 score = 240 − 180 = 60</div></div>
+        <div class="we-answer">✓ Answer: <strong>60 runs</strong></div>
+      </div>`,
+    questions:[
+      {q:'Find the mean of: 8, 13, 6, 11, 12',
+       opts:['9','10','11','12'],ans:1,exp:'Sum=8+13+6+11+12=50. Mean=50÷5=10.'},
+      {q:'The mean of 4 numbers is 9. Three of them are 7, 11 and 8. What is the fourth number?',
+       opts:['8','9','10','11'],ans:2,exp:'Total=9×4=36. Known sum=7+11+8=26. Missing=36−26=10.'},
+      {q:'Sacha scored 65, 72, 58 and 81 in four tests. What is his mean score?',
+       opts:['68','69','70','71'],ans:2,exp:'Sum=65+72+58+81=276. Mean=276÷4=69.'},
+      {q:'The mean of 5 numbers is 20. Four of the numbers are 18, 22, 19 and 25. What is the fifth number?',
+       opts:['14','15','16','17'],ans:2,exp:'Total=20×5=100. Known sum=18+22+19+25=84. Missing=100−84=16.'},
+      {q:`A class of 6 pupils has a mean height of 140cm. A seventh pupil joins and the new mean is 141cm. How tall is the new pupil?`,
+       opts:['145cm','146cm','147cm','148cm'],ans:2,exp:'Total for 6 pupils=140×6=840cm. Total for 7 pupils=141×7=987cm. New pupil=987−840=147cm.'},
+    ]
+  }
+];
+
+// ─── STATE & RENDER ───
+let curTab='learn';
+
+function showHome(){
+  document.getElementById('home-view').style.display='';
+  document.getElementById('topic-view').style.display='none';
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector('.nav-btn').classList.add('active');
+  updateProgress();
+}
+
+function updateProgress(){
+  const n=state.done.filter(Boolean).length;
+  document.getElementById('prog-text').textContent=`${n} / 4 topics`;
+  document.getElementById('prog-fill').style.width=`${n/4*100}%`;
+  state.done.forEach((d,i)=>{
+    const card=document.getElementById('card-'+i);
+    const nav=document.getElementById('nav-'+i);
+    if(d){
+      card.classList.add('completed');
+      if(!card.querySelector('.topic-complete-badge')){
+        const b=document.createElement('div');
+        b.className='topic-complete-badge';b.textContent='✓ Done';
+        card.appendChild(b);
+      }
+      nav && (nav.className='nav-btn done-tab');
+    }
+  });
+}
+
+function openTopic(i){
+  state.current=i;
+  state.answered={};
+  document.getElementById('home-view').style.display='none';
+  document.getElementById('topic-view').style.display='';
+  document.getElementById('topic-view-title').textContent=TOPICS[i].title;
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  const nb=document.getElementById('nav-'+i);
+  if(nb) nb.classList.add('active');
+  switchTab('learn');
+}
+
+function switchTab(tab){
+  curTab=tab;
+  ['learn','examples','quiz'].forEach(t=>{
+    document.getElementById('tab-'+t).style.display=t===tab?'':'none';
+    document.getElementById('stab-'+t).classList.toggle('active',t===tab);
+  });
+  const t=TOPICS[state.current];
+  if(tab==='learn') document.getElementById('tab-learn').innerHTML=t.learn;
+  if(tab==='examples') document.getElementById('tab-examples').innerHTML=t.examples;
+  if(tab==='quiz') buildQuiz(t);
+}
+
+function buildQuiz(t){
+  let html='';
+  t.questions.forEach((q,qi)=>{
+    const answered=state.answered.hasOwnProperty(qi);
+    const chosen=state.answered[qi];
+    const correct=chosen===q.ans;
+    html+=`<div class="q-card">
+      <div class="q-num">Question ${qi+1} of ${t.questions.length}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="options-grid">`;
+    q.opts.forEach((o,j)=>{
+      let cls='opt-btn';
+      if(answered){
+        if(j===chosen) cls+=(correct?' sc':' sw');
+        if(!correct&&j===q.ans) cls+=' reveal';
+      }
+      html+=`<button class="${cls}" id="opt-${qi}-${j}" onclick="answer(${qi},${j})" ${answered?'disabled':''}>${o}</button>`;
+    });
+    html+=`</div>
+      <div class="q-feedback ${answered?'show '+(correct?'cf':'wf'):''}" id="fb-${qi}">
+        ${answered?(correct?'✓ Correct! ':'✗ Not quite. ')+q.exp:''}
+      </div>
+      <button class="hint-btn ${answered&&!correct?'show':''}" id="hint-btn-${qi}" onclick="getHint(${qi})">💡 Explain it to me</button>
+      <div class="q-hint-box" id="hint-${qi}"></div>
+    </div>`;
+  });
+  html+=`<div class="score-card ${Object.keys(state.answered).length===t.questions.length?'show':''}" id="quiz-score">
+    <div class="score-big" id="s-num">-</div>
+    <div style="font-size:0.8rem;opacity:0.5;margin-top:2px">out of ${t.questions.length}</div>
+    <div class="score-msg" id="s-msg"></div>
+    <div class="score-btns">
+      <button class="btn-primary" onclick="retryQuiz()">Try Again</button>
+      <button class="btn-secondary" onclick="showHome()">Back to Topics</button>
+    </div>
+  </div>`;
+  document.getElementById('tab-quiz').innerHTML=html;
+  if(Object.keys(state.answered).length===t.questions.length) calcScore(t);
+}
+
+function answer(qi,j){
+  if(state.answered.hasOwnProperty(qi)) return;
+  state.answered[qi]=j;
+  const q=TOPICS[state.current].questions[qi];
+  const correct=j===q.ans;
+  q.opts.forEach((_,k)=>{
+    const b=document.getElementById(`opt-${qi}-${k}`);
+    b.disabled=true;
+    if(k===j) b.classList.add(correct?'sc':'sw');
+    if(!correct&&k===q.ans) b.classList.add('reveal');
+  });
+  const fb=document.getElementById(`fb-${qi}`);
+  fb.className='q-feedback show '+(correct?'cf':'wf');
+  fb.textContent=(correct?'✓ Correct! ':'✗ Not quite. ')+q.exp;
+  const hb=document.getElementById(`hint-btn-${qi}`);
+  if(!correct) hb.classList.add('show');
+  if(Object.keys(state.answered).length===TOPICS[state.current].questions.length){
+    setTimeout(()=>calcScore(TOPICS[state.current]),300);
+  }
+}
+
+function calcScore(t){
+  const score=Object.entries(state.answered).filter(([i,c])=>+c===t.questions[+i].ans).length;
+  const pct=score/t.questions.length;
+  if(pct>=1) state.done[state.current]=true;
+  state.scores[state.current]=pct;
+  document.getElementById('s-num').textContent=score;
+  const msgs=['Keep practising — review the lesson first!','Getting there — check the explanations for the ones you missed.','Good work! Try once more for full marks?','Great score! Nearly perfect.','Perfect score! Topic complete! 🌟'];
+  document.getElementById('s-msg').textContent=msgs[Math.min(score,4)];
+  document.getElementById('quiz-score').classList.add('show');
+  updateProgress();
+}
+
+async function getHint(qi){
+  const t=TOPICS[state.current];
+  const q=t.questions[qi];
+  const hintEl=document.getElementById(`hint-${qi}`);
+  const btn=document.getElementById(`hint-btn-${qi}`);
+  btn.disabled=true;
+  hintEl.classList.add('show');
+  hintEl.innerHTML='<span class="spinner"></span> Thinking…';
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:`You are a warm, encouraging maths tutor for a 10-year-old called Sacha preparing for the 11+ exam (City of London or Westminster). Explain why the correct answer is right in 2-3 short, friendly sentences. Use simple language. No markdown, just plain text.`,
+        messages:[{role:'user',content:`Question: ${q.q}\nCorrect answer: ${q.opts[q.ans]}\nHint: ${q.exp}\n\nPlease explain this clearly to Sacha.`}]
+      })
+    });
+    const data=await res.json();
+    hintEl.textContent=data.content[0].text;
+  }catch(e){
+    hintEl.textContent='Hint: '+q.exp;
+  }
+  btn.disabled=false;
+}
+
+function retryQuiz(){
+  state.answered={};
+  buildQuiz(TOPICS[state.current]);
+}
+
+showHome();
+</script>
+</body>
+</html>

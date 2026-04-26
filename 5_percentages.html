@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Percentages — Sacha's 11+ Prep</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,400&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1207;
+    --cream: #faf6ee;
+    --gold: #d4920a;
+    --gold-light: #f5e3b0;
+    --green: #1d7a4a;
+    --green-light: #d4f0e2;
+    --red: #c0392b;
+    --red-light: #fde8e6;
+    --blue: #1a4f8a;
+    --blue-light: #ddeaf8;
+    --purple: #6b3fa0;
+    --purple-light: #ede5f8;
+    --border: #d6c9a8;
+    --mono: 'DM Mono', monospace;
+    --serif: 'Fraunces', Georgia, serif;
+    --sans: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: var(--sans);
+    min-height: 100vh;
+  }
+
+  header {
+    background: var(--ink);
+    color: var(--cream);
+    padding: 2rem 2.5rem 1.5rem;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  header h1 {
+    font-family: var(--serif);
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  header h1 span { color: var(--gold); }
+  .badge {
+    background: var(--gold);
+    color: var(--ink);
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    font-weight: 500;
+    padding: 0.3rem 0.7rem;
+    border-radius: 2px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  nav {
+    background: #f0e8d8;
+    border-bottom: 2px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  .nav-btn {
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    padding: 1rem 1.2rem;
+    font-family: var(--sans);
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #7a6a50;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .nav-btn:hover { color: var(--ink); }
+  .nav-btn.active { color: var(--ink); border-bottom-color: var(--gold); }
+
+  main { max-width: 820px; margin: 0 auto; padding: 2rem 2rem 4rem; }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .lesson-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1.5px solid var(--border);
+  }
+  .lesson-header h2 {
+    font-family: var(--serif);
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 900;
+    margin-bottom: 0.5rem;
+  }
+  .lesson-header p {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: #4a3f2f;
+  }
+
+  .card {
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    padding: 1.5rem 1.8rem;
+    margin-bottom: 1.5rem;
+  }
+  .card h3 {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1rem;
+  }
+  .card p { font-size: 0.95rem; line-height: 1.75; margin-bottom: 0.8rem; }
+  .card p:last-child { margin-bottom: 0; }
+
+  /* big % symbol display */
+  .pct-hero {
+    text-align: center;
+    padding: 2rem 1rem;
+    margin: 1rem 0;
+  }
+  .pct-big {
+    font-family: var(--serif);
+    font-size: 6rem;
+    font-weight: 900;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .pct-label {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: #7a6a50;
+    letter-spacing: 0.1em;
+    margin-top: 0.5rem;
+  }
+
+  /* visual bar — "out of 100" */
+  .hundred-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 3px;
+    margin: 1rem 0;
+  }
+  .hundred-cell {
+    aspect-ratio: 1;
+    border-radius: 2px;
+    background: #e8dfc8;
+    transition: background 0.2s;
+  }
+  .hundred-cell.filled { background: var(--gold); }
+
+  .pct-slider-wrap {
+    margin: 1rem 0;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .pct-slider-wrap input[type=range] { flex: 1; accent-color: var(--gold); }
+  .pct-slider-label {
+    font-family: var(--mono);
+    font-size: 0.9rem;
+    font-weight: 500;
+    min-width: 60px;
+    text-align: right;
+  }
+
+  /* fraction–decimal–percent table */
+  .equiv-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    margin: 1rem 0;
+  }
+  .equiv-table th {
+    background: var(--ink);
+    color: var(--cream);
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    padding: 0.6rem 1rem;
+    text-align: left;
+    text-transform: uppercase;
+  }
+  .equiv-table td {
+    padding: 0.65rem 1rem;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.92rem;
+  }
+  .equiv-table tr:last-child td { border-bottom: none; }
+  .equiv-table tr:nth-child(even) td { background: #faf4e8; }
+  .equiv-table .frac { font-family: var(--mono); font-weight: 500; color: var(--blue); }
+  .equiv-table .dec  { font-family: var(--mono); font-weight: 500; color: var(--green); }
+  .equiv-table .pct  { font-family: var(--mono); font-weight: 500; color: var(--gold); }
+  .equiv-table .mem  { font-size: 0.78rem; color: #7a6a50; font-style: italic; }
+
+  /* worked example box */
+  .worked {
+    background: #fff9ed;
+    border-left: 4px solid var(--gold);
+    border-radius: 0 4px 4px 0;
+    padding: 1.2rem 1.5rem;
+    margin: 1rem 0;
+  }
+  .worked .worked-title {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.8rem;
+  }
+  .worked .step {
+    display: flex;
+    gap: 0.8rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.92rem;
+    line-height: 1.6;
+  }
+  .worked .step-num {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    background: var(--gold);
+    color: white;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .math {
+    font-family: var(--mono);
+    background: #f0e8d4;
+    padding: 0.15em 0.45em;
+    border-radius: 3px;
+    font-size: 0.88em;
+  }
+
+  /* key fact highlight */
+  .key-fact {
+    background: var(--blue-light);
+    border: 1.5px solid var(--blue);
+    border-radius: 4px;
+    padding: 1rem 1.4rem;
+    margin: 1rem 0;
+    font-size: 0.92rem;
+    line-height: 1.7;
+  }
+  .key-fact strong { color: var(--blue); }
+
+  /* warning box */
+  .warning {
+    background: var(--red-light);
+    border: 1.5px solid var(--red);
+    border-radius: 4px;
+    padding: 1rem 1.4rem;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+    line-height: 1.7;
+  }
+  .warning .warn-title {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    color: var(--red);
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+
+  /* method grid for multiple methods */
+  .method-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1rem 0;
+  }
+  @media (max-width: 560px) { .method-grid { grid-template-columns: 1fr; } }
+  .method-box {
+    border: 1.5px solid var(--border);
+    border-radius: 4px;
+    padding: 1.1rem 1.2rem;
+    background: white;
+  }
+  .method-box .method-name {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--purple);
+    margin-bottom: 0.6rem;
+  }
+  .method-box p { font-size: 0.88rem; line-height: 1.65; }
+
+  /* ── QUIZ ── */
+  #quiz .lesson-header { border-bottom-color: var(--blue); }
+  #quiz .lesson-header h2 { color: var(--ink); }
+
+  .progress-wrap {
+    background: #e8dfc8;
+    border-radius: 999px;
+    height: 6px;
+    margin: 0 0 2rem;
+    overflow: hidden;
+  }
+  .progress-bar {
+    background: var(--gold);
+    height: 100%;
+    border-radius: 999px;
+    transition: width 0.4s ease;
+  }
+
+  .q-block {
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    padding: 1.5rem 1.8rem;
+    margin-bottom: 1.2rem;
+    transition: border-color 0.2s;
+  }
+  .q-block.correct { border-color: var(--green); background: #f4fdf7; }
+  .q-block.wrong   { border-color: var(--red);   background: #fdf4f4; }
+
+  .q-num {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #9a8a70;
+    margin-bottom: 0.6rem;
+  }
+  .q-text {
+    font-size: 0.97rem;
+    font-weight: 600;
+    line-height: 1.55;
+    margin-bottom: 1rem;
+  }
+
+  .ans-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+  }
+  @media (max-width: 480px) { .ans-grid { grid-template-columns: 1fr; } }
+
+  .ans-btn {
+    background: #faf6ee;
+    border: 1.5px solid var(--border);
+    border-radius: 4px;
+    padding: 0.65rem 1rem;
+    font-family: var(--sans);
+    font-size: 0.88rem;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s, border-color 0.15s;
+    color: var(--ink);
+  }
+  .ans-btn:hover:not(:disabled) { background: var(--gold-light); border-color: var(--gold); }
+  .ans-btn:disabled { cursor: default; }
+  .ans-btn.selected-wrong { background: var(--red-light); border-color: var(--red); color: var(--red); }
+  .ans-btn.reveal-correct { background: var(--green-light); border-color: var(--green); color: var(--green); font-weight: 600; }
+  .ans-btn.selected-right { background: var(--green-light); border-color: var(--green); color: var(--green); font-weight: 600; }
+
+  .feedback {
+    display: none;
+    margin-top: 0.8rem;
+    font-size: 0.88rem;
+    line-height: 1.65;
+    padding: 0.8rem 1rem;
+    border-radius: 4px;
+  }
+  .feedback.show { display: block; }
+  .feedback.right-fb { background: var(--green-light); color: var(--green); }
+  .feedback.wrong-fb { background: var(--red-light); color: var(--red); }
+
+  .submit-wrap { text-align: center; margin: 2rem 0 1rem; }
+  .submit-btn {
+    background: var(--ink);
+    color: var(--cream);
+    border: none;
+    border-radius: 4px;
+    padding: 0.9rem 2.5rem;
+    font-family: var(--sans);
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    transition: opacity 0.15s;
+  }
+  .submit-btn:hover { opacity: 0.85; }
+
+  .score-box {
+    display: none;
+    background: white;
+    border: 2px solid var(--gold);
+    border-radius: 6px;
+    padding: 2rem;
+    text-align: center;
+    margin-top: 1.5rem;
+  }
+  .score-box.show { display: block; }
+  .score-number {
+    font-family: var(--serif);
+    font-size: 4rem;
+    font-weight: 900;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .score-denom { font-size: 1.5rem; color: #7a6a50; }
+  .score-msg {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: #4a3f2f;
+    margin: 1rem 0 1.5rem;
+  }
+  .reset-btn {
+    background: transparent;
+    border: 1.5px solid var(--ink);
+    border-radius: 4px;
+    padding: 0.6rem 1.5rem;
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .reset-btn:hover { background: var(--gold-light); }
+
+  /* nav link at bottom of each lesson */
+  .next-link {
+    display: inline-block;
+    margin-top: 2rem;
+    background: var(--ink);
+    color: var(--cream);
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.7rem 1.4rem;
+    border-radius: 3px;
+    cursor: pointer;
+    border: none;
+    transition: opacity 0.15s;
+  }
+  .next-link:hover { opacity: 0.85; }
+
+  /* interactive calculator */
+  .calc-wrap {
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    padding: 1.5rem 1.8rem;
+    margin: 1.5rem 0;
+  }
+  .calc-wrap h3 {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--purple);
+    margin-bottom: 1rem;
+  }
+  .calc-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.8rem;
+    font-size: 0.95rem;
+  }
+  .calc-row input[type=number] {
+    width: 80px;
+    padding: 0.4rem 0.6rem;
+    border: 1.5px solid var(--border);
+    border-radius: 3px;
+    font-family: var(--mono);
+    font-size: 0.95rem;
+    background: #faf6ee;
+    color: var(--ink);
+  }
+  .calc-result {
+    font-family: var(--mono);
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: var(--gold);
+    margin-top: 0.8rem;
+  }
+  .calc-working {
+    font-size: 0.85rem;
+    color: #7a6a50;
+    margin-top: 0.3rem;
+    line-height: 1.6;
+  }
+
+  /* colour emphasis inline */
+  .c-blue   { color: var(--blue); font-family: var(--mono); }
+  .c-green  { color: var(--green); font-family: var(--mono); }
+  .c-gold   { color: var(--gold); font-family: var(--mono); }
+  .c-red    { color: var(--red); }
+  .c-purple { color: var(--purple); font-family: var(--mono); }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Percentages<br><span>Master Class</span></h1>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:0.5rem;align-items:flex-end">
+    <div class="badge">Sacha · 11+ Prep</div>
+    <div class="badge" style="background:transparent;color:var(--gold);border:1px solid var(--gold)">City of London · Westminster</div>
+  </div>
+</header>
+
+<nav>
+  <button class="nav-btn active" onclick="showSection('learn1')">1 · What is a Percentage?</button>
+  <button class="nav-btn" onclick="showSection('learn2')">2 · % as Fractions &amp; Decimals</button>
+  <button class="nav-btn" onclick="showSection('learn3')">3 · Key Equivalences</button>
+  <button class="nav-btn" onclick="showSection('learn4')">4 · % of an Amount</button>
+  <button class="nav-btn" onclick="showSection('quiz')">🎯 Quiz</button>
+</nav>
+
+<main>
+
+<!-- ══════════════════════════════════════════
+     SECTION 1 — WHAT IS A PERCENTAGE?
+══════════════════════════════════════════ -->
+<div class="section active" id="learn1">
+  <div class="lesson-header">
+    <h2>What is a Percentage?</h2>
+    <p>The word <em>per cent</em> comes from Latin: <strong>per centum</strong> — meaning <strong>out of one hundred</strong>. The symbol % is a shorthand for "÷ 100".</p>
+  </div>
+
+  <div class="card">
+    <h3>The % Symbol</h3>
+    <div class="pct-hero">
+      <div class="pct-big">%</div>
+      <div class="pct-label">per cent · out of 100 · ÷ 100</div>
+    </div>
+    <p>Think of the % symbol itself as a clue: the two little circles are like zeros, and the dividing line says "out of" — so <span class="math">%</span> literally pictures <span class="math">0/0</span> with a line, hinting at hundredths.</p>
+    <p>When we write <span class="math">35%</span>, we mean <strong>35 out of every 100</strong>. If there were 100 children in a school and 35 had packed lunch, then 35% have packed lunch.</p>
+  </div>
+
+  <div class="card">
+    <h3>See it — 100 squares</h3>
+    <p>Drag the slider to shade a percentage of this 100-square grid.</p>
+    <div class="pct-slider-wrap">
+      <input type="range" min="0" max="100" value="35" id="pctSlider" oninput="updateGrid(this.value)">
+      <span class="pct-slider-label" id="pctSliderLabel">35%</span>
+    </div>
+    <div class="hundred-grid" id="hundredGrid"></div>
+    <p id="gridCaption" style="font-size:0.85rem;color:#7a6a50;margin-top:0.6rem;">35 squares shaded out of 100 = 35%</p>
+  </div>
+
+  <div class="card">
+    <h3>Real-life examples</h3>
+    <p><strong>100% of something</strong> is <em>all</em> of it. If you eat 100% of your dinner, you've eaten every last bite.</p>
+    <p><strong>50%</strong> is half — exactly 50 out of 100.</p>
+    <p><strong>0%</strong> means none at all.</p>
+    <p><strong>Percentages can go above 100%</strong> — if a shop sells 150% more than last year, it sold half as much again on top of everything it sold before.</p>
+  </div>
+
+  <div class="key-fact">
+    <strong>The one rule to burn into memory:</strong> % always means "out of 100". Every calculation you do with percentages comes back to this one idea.
+  </div>
+
+  <div class="worked">
+    <div class="worked-title">Worked example — reading % in context</div>
+    <p style="font-size:0.9rem;margin-bottom:0.8rem;"><em>"In a class of 100 pupils, 63 passed the test. What percentage passed?"</em></p>
+    <div class="step"><div class="step-num">1</div><div>63 out of 100 passed.</div></div>
+    <div class="step"><div class="step-num">2</div><div>Percentage = the number out of 100 = <span class="math">63%</span>.</div></div>
+    <p style="font-size:0.85rem;color:#7a6a50;margin-top:0.6rem;">(When the total is already 100, the percentage equals the count directly. It gets more interesting when the total isn't 100 — that's a later lesson.)</p>
+  </div>
+
+  <button class="next-link" onclick="showSection('learn2')">Next: % as Fractions &amp; Decimals →</button>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     SECTION 2 — % AS FRACTIONS & DECIMALS
+══════════════════════════════════════════ -->
+<div class="section" id="learn2">
+  <div class="lesson-header">
+    <h2>Writing % as Fractions &amp; Decimals</h2>
+    <p>A percentage, a fraction, and a decimal are three different ways of writing the <em>same thing</em>. Knowing how to move between them quickly is one of the most tested 11+ skills.</p>
+  </div>
+
+  <div class="card">
+    <h3>Percentage → Fraction</h3>
+    <p>Because % means "out of 100", any percentage converts straight to a fraction with denominator 100:</p>
+    <div style="text-align:center;font-family:var(--mono);font-size:1.3rem;margin:1rem 0;color:var(--blue)">
+      47% = 47/100
+    </div>
+    <p>You may then be able to simplify. For instance:</p>
+    <div style="text-align:center;font-family:var(--mono);font-size:1.1rem;margin:0.8rem 0;color:var(--blue)">
+      20% = 20/100 = 1/5
+    </div>
+    <p style="font-size:0.88rem;color:#7a6a50;">Divide top and bottom by the same number (the HCF) to simplify. 20 and 100 both divide by 20, giving 1/5.</p>
+  </div>
+
+  <div class="worked">
+    <div class="worked-title">Worked example — % to fraction</div>
+    <p style="font-size:0.9rem;margin-bottom:0.8rem;"><em>"Write 75% as a fraction in its simplest form."</em></p>
+    <div class="step"><div class="step-num">1</div><div>Write over 100: <span class="math">75/100</span></div></div>
+    <div class="step"><div class="step-num">2</div><div>Find the HCF of 75 and 100. Both divide by 25.</div></div>
+    <div class="step"><div class="step-num">3</div><div><span class="math">75 ÷ 25 = 3</span>, <span class="math">100 ÷ 25 = 4</span> → answer: <span class="math">3/4</span></div></div>
+  </div>
+
+  <div class="card">
+    <h3>Percentage → Decimal</h3>
+    <p>Dividing by 100 moves the decimal point <strong>two places to the left</strong>:</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.6rem;margin:1rem 0;text-align:center;">
+      <div style="background:#f0e8d4;border-radius:4px;padding:0.8rem;font-family:var(--mono);">35% → 0.35</div>
+      <div style="background:#f0e8d4;border-radius:4px;padding:0.8rem;font-family:var(--mono);">7% → 0.07</div>
+      <div style="background:#f0e8d4;border-radius:4px;padding:0.8rem;font-family:var(--mono);">100% → 1.00</div>
+    </div>
+    <div class="warning">
+      <div class="warn-title">Common mistake</div>
+      <p>7% is <strong>0.07</strong>, not 0.7. You need two places to the left — 7 becomes 07 with a leading zero, giving 0.07. Draw a column table if unsure.</p>
+    </div>
+  </div>
+
+  <div class="worked">
+    <div class="worked-title">Worked example — % to decimal</div>
+    <p style="font-size:0.9rem;margin-bottom:0.8rem;"><em>"Write 3% as a decimal."</em></p>
+    <div class="step"><div class="step-num">1</div><div>3% means <span class="math">3 ÷ 100</span></div></div>
+    <div class="step"><div class="step-num">2</div><div>Move the point two places left: <span class="math">3.00 → 0.03</span></div></div>
+    <div class="step"><div class="step-num">3</div><div>Answer: <span class="math">0.03</span></div></div>
+  </div>
+
+  <div class="card">
+    <h3>Decimal → Percentage</h3>
+    <p>Go the other way: multiply by 100 (move point two places <em>right</em>):</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.6rem;margin:1rem 0;text-align:center;">
+      <div style="background:#d4f0e2;border-radius:4px;padding:0.8rem;font-family:var(--mono);">0.45 → 45%</div>
+      <div style="background:#d4f0e2;border-radius:4px;padding:0.8rem;font-family:var(--mono);">0.08 → 8%</div>
+      <div style="background:#d4f0e2;border-radius:4px;padding:0.8rem;font-family:var(--mono);">1.25 → 125%</div>
+    </div>
+  </div>
+
+  <div class="worked">
+    <div class="worked-title">Worked example — decimal to %</div>
+    <p style="font-size:0.9rem;margin-bottom:0.8rem;"><em>"Write 0.6 as a percentage."</em></p>
+    <div class="step"><div class="step-num">1</div><div>Multiply by 100: <span class="math">0.6 × 100 = 60</span></div></div>
+    <div class="step"><div class="step-num">2</div><div>Answer: <span class="math">60%</span></div></div>
+  </div>
+
+  <button class="next-link" onclick="showSection('learn3')">Next: Key Equivalences →</button>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     SECTION 3 — KEY EQUIVALENCES
+══════════════════════════════════════════ -->
+<div class="section" id="learn3">
+  <div class="lesson-header">
+    <h2>Key Equivalences</h2>
+    <p>Some fraction–decimal–percentage combinations come up so often that you should know them <em>instantly</em> — no working needed. Memorise these cold.</p>
+  </div>
+
+  <div class="card">
+    <h3>The essential table — learn every row</h3>
+    <table class="equiv-table">
+      <thead>
+        <tr>
+          <th>Fraction</th>
+          <th>Decimal</th>
+          <th>Percentage</th>
+          <th>Memory tip</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="frac">1/2</td><td class="dec">0.5</td><td class="pct">50%</td><td class="mem">Half of everything</td></tr>
+        <tr><td class="frac">1/4</td><td class="dec">0.25</td><td class="pct">25%</td><td class="mem">Quarter of £1 = 25p</td></tr>
+        <tr><td class="frac">3/4</td><td class="dec">0.75</td><td class="pct">75%</td><td class="mem">Three quarters = 75p</td></tr>
+        <tr><td class="frac">1/5</td><td class="dec">0.2</td><td class="pct">20%</td><td class="mem">5 × 20 = 100</td></tr>
+        <tr><td class="frac">2/5</td><td class="dec">0.4</td><td class="pct">40%</td><td class="mem">Double of 1/5</td></tr>
+        <tr><td class="frac">3/5</td><td class="dec">0.6</td><td class="pct">60%</td><td class="mem">Triple of 1/5</td></tr>
+        <tr><td class="frac">4/5</td><td class="dec">0.8</td><td class="pct">80%</td><td class="mem">Quadruple of 1/5</td></tr>
+        <tr><td class="frac">1/10</td><td class="dec">0.1</td><td class="pct">10%</td><td class="mem">Divide by 10</td></tr>
+        <tr><td class="frac">3/10</td><td class="dec">0.3</td><td class="pct">30%</td><td class="mem">Three tenths</td></tr>
+        <tr><td class="frac">7/10</td><td class="dec">0.7</td><td class="pct">70%</td><td class="mem">Seven tenths</td></tr>
+        <tr><td class="frac">9/10</td><td class="dec">0.9</td><td class="pct">90%</td><td class="mem">Nine tenths</td></tr>
+        <tr><td class="frac">1/3</td><td class="dec">0.333…</td><td class="pct">33⅓%</td><td class="mem">Recurring! Not 0.33</td></tr>
+        <tr><td class="frac">2/3</td><td class="dec">0.666…</td><td class="pct">66⅔%</td><td class="mem">Recurring! Not 0.67</td></tr>
+        <tr><td class="frac">1/8</td><td class="dec">0.125</td><td class="pct">12.5%</td><td class="mem">Half of a quarter</td></tr>
+        <tr><td class="frac">1/1</td><td class="dec">1.0</td><td class="pct">100%</td><td class="mem">The whole thing</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="key-fact">
+    <strong>Thirds are special:</strong> 1/3 = 0.333333… (it never stops). In percentage form it's 33⅓%, not 33% or 33.3%. Examiners test this trap.
+  </div>
+
+  <div class="card">
+    <h3>How to derive any equivalence you don't know</h3>
+    <p>For any fraction, convert to a decimal by dividing the top by the bottom, then multiply by 100 for the percentage.</p>
+    <div class="worked" style="margin:0.8rem 0">
+      <div class="worked-title">Example — 3/8</div>
+      <div class="step"><div class="step-num">1</div><div>Divide: <span class="math">3 ÷ 8 = 0.375</span></div></div>
+      <div class="step"><div class="step-num">2</div><div>× 100: <span class="math">0.375 × 100 = 37.5%</span></div></div>
+    </div>
+    <p>Or use the "make denominator 100" shortcut when the denominator divides into 100:</p>
+    <div class="worked" style="margin:0.8rem 0">
+      <div class="worked-title">Example — 7/20</div>
+      <div class="step"><div class="step-num">1</div><div>20 × 5 = 100, so multiply top and bottom by 5.</div></div>
+      <div class="step"><div class="step-num">2</div><div><span class="math">7/20 = 35/100 = 35%</span></div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Comparing fractions using %</h3>
+    <p>Percentages make it easy to compare fractions that look incomparable:</p>
+    <p><em>"Which is larger: 3/8 or 2/5?"</em></p>
+    <p style="font-family:var(--mono);font-size:0.9rem;margin:0.5rem 0;">3/8 = 37.5%  ·  2/5 = 40%</p>
+    <p>So 2/5 is larger. This technique comes up regularly in 11+ papers.</p>
+  </div>
+
+  <button class="next-link" onclick="showSection('learn4')">Next: % of an Amount →</button>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     SECTION 4 — % OF AN AMOUNT
+══════════════════════════════════════════ -->
+<div class="section" id="learn4">
+  <div class="lesson-header">
+    <h2>Calculating % of an Amount</h2>
+    <p>This is the most commonly examined percentage skill. There are several methods — learn the one that feels fastest, but understand all of them.</p>
+  </div>
+
+  <div class="card">
+    <h3>Method 1 — divide then multiply (always works)</h3>
+    <p>To find <strong>P%</strong> of <strong>N</strong>:</p>
+    <div class="method-grid">
+      <div class="method-box">
+        <div class="method-name">Step 1</div>
+        <p>Divide N by 100 to find 1%</p>
+      </div>
+      <div class="method-box">
+        <div class="method-name">Step 2</div>
+        <p>Multiply your answer by P</p>
+      </div>
+    </div>
+    <div class="worked" style="margin-top:0.8rem">
+      <div class="worked-title">Find 35% of 240</div>
+      <div class="step"><div class="step-num">1</div><div>1% of 240 = <span class="math">240 ÷ 100 = 2.4</span></div></div>
+      <div class="step"><div class="step-num">2</div><div>35% = <span class="math">2.4 × 35 = 84</span></div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Method 2 — build from 10% (often quickest)</h3>
+    <p>Find 10% by dividing by 10, then build the percentage you need from multiples and halves:</p>
+    <div class="worked">
+      <div class="worked-title">Find 35% of 240</div>
+      <div class="step"><div class="step-num">1</div><div>10% of 240 = <span class="math">240 ÷ 10 = 24</span></div></div>
+      <div class="step"><div class="step-num">2</div><div>30% = <span class="math">24 × 3 = 72</span></div></div>
+      <div class="step"><div class="step-num">3</div><div>5% = half of 10% = <span class="math">24 ÷ 2 = 12</span></div></div>
+      <div class="step"><div class="step-num">4</div><div>35% = 30% + 5% = <span class="math">72 + 12 = 84</span> ✓</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Method 3 — fraction shortcut (for common %)</h3>
+    <p>For percentages you know as simple fractions, convert and use the fraction directly:</p>
+    <div class="worked">
+      <div class="worked-title">Find 25% of 360</div>
+      <div class="step"><div class="step-num">1</div><div>25% = 1/4</div></div>
+      <div class="step"><div class="step-num">2</div><div><span class="math">360 ÷ 4 = 90</span></div></div>
+    </div>
+    <div class="worked">
+      <div class="worked-title">Find 33⅓% of 270</div>
+      <div class="step"><div class="step-num">1</div><div>33⅓% = 1/3</div></div>
+      <div class="step"><div class="step-num">2</div><div><span class="math">270 ÷ 3 = 90</span></div></div>
+    </div>
+  </div>
+
+  <div class="key-fact">
+    <strong>Which method to use?</strong> For a percentage like 17% or 43%, use Method 1 or 2 — they always work. For 25%, 50%, 75%, 33⅓%, use Method 3 — it's instant.
+  </div>
+
+  <div class="warning">
+    <div class="warn-title">Watch out</div>
+    <p>"Find 15% of 80" — students often find 10% = 8, then forget to add 5%. 15% = 10% + 5% = 8 + 4 = <strong>12</strong>, not 8.</p>
+  </div>
+
+  <!-- Interactive calculator -->
+  <div class="calc-wrap">
+    <h3>Practice calculator — try any % of any amount</h3>
+    <div class="calc-row">
+      <span>Find</span>
+      <input type="number" id="calcPct" value="35" min="0" max="999" oninput="updateCalc()">
+      <span>% of</span>
+      <input type="number" id="calcAmount" value="240" min="0" oninput="updateCalc()">
+    </div>
+    <div class="calc-result" id="calcResult">= 84</div>
+    <div class="calc-working" id="calcWorking">
+      1% of 240 = 2.4 &nbsp;·&nbsp; 2.4 × 35 = 84
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Multi-step % problems</h3>
+    <p>At City of London and Westminster level, percentages often appear inside a larger problem. Here is a typical style:</p>
+    <div class="worked">
+      <div class="worked-title">Exam-style question</div>
+      <p style="font-size:0.9rem;margin-bottom:0.8rem;"><em>"A coat costs £180. It is reduced by 30% in a sale. What is the sale price?"</em></p>
+      <div class="step"><div class="step-num">1</div><div>Find 30% of £180:<br>10% = £18 &nbsp;·&nbsp; 30% = £54</div></div>
+      <div class="step"><div class="step-num">2</div><div>Subtract the reduction: <span class="math">£180 − £54 = £126</span></div></div>
+      <div class="step"><div class="step-num">3</div><div>Sale price = <span class="math">£126</span></div></div>
+      <p style="font-size:0.82rem;color:#7a6a50;margin-top:0.6rem;">Alternative: 100% − 30% = 70%, so find 70% of £180 = £126 directly. Quicker!</p>
+    </div>
+    <div class="worked">
+      <div class="worked-title">Exam-style — finding the original</div>
+      <p style="font-size:0.9rem;margin-bottom:0.8rem;"><em>"After a 20% increase, a price is £60. What was the original price?"</em></p>
+      <div class="step"><div class="step-num">1</div><div>£60 represents 120% (original + 20%).</div></div>
+      <div class="step"><div class="step-num">2</div><div>1% = <span class="math">£60 ÷ 120 = £0.50</span></div></div>
+      <div class="step"><div class="step-num">3</div><div>100% = <span class="math">£0.50 × 100 = £50</span></div></div>
+      <p style="font-size:0.82rem;color:#7a6a50;margin-top:0.6rem;">This reverse-percentage type appears at top school level — it's harder but very learnable.</p>
+    </div>
+  </div>
+
+  <button class="next-link" onclick="showSection('quiz')">Take the Quiz →</button>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     QUIZ — 20 QUESTIONS
+══════════════════════════════════════════ -->
+<div class="section" id="quiz">
+  <div class="lesson-header">
+    <h2>Quiz — 20 Questions</h2>
+    <p>Work through all 20 questions. Each one gives instant feedback with an explanation. Submit at the end for your score.</p>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-bar" id="progressBar" style="width:0%"></div>
+  </div>
+
+  <div id="quizContainer"></div>
+
+  <div class="submit-wrap">
+    <button class="submit-btn" onclick="submitQuiz()">Submit — see my score</button>
+  </div>
+
+  <div class="score-box" id="quizScore">
+    <div class="score-number" id="scoreNum">0</div><span class="score-denom"> / 20</span>
+    <div class="score-msg" id="scoreMsg"></div>
+    <button class="reset-btn" onclick="resetQuiz()">Reset &amp; try again</button>
+  </div>
+</div>
+
+</main>
+
+<script>
+// ── NAV ──────────────────────────────────────────────────────────────────────
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const btns = document.querySelectorAll('.nav-btn');
+  const map = { learn1:0, learn2:1, learn3:2, learn4:3, quiz:4 };
+  if (map[id] !== undefined) btns[map[id]].classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── HUNDRED-GRID ──────────────────────────────────────────────────────────────
+function buildGrid() {
+  const g = document.getElementById('hundredGrid');
+  g.innerHTML = '';
+  for (let i = 0; i < 100; i++) {
+    const d = document.createElement('div');
+    d.className = 'hundred-cell';
+    d.id = 'cell' + i;
+    g.appendChild(d);
+  }
+}
+function updateGrid(v) {
+  v = parseInt(v);
+  document.getElementById('pctSliderLabel').textContent = v + '%';
+  document.getElementById('gridCaption').textContent = v + ' squares shaded out of 100 = ' + v + '%';
+  for (let i = 0; i < 100; i++) {
+    document.getElementById('cell' + i).className = 'hundred-cell' + (i < v ? ' filled' : '');
+  }
+}
+buildGrid();
+updateGrid(35);
+
+// ── CALCULATOR ────────────────────────────────────────────────────────────────
+function updateCalc() {
+  const p = parseFloat(document.getElementById('calcPct').value) || 0;
+  const a = parseFloat(document.getElementById('calcAmount').value) || 0;
+  const result = (p / 100) * a;
+  const onePct = (a / 100);
+  const displayResult = Number.isInteger(result) ? result : Math.round(result * 1000) / 1000;
+  const displayOne = Number.isInteger(onePct) ? onePct : Math.round(onePct * 1000) / 1000;
+  document.getElementById('calcResult').textContent = '= ' + displayResult;
+  document.getElementById('calcWorking').innerHTML =
+    '1% of ' + a + ' = ' + displayOne + '&nbsp;&nbsp;·&nbsp;&nbsp;' +
+    displayOne + ' × ' + p + ' = ' + displayResult;
+}
+
+// ── QUIZ ──────────────────────────────────────────────────────────────────────
+const questions = [
+  // Section 1 — What is a %?
+  { q: 'What does the word "per cent" mean?',
+    opts: ['Per ten', 'Out of one hundred', 'Out of one thousand', 'Divided by ten'],
+    ans: 1, exp: '"Per cent" comes from Latin per centum — out of one hundred. The % symbol always means ÷ 100.' },
+
+  { q: 'What is 63 out of 100 as a percentage?',
+    opts: ['6.3%', '630%', '63%', '0.63%'],
+    ans: 2, exp: 'When the total is already 100, the percentage equals the count directly: 63 out of 100 = 63%.' },
+
+  { q: 'A bag contains 100 marbles. 17 are blue. What percentage are blue?',
+    opts: ['17%', '1.7%', '83%', '170%'],
+    ans: 0, exp: '17 out of 100 = 17%. The remaining 83% are not blue.' },
+
+  // Section 2 — % as fractions & decimals
+  { q: 'Write 47% as a fraction with denominator 100.',
+    opts: ['4/7', '47/10', '47/100', '470/100'],
+    ans: 2, exp: '% means out of 100, so 47% = 47/100 directly. No calculation needed.' },
+
+  { q: 'Write 20% as a fraction in its simplest form.',
+    opts: ['20/100', '1/5', '2/10', '1/4'],
+    ans: 1, exp: '20/100 — divide top and bottom by 20 (the HCF) → 1/5.' },
+
+  { q: 'Write 35% as a decimal.',
+    opts: ['35', '3.5', '0.35', '0.035'],
+    ans: 2, exp: 'Divide by 100 — move the decimal point two places left: 35.0 → 0.35.' },
+
+  { q: 'Write 7% as a decimal.',
+    opts: ['0.7', '7', '0.07', '0.007'],
+    ans: 2, exp: '7% ÷ 100 = 0.07. A common mistake is 0.7 — remember you need two places left, so 7 becomes 07 → 0.07.' },
+
+  { q: 'Write 0.9 as a percentage.',
+    opts: ['0.9%', '9%', '90%', '900%'],
+    ans: 2, exp: 'Multiply by 100 — move two places right: 0.9 → 90. So 0.9 = 90%.' },
+
+  { q: 'Write 75% as a fraction in its simplest form.',
+    opts: ['75/100', '3/4', '7/5', '15/20'],
+    ans: 1, exp: '75/100 — divide by 25 (the HCF) → 3/4. Also useful to know: 75% = ¾ by heart.' },
+
+  // Section 3 — Key equivalences
+  { q: 'What is ½ as a percentage?',
+    opts: ['25%', '20%', '50%', '5%'],
+    ans: 2, exp: '1/2 = 50%. This is one of the most important equivalences to know instantly.' },
+
+  { q: 'What is 1/5 as a decimal?',
+    opts: ['0.5', '0.15', '0.2', '0.02'],
+    ans: 2, exp: '1/5 = 20% = 0.2. Think: 5 × 20 = 100, so 1/5 = 20/100 = 0.2.' },
+
+  { q: 'What is 1/3 as a percentage?',
+    opts: ['30%', '33%', '33⅓%', '3.33%'],
+    ans: 2, exp: '1/3 = 33.333…% — a recurring decimal. The correct percentage form is 33⅓%, not 33% or 33.3%.' },
+
+  { q: 'Which of these is largest?',
+    opts: ['3/8', '2/5', '1/3', '0.3'],
+    ans: 1, exp: 'Convert all to %: 3/8 = 37.5%, 2/5 = 40%, 1/3 = 33⅓%, 0.3 = 30%. Largest is 2/5 = 40%.' },
+
+  { q: 'What is 1/8 as a percentage?',
+    opts: ['8%', '18%', '12%', '12.5%'],
+    ans: 3, exp: '1/8 = half of 1/4 = half of 25% = 12.5%. Or: 1 ÷ 8 = 0.125 → × 100 = 12.5%.' },
+
+  // Section 4 — % of an amount
+  { q: 'Find 10% of 350.',
+    opts: ['3.5', '35', '3500', '0.35'],
+    ans: 1, exp: '10% = divide by 10. 350 ÷ 10 = 35.' },
+
+  { q: 'Find 25% of 160.',
+    opts: ['4', '40', '80', '25'],
+    ans: 1, exp: '25% = ¼. 160 ÷ 4 = 40. Or: 10% = 16, 25% = 16 + 16 ÷ 2 = 16 + 8 = wait — easier as a fraction: 160 ÷ 4 = 40.' },
+
+  { q: 'Find 15% of 80.',
+    opts: ['8', '12', '15', '14'],
+    ans: 1, exp: '10% of 80 = 8. 5% = half of that = 4. 15% = 8 + 4 = 12.' },
+
+  { q: 'A jacket costs £120. It is reduced by 30% in a sale. What is the sale price?',
+    opts: ['£90', '£36', '£84', '£78'],
+    ans: 2, exp: '30% of £120: 10% = £12, 30% = £36. Sale price = £120 − £36 = £84. Or: 70% of £120 = 7 × £12 = £84.' },
+
+  { q: 'Find 60% of 450.',
+    opts: ['27', '270', '2700', '27000'],
+    ans: 1, exp: '10% of 450 = 45. 60% = 45 × 6 = 270.' },
+
+  { q: 'After a 20% increase, a price is £72. What was the original price?',
+    opts: ['£57.60', '£60', '£52', '£86.40'],
+    ans: 1, exp: '£72 = 120%. So 1% = £72 ÷ 120 = £0.60. 100% = £0.60 × 100 = £60. Always ask: what does my given number represent as a percentage?' },
+];
+
+let answered = {};
+
+function buildQuiz() {
+  answered = {};
+  const c = document.getElementById('quizContainer');
+  c.innerHTML = '';
+  document.getElementById('progressBar').style.width = '0%';
+  document.getElementById('quizScore').classList.remove('show');
+
+  questions.forEach((q, qi) => {
+    const block = document.createElement('div');
+    block.className = 'q-block';
+    block.id = 'qb' + qi;
+
+    const num = document.createElement('div');
+    num.className = 'q-num';
+    num.textContent = 'Question ' + (qi + 1) + ' of ' + questions.length;
+
+    const text = document.createElement('div');
+    text.className = 'q-text';
+    text.textContent = q.q;
+
+    const grid = document.createElement('div');
+    grid.className = 'ans-grid';
+
+    q.opts.forEach((opt, oi) => {
+      const btn = document.createElement('button');
+      btn.className = 'ans-btn';
+      btn.textContent = opt;
+      btn.id = 'qa' + qi + '_' + oi;
+      btn.onclick = () => answer(qi, oi);
+      grid.appendChild(btn);
+    });
+
+    const fb = document.createElement('div');
+    fb.className = 'feedback';
+    fb.id = 'fb' + qi;
+
+    block.appendChild(num);
+    block.appendChild(text);
+    block.appendChild(grid);
+    block.appendChild(fb);
+    c.appendChild(block);
+  });
+}
+
+function answer(qi, chosen) {
+  if (answered[qi] !== undefined) return;
+  answered[qi] = chosen;
+
+  const q = questions[qi];
+  const block = document.getElementById('qb' + qi);
+  const fb = document.getElementById('fb' + qi);
+  const btns = document.querySelectorAll('[id^="qa' + qi + '_"]');
+  btns.forEach(b => b.disabled = true);
+
+  const ok = chosen === q.ans;
+  if (ok) {
+    block.classList.add('correct');
+    document.getElementById('qa' + qi + '_' + chosen).classList.add('selected-right');
+    fb.className = 'feedback show right-fb';
+  } else {
+    block.classList.add('wrong');
+    document.getElementById('qa' + qi + '_' + chosen).classList.add('selected-wrong');
+    document.getElementById('qa' + qi + '_' + q.ans).classList.add('reveal-correct');
+    fb.className = 'feedback show wrong-fb';
+  }
+  fb.textContent = (ok ? '✓ Correct! ' : '✗ Not quite. ') + q.exp;
+  updateProgress();
+}
+
+function updateProgress() {
+  const pct = (Object.keys(answered).length / questions.length) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+}
+
+function submitQuiz() {
+  let score = 0;
+  questions.forEach((q, i) => { if (answered[i] === q.ans) score++; });
+
+  document.getElementById('scoreNum').textContent = score;
+  let msg;
+  if (score === 20) msg = 'Perfect 20/20 — flawless. That is exactly the standard needed for City of London or Westminster. Exceptional.';
+  else if (score >= 17) msg = 'Excellent — ' + score + '/20 is a strong pass. Review any slips and you are in great shape for the exam.';
+  else if (score >= 13) msg = 'Good solid work — ' + score + '/20. Go back over the sections where you dropped marks, then try again.';
+  else if (score >= 8) msg = score + '/20 — a reasonable start. Work through each lesson carefully and re-sit the quiz. You will improve fast.';
+  else msg = score + '/20 — percentages need more work. Take each lesson slowly, use the calculator, and come back when you are ready.';
+
+  document.getElementById('scoreMsg').textContent = msg;
+  document.getElementById('quizScore').classList.add('show');
+  document.getElementById('quizScore').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function resetQuiz() {
+  buildQuiz();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+buildQuiz();
+</script>
+</body>
+</html>
