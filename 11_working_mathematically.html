@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maths Vocabulary — Sacha's 11+ Prep</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0e0e14;
+  --surface: #16161f;
+  --surface2: #1e1e2a;
+  --border: #2a2a3a;
+  --accent: #7c6af7;
+  --accent2: #f7c96a;
+  --accent3: #6af79a;
+  --red: #f76a6a;
+  --text: #e8e6f0;
+  --muted: #7a788a;
+  --serif: 'Instrument Serif', Georgia, serif;
+  --sans: 'Syne', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* BG PATTERN */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(circle at 20% 20%, rgba(124,106,247,0.07) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(106,247,154,0.05) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* HEADER */
+header {
+  position: relative;
+  z-index: 1;
+  padding: 2rem 2.5rem 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--border);
+}
+
+.header-left h1 {
+  font-family: var(--serif);
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1;
+  color: var(--text);
+}
+.header-left h1 em {
+  font-style: normal;
+  color: var(--accent);
+}
+.header-left p {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.header-stats {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.stat {
+  text-align: center;
+}
+.stat-num {
+  font-family: var(--mono);
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: var(--accent2);
+  line-height: 1;
+}
+.stat-label {
+  font-size: 0.7rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: 2px;
+}
+
+/* CATEGORY TABS */
+.tabs-wrap {
+  position: relative;
+  z-index: 1;
+  padding: 1rem 2.5rem;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+.tab {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.4rem 1rem;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.tab:hover { border-color: var(--accent); color: var(--text); }
+.tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* MAIN LAYOUT */
+main {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  min-height: calc(100vh - 160px);
+}
+
+/* WORD LIST */
+.word-list {
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  max-height: calc(100vh - 160px);
+  position: sticky;
+  top: 0;
+}
+.word-item {
+  padding: 0.9rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  transition: background 0.1s;
+  position: relative;
+}
+.word-item:hover { background: var(--surface2); }
+.word-item.active {
+  background: var(--surface2);
+  border-left: 2px solid var(--accent);
+}
+.word-item.mastered .word-name { color: var(--accent3); }
+.word-item.struggled .word-name { color: var(--accent2); }
+
+.word-num {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--muted);
+  min-width: 1.8rem;
+}
+.word-info { flex: 1; min-width: 0; }
+.word-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.word-phonetic {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--muted);
+  margin-top: 1px;
+}
+.word-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--border);
+  flex-shrink: 0;
+}
+.word-item.mastered .word-dot { background: var(--accent3); }
+.word-item.struggled .word-dot { background: var(--accent2); }
+
+/* DETAIL PANEL */
+.detail {
+  padding: 2rem 2.5rem;
+  overflow-y: auto;
+}
+
+.detail-header {
+  margin-bottom: 2rem;
+}
+.detail-word {
+  font-family: var(--serif);
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-style: italic;
+  line-height: 1;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+}
+.detail-phonetic {
+  font-family: var(--mono);
+  font-size: 1rem;
+  color: var(--accent2);
+  letter-spacing: 0.05em;
+}
+.detail-category {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: 0.3rem 0.8rem;
+  border-radius: 2px;
+  background: rgba(124,106,247,0.15);
+  color: var(--accent);
+  margin-top: 0.8rem;
+}
+
+/* PRONUNCIATION GUIDE */
+.pronounce-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.2rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.box-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  margin-bottom: 0.7rem;
+}
+.syllables {
+  display: flex;
+  gap: 2px;
+  flex-wrap: wrap;
+  margin-bottom: 0.8rem;
+}
+.syllable {
+  font-family: var(--mono);
+  font-size: 1.1rem;
+  font-weight: 500;
+  padding: 0.3rem 0.5rem;
+  border-radius: 4px;
+  background: var(--surface2);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.syllable.stressed {
+  background: rgba(124,106,247,0.2);
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 700;
+}
+.syllable-sep {
+  display: flex;
+  align-items: center;
+  color: var(--muted);
+  font-size: 1rem;
+}
+.pronounce-tip {
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.pronounce-tip strong { color: var(--text); }
+
+/* SPEAK BUTTON */
+.speak-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.5rem 1.1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-top: 0.6rem;
+}
+.speak-btn:hover { background: rgba(124,106,247,0.15); }
+.speak-btn.speaking { background: var(--accent); color: #fff; }
+
+/* DEFINITION */
+.def-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.2rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.definition {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--text);
+}
+.definition strong { color: var(--accent2); }
+
+/* EXAMPLE */
+.example-box {
+  background: linear-gradient(135deg, rgba(124,106,247,0.08), rgba(106,247,154,0.05));
+  border: 1px solid rgba(124,106,247,0.25);
+  border-radius: 8px;
+  padding: 1.2rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.example-text {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--text);
+  font-style: italic;
+}
+.example-text strong {
+  font-style: normal;
+  color: var(--accent3);
+  font-family: var(--mono);
+}
+
+/* SPELLING CHALLENGE */
+.spell-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.2rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.spell-input-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.8rem;
+  flex-wrap: wrap;
+}
+.spell-input {
+  flex: 1;
+  min-width: 180px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 1rem;
+  padding: 0.6rem 0.8rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.spell-input:focus { border-color: var(--accent); }
+.spell-input.correct { border-color: var(--accent3); background: rgba(106,247,154,0.08); }
+.spell-input.wrong { border-color: var(--red); background: rgba(247,106,106,0.08); }
+
+.spell-btn {
+  background: var(--accent);
+  border: none;
+  color: #fff;
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0.6rem 1.2rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.spell-btn:hover { opacity: 0.85; }
+.spell-feedback {
+  margin-top: 0.7rem;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  display: none;
+}
+.spell-feedback.show { display: block; }
+.spell-feedback.correct { color: var(--accent3); }
+.spell-feedback.wrong { color: var(--red); }
+
+/* REASONING QUESTION */
+.reasoning-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent2);
+  border-radius: 8px;
+  padding: 1.2rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.reasoning-q {
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--text);
+  margin-bottom: 1rem;
+}
+.options-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+.opt-btn {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+.opt-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.opt-btn.correct { background: rgba(106,247,154,0.12); border-color: var(--accent3); color: var(--accent3); }
+.opt-btn.wrong { background: rgba(247,106,106,0.1); border-color: var(--red); color: var(--red); }
+.opt-btn.reveal { background: rgba(106,247,154,0.12); border-color: var(--accent3); color: var(--accent3); }
+.reasoning-feedback {
+  margin-top: 0.8rem;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  padding: 0.8rem;
+  border-radius: 4px;
+  display: none;
+}
+.reasoning-feedback.show { display: block; }
+.reasoning-feedback.correct { background: rgba(106,247,154,0.08); color: var(--accent3); }
+.reasoning-feedback.wrong { background: rgba(247,106,106,0.08); color: var(--red); }
+
+/* AI HINT */
+.hint-box {
+  background: linear-gradient(135deg, rgba(124,106,247,0.1), rgba(247,201,106,0.07));
+  border: 1px solid rgba(124,106,247,0.3);
+  border-radius: 8px;
+  padding: 1.2rem 1.5rem;
+  margin-bottom: 1.5rem;
+  display: none;
+}
+.hint-box.show { display: block; }
+.hint-text {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--text);
+}
+.hint-btn {
+  background: transparent;
+  border: 1px dashed rgba(124,106,247,0.5);
+  color: var(--accent);
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.4rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 0.8rem;
+  transition: all 0.15s;
+}
+.hint-btn:hover { background: rgba(124,106,247,0.1); }
+.spinner { display: inline-block; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* NAV BUTTONS */
+.nav-row {
+  display: flex;
+  gap: 0.7rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+.nav-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.6rem 1.2rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.nav-btn:hover { border-color: var(--text); color: var(--text); }
+.nav-btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.nav-btn.primary:hover { opacity: 0.85; }
+.nav-btn.success { background: rgba(106,247,154,0.12); border-color: var(--accent3); color: var(--accent3); }
+
+/* EMPTY STATE */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  height: 100%;
+  min-height: 400px;
+}
+.empty-icon { font-size: 3rem; margin-bottom: 1rem; }
+.empty-title { font-family: var(--serif); font-size: 1.5rem; font-style: italic; color: var(--muted); }
+
+/* MOBILE */
+@media (max-width: 768px) {
+  main { grid-template-columns: 1fr; }
+  .word-list { max-height: 250px; border-right: none; border-bottom: 1px solid var(--border); position: static; }
+  header { padding: 1.5rem; }
+  .tabs-wrap { padding: 0.8rem 1.5rem; }
+  .detail { padding: 1.5rem; }
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <h1>Maths <em>Vocabulary</em></h1>
+    <p>11+ Prep · Sacha · Read, Spell & Reason</p>
+  </div>
+  <div class="header-stats">
+    <div class="stat">
+      <div class="stat-num" id="stat-mastered">0</div>
+      <div class="stat-label">Mastered</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" id="stat-total">0</div>
+      <div class="stat-label">Total Words</div>
+    </div>
+  </div>
+</header>
+
+<div class="tabs-wrap" id="tabs"></div>
+
+<main>
+  <div class="word-list" id="wordList"></div>
+  <div class="detail" id="detail">
+    <div class="empty-state">
+      <div class="empty-icon">∑</div>
+      <div class="empty-title">Choose a word to begin</div>
+    </div>
+  </div>
+</main>
+
+<script>
+// ── VOCABULARY DATA ──────────────────────────────────────────────
+const VOCAB = {
+  "Number & Place Value": [
+    {
+      word: "integer",
+      phonetic: "/ˈɪn.tɪ.dʒər/",
+      syllables: ["in","te","ger"],
+      stress: 0,
+      pronounce_tip: "Say <strong>IN</strong>-teh-jer. The final syllable sounds like the word 'juh'. Don't say 'in-TEE-ger'.",
+      definition: "A whole number — it can be <strong>positive</strong>, <strong>negative</strong>, or <strong>zero</strong>. Integers do not include fractions or decimals.",
+      example: "−5, −2, 0, 7 and 104 are all <strong>integers</strong>. But 3.5 and ½ are not.",
+      spelling_hint: "Common mistake: people write 'intager' or 'integar'. Remember: int-E-G-er.",
+      reasoning: {
+        q: "Which of these is NOT an integer?",
+        opts: ["−12", "0", "7/2", "100"],
+        ans: 2,
+        exp: "7/2 = 3.5, which is a fraction/decimal — not a whole number, so it is not an integer."
+      }
+    },
+    {
+      word: "digit",
+      phonetic: "/ˈdɪdʒ.ɪt/",
+      syllables: ["dig","it"],
+      stress: 0,
+      pronounce_tip: "Say <strong>DIG</strong>-it. Two syllables, like 'dig' + 'it'. The 'g' is soft (like the 'j' sound).",
+      definition: "Any of the ten symbols used to write numbers: <strong>0, 1, 2, 3, 4, 5, 6, 7, 8, 9</strong>. A number can have many digits.",
+      example: "The number 4,826 has four <strong>digits</strong>: 4, 8, 2 and 6.",
+      spelling_hint: "Just 5 letters: D-I-G-I-T. Don't double the 't'.",
+      reasoning: {
+        q: "How many digits does the number 30,405 have?",
+        opts: ["3", "4", "5", "6"],
+        ans: 2,
+        exp: "30,405 has five digits: 3, 0, 4, 0 and 5. Zeros count as digits too!"
+      }
+    },
+    {
+      word: "multiple",
+      phonetic: "/ˈmʌl.tɪ.pəl/",
+      syllables: ["mul","ti","ple"],
+      stress: 0,
+      pronounce_tip: "Say <strong>MUL</strong>-ti-pul. The final syllable is soft: 'pul' not 'ple'. Three syllables.",
+      definition: "A multiple of a number is what you get when you <strong>multiply</strong> it by any integer. The multiples of 4 are numbers in the 4 times table.",
+      example: "Multiples of 6: 6, 12, 18, 24, 30... A number is a <strong>multiple</strong> of 6 if it divides exactly by 6.",
+      spelling_hint: "Don't confuse with 'multiple' vs 'multiply'. Both come from Latin 'multiplex' meaning 'many folds'.",
+      reasoning: {
+        q: "Which of these is a multiple of both 3 and 4?",
+        opts: ["9", "16", "24", "34"],
+        ans: 2,
+        exp: "24 ÷ 3 = 8 and 24 ÷ 4 = 6, so 24 is a multiple of both. The others only work for one."
+      }
+    },
+    {
+      word: "factor",
+      phonetic: "/ˈfæk.tər/",
+      syllables: ["fac","tor"],
+      stress: 0,
+      pronounce_tip: "Say <strong>FAK</strong>-ter. Just two syllables. The 'a' sounds like the 'a' in 'back'.",
+      definition: "A factor of a number divides into it <strong>exactly</strong> with no remainder. Every number has at least two factors: 1 and itself.",
+      example: "The factors of 12 are: 1, 2, 3, 4, 6 and 12 — because all of these divide into 12 exactly.",
+      spelling_hint: "F-A-C-T-O-R. Note the 'or' ending, not 'er'. Think: 'a factor IS an actor in multiplication'.",
+      reasoning: {
+        q: "How many factors does 16 have?",
+        opts: ["3", "4", "5", "6"],
+        ans: 2,
+        exp: "The factors of 16 are 1, 2, 4, 8 and 16 — that's five factors."
+      }
+    },
+    {
+      word: "prime",
+      phonetic: "/praɪm/",
+      syllables: ["prime"],
+      stress: 0,
+      pronounce_tip: "Just one syllable: <strong>PRYME</strong>. Rhymes with 'time' and 'lime'.",
+      definition: "A <strong>prime</strong> number has exactly two factors: 1 and itself. 1 is NOT prime. 2 is the only even prime number.",
+      example: "Prime numbers: 2, 3, 5, 7, 11, 13, 17, 19, 23... Note that 4 is not prime because 4 = 2 × 2.",
+      spelling_hint: "P-R-I-M-E. Five letters. 'Prime' also means 'first' or 'best' — these numbers are the building blocks of all others.",
+      reasoning: {
+        q: "Which of these is a prime number?",
+        opts: ["1", "9", "51", "53"],
+        ans: 3,
+        exp: "53 is prime — it has no factors other than 1 and 53. 1 is not prime. 9 = 3×3. 51 = 3×17."
+      }
+    },
+    {
+      word: "product",
+      phonetic: "/ˈprɒd.ʌkt/",
+      syllables: ["prod","uct"],
+      stress: 0,
+      pronounce_tip: "Say <strong>PROD</strong>-ukt. The 'o' sounds like in 'hot'. Two syllables, the second is soft.",
+      definition: "The <strong>product</strong> is the answer when you multiply two or more numbers together.",
+      example: "The product of 6 and 7 is 42, because 6 × 7 = 42.",
+      spelling_hint: "P-R-O-D-U-C-T. Don't miss the 'c' before the 't' at the end.",
+      reasoning: {
+        q: "What is the product of the two prime numbers closest to 20?",
+        opts: ["361", "323", "357", "289"],
+        ans: 1,
+        exp: "The primes closest to 20 are 17 and 19. Their product is 17 × 19 = 323."
+      }
+    }
+  ],
+  "Fractions & Ratio": [
+    {
+      word: "numerator",
+      phonetic: "/ˈnjuː.mər.eɪ.tər/",
+      syllables: ["nu","mer","a","tor"],
+      stress: 0,
+      pronounce_tip: "Say <strong>NEW</strong>-mer-ay-ter. Four syllables. 'Nu' sounds like the word 'new'. Stress on the first syllable.",
+      definition: "The <strong>numerator</strong> is the top number of a fraction. It shows how many parts you have.",
+      example: "In the fraction ⁴⁄₇, the <strong>numerator</strong> is 4 — we have 4 parts out of 7.",
+      spelling_hint: "N-U-M-E-R-A-T-O-R. Remember: numERATor — the 'ERATE' part, like in 'enumerate' (to count). It's the counting number on top.",
+      reasoning: {
+        q: "In the fraction 5/8, which is the numerator?",
+        opts: ["8", "5", "5/8", "Neither"],
+        ans: 1,
+        exp: "The numerator is always the top number. 5 is on top, so 5 is the numerator. 8 is the denominator."
+      }
+    },
+    {
+      word: "denominator",
+      phonetic: "/dɪˈnɒm.ɪ.neɪ.tər/",
+      syllables: ["de","nom","i","na","tor"],
+      stress: 1,
+      pronounce_tip: "Say deh-<strong>NOM</strong>-in-ay-ter. Five syllables. Stress on 'NOM'. The 'de' sounds like 'deh', not 'dee'.",
+      definition: "The <strong>denominator</strong> is the bottom number of a fraction. It shows how many equal parts the whole is divided into.",
+      example: "In ³⁄₈, the <strong>denominator</strong> is 8 — the whole is cut into 8 equal pieces.",
+      spelling_hint: "D-E-N-O-M-I-N-A-T-O-R. It's long! Think: de-NOM-inator. The denominator 'names' (nominates) the type of fraction.",
+      reasoning: {
+        q: "Which fraction has a denominator of 9?",
+        opts: ["9/5", "3/9", "9/3", "99/10"],
+        ans: 1,
+        exp: "3/9 has 9 as the bottom number, so 9 is its denominator."
+      }
+    },
+    {
+      word: "equivalent",
+      phonetic: "/ɪˈkwɪv.ə.lənt/",
+      syllables: ["e","quiv","a","lent"],
+      stress: 1,
+      pronounce_tip: "Say eh-<strong>KWIV</strong>-uh-lent. Four syllables. Stress on 'KWIV'. The 'qu' sounds like 'kw'.",
+      definition: "<strong>Equivalent</strong> fractions look different but have the same value. You make them by multiplying or dividing the numerator and denominator by the same number.",
+      example: "½, ²⁄₄ and ⁴⁄₈ are all <strong>equivalent</strong> — they all equal 0.5.",
+      spelling_hint: "E-Q-U-I-V-A-L-E-N-T. Often misspelt as 'equivelant'. Remember the 'a' before 'lent': equiv-A-lent.",
+      reasoning: {
+        q: "Which fraction is equivalent to 3/4?",
+        opts: ["6/9", "12/16", "9/16", "6/8"],
+        ans: 3,
+        exp: "6/8: divide both by 2 → 3/4. Also 12/16 works (divide by 4). Actually both B and D are correct — but 6/8 is the most direct. 6/9 simplifies to 2/3."
+      }
+    },
+    {
+      word: "ratio",
+      phonetic: "/ˈreɪ.ʃi.əʊ/",
+      syllables: ["ra","ti","o"],
+      stress: 0,
+      pronounce_tip: "Say <strong>RAY</strong>-shee-oh. Three syllables. The 'ti' sounds like 'shee'. Don't say 'rat-ee-oh'.",
+      definition: "A <strong>ratio</strong> compares two or more quantities. Written with a colon (3:2) or as a fraction. It shows the relative size of amounts.",
+      example: "In a class of 30 with 18 girls and 12 boys, the ratio of girls to boys is 18:12 = 3:2.",
+      spelling_hint: "R-A-T-I-O. Five letters, ends in just 'io' — no extra letters. Don't write 'racio' or 'ration'.",
+      reasoning: {
+        q: "Share £40 in the ratio 3:5. What is the larger share?",
+        opts: ["£15", "£24", "£25", "£30"],
+        ans: 2,
+        exp: "Total parts = 3+5 = 8. One part = £40÷8 = £5. Larger share = 5×£5 = £25."
+      }
+    },
+    {
+      word: "proportion",
+      phonetic: "/prəˈpɔː.ʃən/",
+      syllables: ["pro","por","tion"],
+      stress: 1,
+      pronounce_tip: "Say pruh-<strong>POR</strong>-shun. Three syllables. The 'tion' ending sounds like 'shun'. Stress on 'POR'.",
+      definition: "<strong>Proportion</strong> is when two ratios are equal, or it describes a part of a whole as a fraction. 'In proportion' means things scale up or down equally.",
+      example: "If 5 pens cost £2, then by <strong>proportion</strong>, 15 pens cost £6 (scaled up by 3).",
+      spelling_hint: "P-R-O-P-O-R-T-I-O-N. Note: ratio has no 'p', proportion does. Don't mix them up in spelling.",
+      reasoning: {
+        q: "A recipe for 4 uses 300g of flour. How much for 10?",
+        opts: ["600g", "650g", "750g", "800g"],
+        ans: 2,
+        exp: "4 people → 300g. 1 person → 75g. 10 people → 750g. This is direct proportion."
+      }
+    }
+  ],
+  "Algebra": [
+    {
+      word: "expression",
+      phonetic: "/ɪkˈsprɛʃ.ən/",
+      syllables: ["ex","pres","sion"],
+      stress: 1,
+      pronounce_tip: "Say ex-<strong>PRESH</strong>-un. Three syllables. 'ss' sounds like 'sh'. Don't say 'ex-PRESS-ee-on'.",
+      definition: "A mathematical <strong>expression</strong> contains numbers, variables (letters) and operations but does NOT have an equals sign. It cannot be solved, only simplified.",
+      example: "<strong>3x + 5</strong> and <strong>2a − b + 7</strong> are expressions. Notice: no '=' sign.",
+      spelling_hint: "E-X-P-R-E-S-S-I-O-N. Double 's', ends in '-ion'. Don't confuse with 'equation' (which has an = sign).",
+      reasoning: {
+        q: "Which of these is an expression (not an equation)?",
+        opts: ["3x = 12", "x + 5 = 9", "4y − 2", "2a = b"],
+        ans: 2,
+        exp: "4y − 2 has no equals sign, so it's an expression. The others are equations because they contain '='."
+      }
+    },
+    {
+      word: "equation",
+      phonetic: "/ɪˈkweɪ.ʒən/",
+      syllables: ["e","qua","tion"],
+      stress: 1,
+      pronounce_tip: "Say eh-<strong>KWAY</strong>-zhun. Three syllables. The 'ti' sounds like 'zh' (like the 's' in 'measure'). Don't say 'ee-KWAY-shun'.",
+      definition: "An <strong>equation</strong> has an equals sign showing that two expressions are equal. You can solve an equation to find the value of an unknown.",
+      example: "3x + 4 = 19 is an <strong>equation</strong>. Solving it: 3x = 15, so x = 5.",
+      spelling_hint: "E-Q-U-A-T-I-O-N. Contains 'EQUAT' (like 'equal'). Don't write 'equasion' — it's '-tion' not '-sion'.",
+      reasoning: {
+        q: "If 4x − 3 = 17, what is x?",
+        opts: ["3", "4", "5", "6"],
+        ans: 2,
+        exp: "4x = 17 + 3 = 20. x = 20 ÷ 4 = 5."
+      }
+    },
+    {
+      word: "variable",
+      phonetic: "/ˈveə.ri.ə.bəl/",
+      syllables: ["var","i","a","ble"],
+      stress: 0,
+      pronounce_tip: "Say <strong>VAIR</strong>-ee-uh-bul. Four syllables. 'var' rhymes with 'air' + 'var'. The 'ia' sounds like 'ee-uh'.",
+      definition: "A <strong>variable</strong> is a letter used to represent an unknown or changing value. Common variables are x, y, n and a.",
+      example: "In the expression 5n + 3, the <strong>variable</strong> is n. It can take any value.",
+      spelling_hint: "V-A-R-I-A-B-L-E. Notice: vari-ABLE. 'Variable' contains the word 'vary' because its value can vary.",
+      reasoning: {
+        q: "If y = 4, what is the value of 3y² − 2?",
+        opts: ["22", "46", "46", "46"],
+        ans: 1,
+        exp: "3y² − 2 = 3×(4²) − 2 = 3×16 − 2 = 48 − 2 = 46."
+      }
+    },
+    {
+      word: "coefficient",
+      phonetic: "/ˌkəʊ.ɪˈfɪʃ.ənt/",
+      syllables: ["co","ef","fi","cient"],
+      stress: 2,
+      pronounce_tip: "Say koh-eh-<strong>FISH</strong>-ent. Four syllables. 'co' sounds like 'koh', 'ffi' sounds like 'fish'. Stress on 'FISH'.",
+      definition: "A <strong>coefficient</strong> is the number that multiplies a variable. In 5x, the coefficient is 5. If you see just 'x', the coefficient is 1.",
+      example: "In 7y² + 3y − 4, the coefficient of y² is <strong>7</strong> and the coefficient of y is <strong>3</strong>.",
+      spelling_hint: "C-O-E-F-F-I-C-I-E-N-T. Double 'f', ends in '-ient'. This is one of the trickiest spellings in maths — practise it!",
+      reasoning: {
+        q: "In the expression 9x³ − 4x + 1, what is the coefficient of x?",
+        opts: ["9", "4", "−4", "1"],
+        ans: 2,
+        exp: "The term with just x (not x²) is −4x. Its coefficient is −4, including the minus sign."
+      }
+    },
+    {
+      word: "sequence",
+      phonetic: "/ˈsiː.kwəns/",
+      syllables: ["se","quence"],
+      stress: 0,
+      pronounce_tip: "Say <strong>SEE</strong>-kwents. Two syllables. 'quence' sounds like 'kwents'. Don't say 'se-KWENTS-ee'.",
+      definition: "A <strong>sequence</strong> is a list of numbers that follow a pattern or rule. Each number is called a term.",
+      example: "3, 6, 9, 12, 15... is a <strong>sequence</strong> with rule '+3'. The nth term is 3n.",
+      spelling_hint: "S-E-Q-U-E-N-C-E. Always has a 'q' followed by 'u'. Don't forget the 'c' before the 'e' at the end.",
+      reasoning: {
+        q: "The nth term of a sequence is 4n − 1. What is the 6th term?",
+        opts: ["21", "23", "24", "25"],
+        ans: 1,
+        exp: "4×6 − 1 = 24 − 1 = 23."
+      }
+    }
+  ],
+  "Geometry": [
+    {
+      word: "perpendicular",
+      phonetic: "/ˌpɜː.pənˈdɪk.jʊ.lər/",
+      syllables: ["per","pen","dic","u","lar"],
+      stress: 2,
+      pronounce_tip: "Say per-pen-<strong>DIK</strong>-yoo-ler. Five syllables. Stress on 'DIK'. The 'cu' sounds like 'kyoo'.",
+      definition: "Two lines are <strong>perpendicular</strong> if they meet at a right angle (90°). The symbol ⊥ means perpendicular.",
+      example: "The sides of a square are <strong>perpendicular</strong> to each other. The corner forms a perfect 90° angle.",
+      spelling_hint: "P-E-R-P-E-N-D-I-C-U-L-A-R. Very long! Break it: PER-PEN-DIC-U-LAR. Notice 'perpend' — think 'perfectly ending' at 90°.",
+      reasoning: {
+        q: "A line has gradient 2. What is the gradient of a perpendicular line?",
+        opts: ["2", "−2", "−½", "½"],
+        ans: 2,
+        exp: "For perpendicular lines, the gradients multiply to −1. 2 × (−½) = −1, so the perpendicular gradient is −½."
+      }
+    },
+    {
+      word: "parallel",
+      phonetic: "/ˈpær.ə.lel/",
+      syllables: ["par","al","lel"],
+      stress: 0,
+      pronounce_tip: "Say <strong>PAR</strong>-uh-lel. Three syllables. All three parts are lightly stressed. Don't say 'pa-RALL-el'.",
+      definition: "<strong>Parallel</strong> lines go in exactly the same direction. They are always the same distance apart and never meet. The symbol ∥ means parallel.",
+      example: "Railway tracks are <strong>parallel</strong>. Opposite sides of a rectangle are always parallel.",
+      spelling_hint: "P-A-R-A-L-L-E-L. One 'r', double 'l' in the middle, and double 'l' at the end. Contains 'all' in it: par-ALL-el.",
+      reasoning: {
+        q: "Which shape has exactly one pair of parallel sides?",
+        opts: ["Rectangle", "Parallelogram", "Trapezium", "Rhombus"],
+        ans: 2,
+        exp: "A trapezium has exactly one pair of parallel sides. Rectangles, parallelograms and rhombuses all have two pairs."
+      }
+    },
+    {
+      word: "hypotenuse",
+      phonetic: "/haɪˈpɒt.ɪ.njuːz/",
+      syllables: ["hy","pot","e","nuse"],
+      stress: 1,
+      pronounce_tip: "Say hy-<strong>POT</strong>-eh-nyooz. Four syllables. Rhymes roughly with 'hi-POT-uh-news'. The 'use' sounds like 'nyooz'.",
+      definition: "The <strong>hypotenuse</strong> is the longest side of a right-angled triangle. It is always opposite the right angle.",
+      example: "In a 3-4-5 triangle, the <strong>hypotenuse</strong> is 5 — it's opposite the 90° angle.",
+      spelling_hint: "H-Y-P-O-T-E-N-U-S-E. Often misspelt! Remember: hypo-TEN-use. There's a 'ten' hiding in the middle.",
+      reasoning: {
+        q: "A right triangle has sides 5cm and 12cm (not the hypotenuse). How long is the hypotenuse?",
+        opts: ["13cm", "14cm", "15cm", "17cm"],
+        ans: 0,
+        exp: "Using Pythagoras: 5² + 12² = 25 + 144 = 169 = 13². So the hypotenuse is 13cm. This is the 5-12-13 triple!"
+      }
+    },
+    {
+      word: "polygon",
+      phonetic: "/ˈpɒl.ɪ.ɡɒn/",
+      syllables: ["pol","y","gon"],
+      stress: 0,
+      pronounce_tip: "Say <strong>POL</strong>-ee-gon. Three syllables. 'poly' means 'many', 'gon' sounds like 'gone'.",
+      definition: "A <strong>polygon</strong> is a closed 2D shape with straight sides. 'Poly' means many, 'gon' means angle. Triangles and squares are polygons.",
+      example: "Triangle (3 sides), pentagon (5), hexagon (6), octagon (8) are all <strong>polygons</strong>.",
+      spelling_hint: "P-O-L-Y-G-O-N. Remember: POLY = many (like 'polyglot' = many languages). Don't write 'poligon'.",
+      reasoning: {
+        q: "What is the sum of interior angles in a hexagon?",
+        opts: ["540°", "720°", "900°", "1080°"],
+        ans: 1,
+        exp: "Formula: (n−2) × 180°. For hexagon: (6−2) × 180° = 4 × 180° = 720°."
+      }
+    },
+    {
+      word: "circumference",
+      phonetic: "/səˈkʌm.fər.əns/",
+      syllables: ["cir","cum","fer","ence"],
+      stress: 1,
+      pronounce_tip: "Say ser-<strong>KUM</strong>-fer-ents. Four syllables. 'Cir' sounds like 'ser'. Stress on 'KUM'. Final syllable is 'ents'.",
+      definition: "The <strong>circumference</strong> is the perimeter of a circle — the total distance around its edge. Formula: C = πd or C = 2πr.",
+      example: "A circle with diameter 10cm has <strong>circumference</strong> = π × 10 ≈ 31.4cm.",
+      spelling_hint: "C-I-R-C-U-M-F-E-R-E-N-C-E. Lots of letters! 'Circum' means 'around' (like circumnavigate). Don't forget the 'fer' in the middle.",
+      reasoning: {
+        q: "A circle has radius 7cm. What is its circumference? (Use π ≈ 22/7)",
+        opts: ["22cm", "44cm", "154cm", "49cm"],
+        ans: 1,
+        exp: "C = 2πr = 2 × (22/7) × 7 = 2 × 22 = 44cm."
+      }
+    }
+  ],
+  "Statistics": [
+    {
+      word: "mean",
+      phonetic: "/miːn/",
+      syllables: ["mean"],
+      stress: 0,
+      pronounce_tip: "Just one syllable: <strong>MEEN</strong>. Rhymes with 'seen' and 'clean'. Don't confuse with 'median' or 'mode'.",
+      definition: "The <strong>mean</strong> is the arithmetic average. Add all the values and divide by how many there are.",
+      example: "Mean of 4, 7, 9, 10: (4+7+9+10) ÷ 4 = 30 ÷ 4 = <strong>7.5</strong>.",
+      spelling_hint: "M-E-A-N. Just four letters. 'Mean' also means 'average' in everyday English, but in maths it's specifically the arithmetic mean.",
+      reasoning: {
+        q: "The mean of five numbers is 8. Four of them are 6, 9, 7 and 11. What is the fifth?",
+        opts: ["5", "6", "7", "8"],
+        ans: 2,
+        exp: "Total must be 5×8 = 40. Sum of four known: 6+9+7+11 = 33. Fifth number = 40−33 = 7."
+      }
+    },
+    {
+      word: "median",
+      phonetic: "/ˈmiː.di.ən/",
+      syllables: ["me","di","an"],
+      stress: 0,
+      pronounce_tip: "Say <strong>MEE</strong>-dee-un. Three syllables. Stress on 'MEE'. Don't say 'med-EE-an'.",
+      definition: "The <strong>median</strong> is the middle value when data is arranged in order. If there are two middle values, find their mean.",
+      example: "Data: 3, 5, 7, 9, 12 → <strong>median</strong> = 7 (the middle). For 3, 5, 7, 9 → median = (5+7)÷2 = 6.",
+      spelling_hint: "M-E-D-I-A-N. Think of the middle lane of a motorway, called a 'median strip'. The median is the middle value.",
+      reasoning: {
+        q: "What is the median of: 8, 3, 15, 7, 12, 5, 10?",
+        opts: ["7", "8", "9", "10"],
+        ans: 1,
+        exp: "Ordered: 3, 5, 7, 8, 10, 12, 15. There are 7 values, so the median is the 4th: 8."
+      }
+    },
+    {
+      word: "mode",
+      phonetic: "/məʊd/",
+      syllables: ["mode"],
+      stress: 0,
+      pronounce_tip: "One syllable: <strong>MOHD</strong>. Rhymes with 'road' and 'toad'.",
+      definition: "The <strong>mode</strong> is the most frequent value in a data set — the one that appears most often. A data set can have more than one mode.",
+      example: "In: 2, 3, 3, 5, 7, 3, 8, 5, 3 — the <strong>mode</strong> is 3, because it appears four times.",
+      spelling_hint: "M-O-D-E. Four letters. 'Mode' comes from French meaning 'fashion' — the mode is the most popular or fashionable value.",
+      reasoning: {
+        q: "Data: 4, 7, 4, 9, 7, 4, 3, 7, 4. What is the mode?",
+        opts: ["3", "4", "7", "9"],
+        ans: 1,
+        exp: "4 appears 4 times (at positions 1,3,6,9), 7 appears 3 times. So the mode is 4."
+      }
+    },
+    {
+      word: "range",
+      phonetic: "/reɪndʒ/",
+      syllables: ["range"],
+      stress: 0,
+      pronounce_tip: "One syllable: <strong>RAYNJ</strong>. Rhymes with 'change' and 'strange'. The 'ng' is a nasal sound.",
+      definition: "The <strong>range</strong> is the difference between the largest and smallest values in a data set. It measures how spread out the data is.",
+      example: "Data: 3, 7, 12, 5, 19, 8. <strong>Range</strong> = 19 − 3 = 16.",
+      spelling_hint: "R-A-N-G-E. Five letters. Simple to spell — but easy to confuse with 'rang'. The range is calculated by subtraction, not by listing.",
+      reasoning: {
+        q: "Five test scores are: 67, 82, 54, 91, 73. What is the range?",
+        opts: ["27", "34", "37", "46"],
+        ans: 2,
+        exp: "Largest = 91, smallest = 54. Range = 91 − 54 = 37."
+      }
+    },
+    {
+      word: "frequency",
+      phonetic: "/ˈfriː.kwən.si/",
+      syllables: ["fre","quen","cy"],
+      stress: 0,
+      pronounce_tip: "Say <strong>FREE</strong>-kwent-see. Three syllables. Stress on 'FREE'. The 'qu' sounds like 'kw'.",
+      definition: "<strong>Frequency</strong> is how often something happens or appears in a data set. In a frequency table, it shows the count for each category.",
+      example: "If 7 students chose red as their favourite colour, the <strong>frequency</strong> for red is 7.",
+      spelling_hint: "F-R-E-Q-U-E-N-C-Y. After 'q' always write 'u'. Don't forget the 'u'. Ends in '-cy' not '-see'.",
+      reasoning: {
+        q: "In a class, the frequency of students scoring 80+ was 12 out of 30. What fraction scored 80+?",
+        opts: ["2/5", "5/12", "12/42", "3/8"],
+        ans: 0,
+        exp: "12 out of 30 = 12/30 = 2/5. Remember to simplify: ÷6 top and bottom."
+      }
+    }
+  ]
+};
+
+// ── STATE ──────────────────────────────────────────────────────
+const state = {
+  category: Object.keys(VOCAB)[0],
+  wordIndex: null,
+  mastered: JSON.parse(localStorage.getItem('vocab_mastered') || '{}'),
+  struggled: JSON.parse(localStorage.getItem('vocab_struggled') || '{}'),
+};
+
+function saveState() {
+  localStorage.setItem('vocab_mastered', JSON.stringify(state.mastered));
+  localStorage.setItem('vocab_struggled', JSON.stringify(state.struggled));
+}
+
+function getAllWords() {
+  return Object.entries(VOCAB).flatMap(([cat, words]) => words.map(w => ({...w, cat})));
+}
+
+function totalMastered() {
+  return Object.values(state.mastered).filter(Boolean).length;
+}
+
+// ── RENDER TABS ────────────────────────────────────────────────
+function renderTabs() {
+  const tabs = document.getElementById('tabs');
+  tabs.innerHTML = Object.keys(VOCAB).map(cat => `
+    <button class="tab ${cat === state.category ? 'active' : ''}" onclick="setCategory('${cat}')">${cat}</button>
+  `).join('');
+}
+
+function setCategory(cat) {
+  state.category = cat;
+  state.wordIndex = null;
+  renderTabs();
+  renderWordList();
+  renderDetail();
+}
+
+// ── RENDER WORD LIST ───────────────────────────────────────────
+function renderWordList() {
+  const words = VOCAB[state.category];
+  const list = document.getElementById('wordList');
+  list.innerHTML = words.map((w, i) => {
+    const key = `${state.category}::${w.word}`;
+    const mastered = state.mastered[key];
+    const struggled = state.struggled[key];
+    return `
+      <div class="word-item ${state.wordIndex === i ? 'active' : ''} ${mastered ? 'mastered' : ''} ${struggled && !mastered ? 'struggled' : ''}"
+           onclick="selectWord(${i})">
+        <span class="word-num">0${i+1}</span>
+        <div class="word-info">
+          <div class="word-name">${w.word}</div>
+          <div class="word-phonetic">${w.phonetic}</div>
+        </div>
+        <div class="word-dot"></div>
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('stat-mastered').textContent = totalMastered();
+  const total = getAllWords().length;
+  document.getElementById('stat-total').textContent = total;
+}
+
+// ── SELECT WORD ────────────────────────────────────────────────
+function selectWord(i) {
+  state.wordIndex = i;
+  renderWordList();
+  renderDetail();
+}
+
+// ── RENDER DETAIL ──────────────────────────────────────────────
+function renderDetail() {
+  const detail = document.getElementById('detail');
+  if (state.wordIndex === null) {
+    detail.innerHTML = `<div class="empty-state"><div class="empty-icon">∑</div><div class="empty-title">Choose a word to begin</div></div>`;
+    return;
+  }
+
+  const w = VOCAB[state.category][state.wordIndex];
+  const key = `${state.category}::${w.word}`;
+
+  // Build syllables display
+  const syllablesHTML = w.syllables.map((s, i) => `
+    ${i > 0 ? '<span class="syllable-sep">·</span>' : ''}
+    <span class="syllable ${i === w.stress ? 'stressed' : ''}">${s}</span>
+  `).join('');
+
+  // Build options for reasoning
+  const optsHTML = w.reasoning.opts.map((o, i) => `
+    <button class="opt-btn" id="opt-${i}" onclick="checkAnswer(${i})">${o}</button>
+  `).join('');
+
+  detail.innerHTML = `
+    <div class="detail-header">
+      <div class="detail-word">${w.word}</div>
+      <div class="detail-phonetic">${w.phonetic}</div>
+      <div class="detail-category">${state.category}</div>
+    </div>
+
+    <div class="pronounce-box">
+      <div class="box-label">🔊 Pronunciation</div>
+      <div class="syllables">${syllablesHTML}</div>
+      <div class="pronounce-tip">${w.pronounce_tip}</div>
+      <button class="speak-btn" id="speakBtn" onclick="speakWord('${w.word}')">
+        ▶ Hear it spoken
+      </button>
+    </div>
+
+    <div class="def-box">
+      <div class="box-label">📖 Definition</div>
+      <div class="definition">${w.definition}</div>
+    </div>
+
+    <div class="example-box">
+      <div class="box-label">✏️ Example</div>
+      <div class="example-text">${w.example}</div>
+    </div>
+
+    <div class="spell-box">
+      <div class="box-label">🔤 Spelling Challenge — type it from memory</div>
+      <div style="font-size:0.82rem;color:var(--muted);margin-top:0.3rem">${w.spelling_hint}</div>
+      <div class="spell-input-row">
+        <input class="spell-input" id="spellInput" type="text" placeholder="Type the word here..." autocomplete="off" autocorrect="off" spellcheck="false" onkeydown="if(event.key==='Enter') checkSpelling()">
+        <button class="spell-btn" onclick="checkSpelling()">Check</button>
+      </div>
+      <div class="spell-feedback" id="spellFeedback"></div>
+    </div>
+
+    <div class="reasoning-box">
+      <div class="box-label">🧠 Reasoning Question</div>
+      <div class="reasoning-q">${w.reasoning.q}</div>
+      <div class="options-grid">${optsHTML}</div>
+      <div class="reasoning-feedback" id="reasoningFeedback"></div>
+    </div>
+
+    <div class="hint-box" id="hintBox">
+      <div class="box-label">💡 AI Tutor Hint</div>
+      <div class="hint-text" id="hintText"></div>
+    </div>
+    <button class="hint-btn" id="hintBtn" onclick="getHint()" style="display:none">💡 Ask AI tutor for help</button>
+
+    <div class="nav-row">
+      <button class="nav-btn success" onclick="markMastered()">✓ Mark as Mastered</button>
+      ${state.wordIndex < VOCAB[state.category].length - 1 ?
+        `<button class="nav-btn primary" onclick="selectWord(${state.wordIndex + 1})">Next word →</button>` : ''}
+      ${state.wordIndex > 0 ?
+        `<button class="nav-btn" onclick="selectWord(${state.wordIndex - 1})">← Previous</button>` : ''}
+    </div>
+  `;
+}
+
+// ── SPEAK ──────────────────────────────────────────────────────
+function speakWord(word) {
+  if (!window.speechSynthesis) return;
+  const btn = document.getElementById('speakBtn');
+  btn.classList.add('speaking');
+  btn.textContent = '🔊 Speaking...';
+
+  const utter = new SpeechSynthesisUtterance(word);
+  utter.lang = 'en-GB';
+  utter.rate = 0.85;
+  utter.onend = () => {
+    btn.classList.remove('speaking');
+    btn.textContent = '▶ Hear it spoken';
+  };
+  speechSynthesis.speak(utter);
+}
+
+// ── SPELLING CHECK ─────────────────────────────────────────────
+function checkSpelling() {
+  const w = VOCAB[state.category][state.wordIndex];
+  const input = document.getElementById('spellInput');
+  const fb = document.getElementById('spellFeedback');
+  const val = input.value.trim().toLowerCase();
+
+  if (!val) return;
+
+  const correct = val === w.word.toLowerCase();
+  input.className = 'spell-input ' + (correct ? 'correct' : 'wrong');
+  fb.className = 'spell-feedback show ' + (correct ? 'correct' : 'wrong');
+
+  if (correct) {
+    fb.textContent = '✓ Correct! Well spelled.';
+  } else {
+    // Show char-by-char comparison
+    let hint = 'The correct spelling is: ';
+    for (let i = 0; i < w.word.length; i++) {
+      if (i < val.length && val[i] === w.word[i]) {
+        hint += `<span style="color:var(--accent3)">${w.word[i]}</span>`;
+      } else {
+        hint += `<span style="color:var(--red);font-weight:bold">${w.word[i]}</span>`;
+      }
+    }
+    fb.innerHTML = '✗ Not quite. ' + hint;
+    const key = `${state.category}::${w.word}`;
+    state.struggled[key] = true;
+    saveState();
+    renderWordList();
+  }
+}
+
+// ── REASONING CHECK ────────────────────────────────────────────
+function checkAnswer(chosen) {
+  const w = VOCAB[state.category][state.wordIndex];
+  const correct = chosen === w.reasoning.ans;
+  const fb = document.getElementById('reasoningFeedback');
+
+  for (let i = 0; i < w.reasoning.opts.length; i++) {
+    const btn = document.getElementById(`opt-${i}`);
+    btn.disabled = true;
+    if (i === chosen) btn.classList.add(correct ? 'correct' : 'wrong');
+    if (!correct && i === w.reasoning.ans) btn.classList.add('reveal');
+  }
+
+  fb.className = 'reasoning-feedback show ' + (correct ? 'correct' : 'wrong');
+  fb.textContent = (correct ? '✓ Correct! ' : '✗ Not quite. ') + w.reasoning.exp;
+
+  if (!correct) {
+    document.getElementById('hintBtn').style.display = 'inline-block';
+    const key = `${state.category}::${w.word}`;
+    state.struggled[key] = true;
+    saveState();
+    renderWordList();
+  }
+}
+
+// ── AI HINT ────────────────────────────────────────────────────
+async function getHint() {
+  const w = VOCAB[state.category][state.wordIndex];
+  const hintBox = document.getElementById('hintBox');
+  const hintText = document.getElementById('hintText');
+  const hintBtn = document.getElementById('hintBtn');
+
+  hintBox.classList.add('show');
+  hintText.innerHTML = '<span class="spinner">⟳</span> Asking AI tutor...';
+  hintBtn.disabled = true;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: `You are a warm, encouraging maths tutor for a 10-year-old called Sacha preparing for 11+ exams (City of London or Westminster entry). Explain maths concepts clearly in 2-3 short sentences. Use simple, friendly language. No markdown.`,
+        messages: [{
+          role: 'user',
+          content: `Sacha got a reasoning question wrong about the maths word "${w.word}". The question was: "${w.reasoning.q}". The correct answer is: "${w.reasoning.opts[w.reasoning.ans]}". Explanation: "${w.reasoning.exp}". Please explain this to Sacha in a friendly, encouraging way in 2-3 sentences.`
+        }]
+      })
+    });
+    const data = await res.json();
+    hintText.textContent = data.content[0].text;
+  } catch (e) {
+    hintText.textContent = w.reasoning.exp;
+  }
+  hintBtn.disabled = false;
+}
+
+// ── MARK MASTERED ──────────────────────────────────────────────
+function markMastered() {
+  const w = VOCAB[state.category][state.wordIndex];
+  const key = `${state.category}::${w.word}`;
+  state.mastered[key] = true;
+  saveState();
+  renderWordList();
+
+  // Flash feedback
+  const btn = event.target;
+  btn.textContent = '⭐ Mastered!';
+  setTimeout(() => { btn.textContent = '✓ Mark as Mastered'; }, 1500);
+}
+
+// ── INIT ───────────────────────────────────────────────────────
+renderTabs();
+renderWordList();
+renderDetail();
+</script>
+</body>
+</html>
