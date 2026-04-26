@@ -1,0 +1,2108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sacha · Measurement Masterclass</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0d0d0d;
+  --paper: #faf7f2;
+  --cream: #f0ebe1;
+  --amber: #e8a020;
+  --amber-light: #fef3dc;
+  --teal: #1a7d6e;
+  --teal-light: #d4f0eb;
+  --coral: #d94f3d;
+  --coral-light: #fdecea;
+  --slate: #4a5568;
+  --rule: #d4cfc6;
+  --white: #ffffff;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ─── BACKGROUND TEXTURE ─── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 27px, var(--rule) 27px, var(--rule) 28px);
+  opacity: 0.35;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─── HEADER ─── */
+.site-header {
+  position: relative;
+  z-index: 10;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 0;
+  overflow: hidden;
+}
+.header-stripe {
+  background: var(--amber);
+  height: 5px;
+  width: 100%;
+}
+.header-inner {
+  padding: 28px 48px 24px;
+  display: flex;
+  align-items: flex-end;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+.header-title-block {}
+.header-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 6px;
+}
+.header-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 44px;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--white);
+}
+.header-title span { color: var(--amber); }
+.header-meta {
+  font-size: 13px;
+  color: rgba(255,255,255,0.45);
+  margin-top: 8px;
+}
+.progress-block {
+  margin-left: auto;
+  text-align: right;
+}
+.progress-ring-wrap { display: flex; align-items: center; gap: 14px; }
+.progress-text { color: rgba(255,255,255,0.6); font-size: 12px; }
+.progress-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--amber);
+}
+.progress-denom { font-size: 14px; color: rgba(255,255,255,0.4); }
+
+/* ─── MAIN LAYOUT ─── */
+.layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  min-height: calc(100vh - 120px);
+  position: relative;
+  z-index: 1;
+}
+
+/* ─── SIDEBAR ─── */
+.sidebar {
+  background: var(--cream);
+  border-right: 1px solid var(--rule);
+  padding: 24px 0;
+  position: sticky;
+  top: 0;
+  height: calc(100vh - 120px);
+  overflow-y: auto;
+}
+.sidebar-section-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--slate);
+  padding: 16px 20px 8px;
+  border-top: 1px solid var(--rule);
+}
+.sidebar-section-label:first-child { border-top: none; }
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 20px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--slate);
+  transition: all 0.15s;
+  border-left: 3px solid transparent;
+  line-height: 1.3;
+}
+.nav-item:hover { background: rgba(0,0,0,0.04); color: var(--ink); }
+.nav-item.active {
+  background: var(--amber-light);
+  color: var(--ink);
+  border-left-color: var(--amber);
+  font-weight: 600;
+}
+.nav-item.done { color: var(--teal); }
+.nav-item.done .nav-check { opacity: 1; }
+.nav-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  min-width: 18px;
+  color: inherit;
+  opacity: 0.6;
+}
+.nav-check {
+  margin-left: auto;
+  width: 16px; height: 16px;
+  background: var(--teal);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0;
+  flex-shrink: 0;
+  transition: opacity 0.2s;
+}
+.nav-check svg { width: 9px; height: 9px; stroke: white; }
+
+/* ─── CONTENT AREA ─── */
+.content { padding: 48px 56px; max-width: 780px; }
+
+/* ─── LESSON SHELL ─── */
+.lesson { display: none; animation: fadeUp 0.3s ease; }
+.lesson.active { display: block; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.lesson-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 10px;
+}
+.lesson-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 36px;
+  font-weight: 900;
+  line-height: 1.1;
+  margin-bottom: 6px;
+}
+.lesson-subtitle {
+  font-size: 14px;
+  color: var(--slate);
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--rule);
+}
+
+/* ─── KEY FACT BOX ─── */
+.key-fact {
+  background: var(--ink);
+  color: var(--paper);
+  border-radius: 4px;
+  padding: 22px 26px;
+  margin-bottom: 24px;
+  font-size: 14px;
+  line-height: 1.8;
+  position: relative;
+  overflow: hidden;
+}
+.key-fact::before {
+  content: 'KEY FACTS';
+  position: absolute;
+  top: 12px; right: 16px;
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 3px;
+  color: var(--amber);
+}
+.key-fact strong { color: var(--amber); }
+.key-fact .formula {
+  font-family: 'DM Mono', monospace;
+  font-size: 18px;
+  color: var(--white);
+  display: block;
+  margin: 10px 0;
+  padding: 8px 0;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+/* ─── CONVERSION TABLE ─── */
+.conv-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 24px;
+  font-size: 13px;
+}
+.conv-table th {
+  background: var(--ink);
+  color: var(--amber);
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 10px 14px;
+  text-align: left;
+}
+.conv-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--rule);
+  background: var(--white);
+}
+.conv-table tr:last-child td { border-bottom: none; }
+.conv-table td:nth-child(3) {
+  font-family: 'DM Mono', monospace;
+  font-weight: 500;
+  color: var(--teal);
+}
+.conv-table td strong { color: var(--ink); font-weight: 700; }
+
+/* ─── EXAMPLE BOX ─── */
+.example {
+  border: 1px solid var(--rule);
+  border-left: 4px solid var(--teal);
+  border-radius: 0 4px 4px 0;
+  padding: 18px 20px;
+  margin-bottom: 16px;
+  background: var(--white);
+}
+.example-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: 8px;
+}
+.example p { font-size: 14px; line-height: 1.7; }
+.example .ans {
+  font-family: 'DM Mono', monospace;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink);
+  margin-top: 8px;
+  display: block;
+  background: var(--teal-light);
+  padding: 6px 10px;
+  border-radius: 3px;
+}
+
+/* ─── TIP ─── */
+.tip {
+  background: var(--amber-light);
+  border-left: 4px solid var(--amber);
+  padding: 12px 16px;
+  font-size: 13px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  border-radius: 0 4px 4px 0;
+}
+.tip::before { content: '💡  '; }
+
+/* ─── SVG DIAGRAM ─── */
+.diagram-wrap {
+  background: var(--white);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 20px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+.diagram-caption {
+  font-size: 12px;
+  color: var(--slate);
+  margin-top: 10px;
+  font-style: italic;
+}
+
+/* ─── PRACTICE ─── */
+.practice-header {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 700;
+  margin: 36px 0 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.practice-header::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--rule);
+}
+
+.q-card {
+  background: var(--white);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 22px 24px;
+  margin-bottom: 16px;
+  transition: box-shadow 0.2s;
+}
+.q-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.07); }
+.q-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--slate);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.q-text { font-size: 15px; font-weight: 600; margin-bottom: 16px; line-height: 1.5; }
+
+.options-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.opt {
+  padding: 11px 14px;
+  border: 1.5px solid var(--rule);
+  border-radius: 3px;
+  background: var(--paper);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink);
+}
+.opt:hover:not(:disabled) { border-color: var(--amber); background: var(--amber-light); }
+.opt .opt-letter {
+  width: 20px; height: 20px;
+  background: var(--ink);
+  color: var(--white);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px;
+  font-family: 'DM Mono', monospace;
+  flex-shrink: 0;
+}
+.opt.correct { border-color: var(--teal); background: var(--teal-light); }
+.opt.correct .opt-letter { background: var(--teal); }
+.opt.wrong { border-color: var(--coral); background: var(--coral-light); }
+.opt.wrong .opt-letter { background: var(--coral); color: white; }
+.opt:disabled { cursor: default; }
+
+.feedback-strip {
+  margin-top: 12px;
+  padding: 12px 16px;
+  border-radius: 3px;
+  font-size: 13px;
+  font-weight: 500;
+  display: none;
+  line-height: 1.6;
+  animation: fadeUp 0.2s ease;
+}
+.feedback-strip.ok { background: var(--teal-light); color: var(--teal); border-left: 3px solid var(--teal); }
+.feedback-strip.bad { background: var(--coral-light); color: var(--coral); border-left: 3px solid var(--coral); }
+
+/* ─── TYPED ANSWER ─── */
+.typed-wrap { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.typed-input {
+  border: 1.5px solid var(--rule);
+  border-radius: 3px;
+  padding: 10px 14px;
+  font-family: 'DM Mono', monospace;
+  font-size: 15px;
+  font-weight: 500;
+  width: 140px;
+  background: var(--paper);
+  color: var(--ink);
+  transition: border 0.15s;
+}
+.typed-input:focus { outline: none; border-color: var(--amber); }
+.typed-unit { font-size: 13px; color: var(--slate); }
+.check-btn {
+  padding: 10px 20px;
+  background: var(--ink);
+  color: var(--white);
+  border: none;
+  border-radius: 3px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.check-btn:hover { background: var(--teal); }
+
+/* ─── LESSON FOOTER ─── */
+.lesson-footer {
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.complete-btn {
+  padding: 13px 28px;
+  background: var(--teal);
+  color: var(--white);
+  border: none;
+  border-radius: 3px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.complete-btn:hover { background: var(--ink); }
+.complete-btn.done-state { background: var(--amber); }
+.next-btn {
+  padding: 13px 28px;
+  background: transparent;
+  color: var(--ink);
+  border: 1.5px solid var(--ink);
+  border-radius: 3px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.next-btn:hover { background: var(--ink); color: var(--white); }
+
+/* ─── FORMULA REF SHEET ─── */
+.formula-sheet {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 32px;
+}
+.f-card {
+  background: var(--white);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 18px;
+}
+.f-icon { font-size: 24px; margin-bottom: 8px; }
+.f-name { font-size: 12px; font-weight: 700; margin-bottom: 6px; color: var(--slate); text-transform: uppercase; letter-spacing: 0.5px; }
+.f-formula {
+  font-family: 'DM Mono', monospace;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--ink);
+  background: var(--ink);
+  color: var(--amber);
+  padding: 7px 10px;
+  border-radius: 2px;
+}
+
+/* ─── QUIZ SECTION ─── */
+.quiz-score-banner {
+  background: var(--ink);
+  color: var(--white);
+  padding: 20px 24px;
+  border-radius: 4px;
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.score-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 48px;
+  font-weight: 900;
+  color: var(--amber);
+  line-height: 1;
+}
+.score-label { font-size: 13px; color: rgba(255,255,255,0.6); margin-top: 4px; }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .content { padding: 28px 20px; }
+  .header-inner { padding: 20px; }
+  .header-title { font-size: 30px; }
+  .options-grid { grid-template-columns: 1fr; }
+}
+
+/* ─── STAR CELEBRATION ─── */
+.stars-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1000;
+  display: none;
+}
+.star {
+  position: absolute;
+  font-size: 24px;
+  animation: starFly 1.2s ease-out forwards;
+}
+@keyframes starFly {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(-200px) scale(0.5); opacity: 0; }
+}
+</style>
+</head>
+<body>
+
+<div class="stars-overlay" id="starsOverlay"></div>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="header-stripe"></div>
+  <div class="header-inner">
+    <div class="header-title-block">
+      <div class="header-eyebrow">11+ Prep · Year 6 · Maths</div>
+      <div class="header-title">Sacha's <span>Measurement</span> Masterclass</div>
+      <div class="header-meta">15 lessons · Units, Conversions, Perimeter, Area &amp; Volume</div>
+    </div>
+    <div class="progress-block">
+      <div class="progress-ring-wrap">
+        <div>
+          <div class="progress-num" id="doneCount">0</div>
+          <div class="progress-denom">/ 15 done</div>
+        </div>
+        <svg width="60" height="60" viewBox="0 0 60 60">
+          <circle cx="30" cy="30" r="24" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="6"/>
+          <circle id="progressCircle" cx="30" cy="30" r="24" fill="none" stroke="#e8a020" stroke-width="6"
+            stroke-dasharray="150.8" stroke-dashoffset="150.8" stroke-linecap="round"
+            transform="rotate(-90 30 30)" style="transition:stroke-dashoffset 0.6s ease"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-section-label">Unit 1 · Conversions</div>
+    <div class="nav-item active" onclick="goLesson(0)" id="nav-0">
+      <span class="nav-num">01</span> Metric Units
+      <span class="nav-check"><svg viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="nav-item" onclick="goLesson(1)" id="nav-1">
+      <span class="nav-num">02</span> Metric &amp; Imperial
+      <span class="nav-check"><svg viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="nav-item" onclick="goLesson(2)" id="nav-2">
+      <span class="nav-num">03</span> Time Problems
+      <span class="nav-check"><svg viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="nav-item" onclick="goLesson(3)" id="nav-3">
+      <span class="nav-num">04</span> Decimals &amp; Scaling
+      <span class="nav-check"><svg viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="nav-item" onclick="goLesson(4)" id="nav-4">
+      <span class="nav-num">05</span> Units to 3 d.p.
+      <span class="nav-check"><svg viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="nav-item" onclick="goLesson(5)" id="nav-5">
+      <span class="nav-num">06</span> Miles &amp; Kilometres
+      <span class="nav-check"><svg viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+
+    <div class="sidebar-section-label">Unit 2 · Perimeter &amp; Area</div>
+    <div class="nav-item" onclick="goLesson(6)" id="nav-6">
+      <span class="nav-num">07</span> Composite Perimeter
+      <span class="nav-check"><svg viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="nav-item" onclick="goLesson(7)" id="nav-7">
+      <span class="nav-num">08</span> Rectangles &amp; Squares
+      <span class="nav-check"><svg viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="nav-item" onclick="goLesson(8)" id="nav-8">
+      <span class="nav-num">09</span> Irregular Shapes
+      <span class="nav-check"><svg viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="nav-item" onclick="goLesson(9)" id="nav-9">
+      <span class="nav-num">10</span> Volume &amp; Capacity
+      <span class="nav-check"><svg viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="nav-item" onclick="goLesson(10)" id="nav-10">
+      <span class="nav-num">11</span> Same Area, Diff. Perimeter
+      <span class="nav-check"><svg viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="nav-item" onclick="goLesson(11)" id="nav-11">
+      <span class="nav-num">12</span> Using Formulae
+      <span class="nav-check"><svg viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="nav-item" onclick="goLesson(12)" id="nav-12">
+      <span class="nav-num">13</span> Area of Triangles
+      <span class="nav-check"><svg viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="nav-item" onclick="goLesson(13)" id="nav-13">
+      <span class="nav-num">14</span> Area of Parallelograms
+      <span class="nav-check"><svg viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+
+    <div class="sidebar-section-label">Unit 3 · Volume</div>
+    <div class="nav-item" onclick="goLesson(14)" id="nav-14">
+      <span class="nav-num">15</span> Cubes &amp; Cuboids
+      <span class="nav-check"><svg viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+
+    <div class="sidebar-section-label">Reference</div>
+    <div class="nav-item" onclick="goLesson(15)" id="nav-15">
+      <span class="nav-num">★</span> Formula Sheet
+    </div>
+    <div class="nav-item" onclick="goLesson(16)" id="nav-16">
+      <span class="nav-num">★</span> Mixed Quiz
+    </div>
+  </nav>
+
+  <!-- CONTENT -->
+  <main class="content">
+
+    <!-- ═══════════════════════════════════ LESSON 0 ══ -->
+    <div class="lesson active" id="lesson-0">
+      <div class="lesson-eyebrow">Lesson 01 · Unit 1: Conversions</div>
+      <div class="lesson-title">Metric Unit Conversions</div>
+      <div class="lesson-subtitle">Converting between km, m, cm, mm · kg, g · litres, ml</div>
+
+      <div class="key-fact">
+        <strong>The Golden Rule</strong><br>
+        Smaller unit → <strong>Multiply</strong> &nbsp;|&nbsp; Larger unit → <strong>Divide</strong>
+        <span class="formula">km →(×1000)→ m →(×100)→ cm →(×10)→ mm</span>
+        <span class="formula">kg →(×1000)→ g &nbsp;&nbsp;&nbsp;&nbsp; litres →(×1000)→ ml</span>
+      </div>
+
+      <div class="diagram-wrap">
+        <svg width="520" height="110" viewBox="0 0 520 110" xmlns="http://www.w3.org/2000/svg" font-family="DM Mono, monospace">
+          <!-- boxes -->
+          <rect x="10" y="35" width="80" height="40" rx="4" fill="#0d0d0d"/>
+          <text x="50" y="60" text-anchor="middle" fill="#e8a020" font-size="14" font-weight="500">km</text>
+          <rect x="140" y="35" width="80" height="40" rx="4" fill="#0d0d0d"/>
+          <text x="180" y="60" text-anchor="middle" fill="#e8a020" font-size="14" font-weight="500">m</text>
+          <rect x="270" y="35" width="80" height="40" rx="4" fill="#0d0d0d"/>
+          <text x="310" y="60" text-anchor="middle" fill="#e8a020" font-size="14" font-weight="500">cm</text>
+          <rect x="400" y="35" width="80" height="40" rx="4" fill="#0d0d0d"/>
+          <text x="440" y="60" text-anchor="middle" fill="#e8a020" font-size="14" font-weight="500">mm</text>
+          <!-- arrows right (multiply) -->
+          <line x1="92" y1="55" x2="138" y2="55" stroke="#1a7d6e" stroke-width="2" marker-end="url(#arr)"/>
+          <line x1="222" y1="55" x2="268" y2="55" stroke="#1a7d6e" stroke-width="2" marker-end="url(#arr)"/>
+          <line x1="352" y1="55" x2="398" y2="55" stroke="#1a7d6e" stroke-width="2" marker-end="url(#arr)"/>
+          <!-- labels multiply -->
+          <text x="115" y="46" text-anchor="middle" fill="#1a7d6e" font-size="9">×1000</text>
+          <text x="245" y="46" text-anchor="middle" fill="#1a7d6e" font-size="9">×100</text>
+          <text x="375" y="46" text-anchor="middle" fill="#1a7d6e" font-size="9">×10</text>
+          <!-- arrows left (divide) -->
+          <line x1="138" y1="65" x2="92" y2="65" stroke="#d94f3d" stroke-width="2" marker-end="url(#arr2)"/>
+          <line x1="268" y1="65" x2="222" y2="65" stroke="#d94f3d" stroke-width="2" marker-end="url(#arr2)"/>
+          <line x1="398" y1="65" x2="352" y2="65" stroke="#d94f3d" stroke-width="2" marker-end="url(#arr2)"/>
+          <!-- labels divide -->
+          <text x="115" y="82" text-anchor="middle" fill="#d94f3d" font-size="9">÷1000</text>
+          <text x="245" y="82" text-anchor="middle" fill="#d94f3d" font-size="9">÷100</text>
+          <text x="375" y="82" text-anchor="middle" fill="#d94f3d" font-size="9">÷10</text>
+          <!-- legend -->
+          <circle cx="20" cy="102" r="4" fill="#1a7d6e"/>
+          <text x="28" y="106" fill="#4a5568" font-size="9">multiply (→ smaller unit)</text>
+          <circle cx="190" cy="102" r="4" fill="#d94f3d"/>
+          <text x="198" y="106" fill="#4a5568" font-size="9">divide (→ larger unit)</text>
+          <defs>
+            <marker id="arr" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#1a7d6e"/></marker>
+            <marker id="arr2" markerWidth="6" markerHeight="6" refX="1" refY="3" orient="auto"><path d="M6,0 L0,3 L6,6 Z" fill="#d94f3d"/></marker>
+          </defs>
+        </svg>
+        <div class="diagram-caption">The metric length chain — move right to multiply, left to divide</div>
+      </div>
+
+      <div class="example">
+        <div class="example-label">Example A</div>
+        <p>Convert 3.45 km to metres.</p>
+        <span class="ans">3.45 × 1,000 = 3,450 m</span>
+      </div>
+      <div class="example">
+        <div class="example-label">Example B</div>
+        <p>Convert 2,750 g to kg.</p>
+        <span class="ans">2,750 ÷ 1,000 = 2.75 kg</span>
+      </div>
+      <div class="tip">Moving the decimal point: ×10 → 1 place right · ×100 → 2 places · ×1000 → 3 places</div>
+
+      <div class="practice-header">Practice Questions</div>
+
+      <div class="q-card" id="q0-0">
+        <div class="q-num">Question 1 of 4</div>
+        <div class="q-text">Convert 4.2 km to metres.</div>
+        <div class="options-grid">
+          <button class="opt" onclick="mc(0,0,0,1,'4.2 × 1,000 = 4,200 m — move the decimal 3 places right.')"><span class="opt-letter">A</span>420 m</button>
+          <button class="opt" onclick="mc(0,0,1,1,'4.2 × 1,000 = 4,200 m — move the decimal 3 places right.')"><span class="opt-letter">B</span>4,200 m</button>
+          <button class="opt" onclick="mc(0,0,2,1,'4.2 × 1,000 = 4,200 m — move the decimal 3 places right.')"><span class="opt-letter">C</span>42,000 m</button>
+          <button class="opt" onclick="mc(0,0,3,1,'4.2 × 1,000 = 4,200 m — move the decimal 3 places right.')"><span class="opt-letter">D</span>42 m</button>
+        </div>
+        <div class="feedback-strip" id="fb0-0"></div>
+      </div>
+
+      <div class="q-card" id="q0-1">
+        <div class="q-num">Question 2 of 4</div>
+        <div class="q-text">Convert 850 ml to litres.</div>
+        <div class="options-grid">
+          <button class="opt" onclick="mc(0,1,0,1,'850 ÷ 1,000 = 0.85 l — litres are bigger than ml, so we divide.')"><span class="opt-letter">A</span>0.085 l</button>
+          <button class="opt" onclick="mc(0,1,1,1,'850 ÷ 1,000 = 0.85 l — litres are bigger than ml, so we divide.')"><span class="opt-letter">B</span>0.85 l</button>
+          <button class="opt" onclick="mc(0,1,2,1,'850 ÷ 1,000 = 0.85 l — litres are bigger than ml, so we divide.')"><span class="opt-letter">C</span>8.5 l</button>
+          <button class="opt" onclick="mc(0,1,3,1,'850 ÷ 1,000 = 0.85 l — litres are bigger than ml, so we divide.')"><span class="opt-letter">D</span>85 l</button>
+        </div>
+        <div class="feedback-strip" id="fb0-1"></div>
+      </div>
+
+      <div class="q-card" id="q0-2">
+        <div class="q-num">Question 3 of 4</div>
+        <div class="q-text">Convert 3,600 g to kg.</div>
+        <div class="typed-wrap">
+          <input class="typed-input" id="ti0-2" type="text" placeholder="Answer…"/>
+          <span class="typed-unit">kg</span>
+          <button class="check-btn" onclick="typed(0,2,'3.6','3,600 ÷ 1,000 = 3.6 kg')">Check</button>
+        </div>
+        <div class="feedback-strip" id="fb0-2"></div>
+      </div>
+
+      <div class="q-card" id="q0-3">
+        <div class="q-num">Question 4 of 4</div>
+        <div class="q-text">Convert 74 mm to cm.</div>
+        <div class="typed-wrap">
+          <input class="typed-input" id="ti0-3" type="text" placeholder="Answer…"/>
+          <span class="typed-unit">cm</span>
+          <button class="check-btn" onclick="typed(0,3,'7.4','74 ÷ 10 = 7.4 cm — cm are bigger than mm, so divide by 10.')">Check</button>
+        </div>
+        <div class="feedback-strip" id="fb0-3"></div>
+      </div>
+
+      <div class="lesson-footer">
+        <button class="complete-btn" id="complete-0" onclick="markDone(0)">Mark Lesson Complete ✓</button>
+        <button class="next-btn" onclick="goLesson(1)">Next Lesson →</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════ LESSON 1 ══ -->
+    <div class="lesson" id="lesson-1">
+      <div class="lesson-eyebrow">Lesson 02 · Unit 1: Conversions</div>
+      <div class="lesson-title">Metric &amp; Imperial Units</div>
+      <div class="lesson-subtitle">Approximate equivalences between metric and common imperial units</div>
+
+      <div class="key-fact">
+        <strong>Must-know equivalences</strong><br>
+        In the 11+, you'll be <em>given</em> the conversion — you just decide × or ÷
+      </div>
+
+      <table class="conv-table">
+        <tr><th>Imperial</th><th>≈</th><th>Metric</th><th>Tip</th></tr>
+        <tr><td>1 mile</td><td>≈</td><td>1.6 km</td><td>5 miles = 8 km (key ratio)</td></tr>
+        <tr><td>1 inch</td><td>≈</td><td>2.54 cm</td><td>Roughly 2.5 cm</td></tr>
+        <tr><td>1 foot</td><td>≈</td><td>30 cm</td><td>12 inches = 1 foot</td></tr>
+        <tr><td>1 pound (lb)</td><td>≈</td><td>454 g</td><td>1 kg ≈ 2.2 lbs</td></tr>
+        <tr><td>1 pint</td><td>≈</td><td>568 ml</td><td>1 litre ≈ 1.75 pints</td></tr>
+        <tr><td>1 gallon</td><td>≈</td><td>4.546 l</td><td>≈ 4.5 l in exams</td></tr>
+      </table>
+
+      <div class="example">
+        <div class="example-label">Example A</div>
+        <p>A baby weighs 8 pounds. Approximately how many kg? <em>(1 kg ≈ 2.2 lbs)</em></p>
+        <span class="ans">8 ÷ 2.2 ≈ 3.6 kg</span>
+      </div>
+      <div class="example">
+        <div class="example-label">Example B</div>
+        <p>A road sign says 30 miles. Convert to km. <em>(5 miles = 8 km)</em></p>
+        <span class="ans">30 ÷ 5 × 8 = 6 × 8 = 48 km</span>
+      </div>
+      <div class="tip">Going from a smaller imperial unit to metric usually means multiplying. Going from metric to imperial usually means dividing. Draw a quick number line if unsure!</div>
+
+      <div class="practice-header">Practice Questions</div>
+
+      <div class="q-card">
+        <div class="q-num">Question 1 of 3</div>
+        <div class="q-text">A jug holds 3.5 pints. Approximately how many litres? <em>(1 pint ≈ 0.57 l)</em></div>
+        <div class="options-grid">
+          <button class="opt" onclick="mc(1,0,0,2,'3.5 × 0.57 = 1.995 ≈ 2.0 litres. We multiply because we are converting FROM pints TO litres.')"><span class="opt-letter">A</span>1.14 l</button>
+          <button class="opt" onclick="mc(1,0,1,2,'3.5 × 0.57 = 1.995 ≈ 2.0 litres. We multiply because we are converting FROM pints TO litres.')"><span class="opt-letter">B</span>1.71 l</button>
+          <button class="opt" onclick="mc(1,0,2,2,'3.5 × 0.57 = 1.995 ≈ 2.0 litres. We multiply because we are converting FROM pints TO litres.')"><span class="opt-letter">C</span>2.0 l</button>
+          <button class="opt" onclick="mc(1,0,3,2,'3.5 × 0.57 = 1.995 ≈ 2.0 litres. We multiply because we are converting FROM pints TO litres.')"><span class="opt-letter">D</span>6.14 l</button>
+        </div>
+        <div class="feedback-strip" id="fb1-0"></div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-num">Question 2 of 3</div>
+        <div class="q-text">A person is 6 feet tall. Approximately how many cm? <em>(1 foot ≈ 30 cm)</em></div>
+        <div class="typed-wrap">
+          <input class="typed-input" id="ti1-1" type="text" placeholder="Answer…"/>
+          <span class="typed-unit">cm</span>
+          <button class="check-btn" onclick="typed(1,1,'180','6 × 30 = 180 cm. Multiply because feet → cm is going to a smaller unit.')">Check</button>
+        </div>
+        <div class="feedback-strip" id="fb1-1"></div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-num">Question 3 of 3</div>
+        <div class="q-text">A car weighs 1,540 pounds. Approximately how many kg? <em>(1 kg ≈ 2.2 lbs)</em></div>
+        <div class="typed-wrap">
+          <input class="typed-input" id="ti1-2" type="text" placeholder="Answer…"/>
+          <span class="typed-unit">kg</span>
+          <button class="check-btn" onclick="typed(1,2,'700','1,540 ÷ 2.2 = 700 kg. We divide because kg are bigger than pounds.')">Check</button>
+        </div>
+        <div class="feedback-strip" id="fb1-2"></div>
+      </div>
+
+      <div class="lesson-footer">
+        <button class="complete-btn" id="complete-1" onclick="markDone(1)">Mark Lesson Complete ✓</button>
+        <button class="next-btn" onclick="goLesson(2)">Next Lesson →</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════ LESSON 2 ══ -->
+    <div class="lesson" id="lesson-2">
+      <div class="lesson-eyebrow">Lesson 03 · Unit 1: Conversions</div>
+      <div class="lesson-title">Time Problems</div>
+      <div class="lesson-subtitle">Converting between seconds, minutes, hours, days — and solving word problems</div>
+
+      <div class="key-fact">
+        <strong>Core facts to know cold:</strong><br>
+        60 sec = 1 min &nbsp;·&nbsp; 60 min = 1 hr &nbsp;·&nbsp; 24 hr = 1 day &nbsp;·&nbsp; 7 days = 1 week &nbsp;·&nbsp; 365 days = 1 year
+        <span class="formula">pm → 24-hr: add 12 &nbsp;&nbsp; e.g. 3:45 pm = 15:45</span>
+      </div>
+
+      <div class="example">
+        <div class="example-label">Example A — Converting to minutes</div>
+        <p>A film lasts 2 hours 35 minutes. How many minutes total?</p>
+        <span class="ans">2 × 60 + 35 = 120 + 35 = 155 minutes</span>
+      </div>
+      <div class="example">
+        <div class="example-label">Example B — Finding journey time</div>
+        <p>A train leaves at 09:47 and arrives at 12:23. How long is the journey?</p>
+        <span class="ans">09:47 → 10:00 = 13 min · 10:00 → 12:00 = 2 hr · 12:00 → 12:23 = 23 min → Total: 2 hr 36 min</span>
+      </div>
+      <div class="tip">For journey times, count up in chunks: minutes to the next hour, then full hours, then remaining minutes. Never subtract directly — you'll make errors!</div>
+
+      <div class="practice-header">Practice Questions</div>
+
+      <div class="q-card">
+        <div class="q-num">Question 1 of 4</div>
+        <div class="q-text">How many seconds are in 4.5 minutes?</div>
+        <div class="options-grid">
+          <button class="opt" onclick="mc(2,0,0,2,'4.5 × 60 = 270. Half a minute = 30 seconds, so 4 min = 240 sec + 30 sec = 270 sec.')"><span class="opt-letter">A</span>240 sec</button>
+          <button class="opt" onclick="mc(2,0,1,2,'4.5 × 60 = 270. Half a minute = 30 seconds, so 4 min = 240 sec + 30 sec = 270 sec.')"><span class="opt-letter">B</span>250 sec</button>
+          <button class="opt" onclick="mc(2,0,2,2,'4.5 × 60 = 270. Half a minute = 30 seconds, so 4 min = 240 sec + 30 sec = 270 sec.')"><span class="opt-letter">C</span>270 sec</button>
+          <button class="opt" onclick="mc(2,0,3,2,'4.5 × 60 = 270. Half a minute = 30 seconds, so 4 min = 240 sec + 30 sec = 270 sec.')"><span class="opt-letter">D</span>280 sec</button>
+        </div>
+        <div class="feedback-strip" id="fb2-0"></div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-num">Question 2 of 4</div>
+        <div class="q-text">A film starts at 14:15 and lasts 1 hour 50 minutes. What time does it end?</div>
+        <div class="options-grid">
+          <button class="opt" onclick="mc(2,1,0,1,'14:15 + 1h = 15:15, then + 50 min = 16:05.')"><span class="opt-letter">A</span>15:55</button>
+          <button class="opt" onclick="mc(2,1,1,1,'14:15 + 1h = 15:15, then + 50 min = 16:05.')"><span class="opt-letter">B</span>16:05</button>
+          <button class="opt" onclick="mc(2,1,2,1,'14:15 + 1h = 15:15, then + 50 min = 16:05.')"><span class="opt-letter">C</span>16:15</button>
+          <button class="opt" onclick="mc(2,1,3,1,'14:15 + 1h = 15:15, then + 50 min = 16:05.')"><span class="opt-letter">D</span>16:00</button>
+        </div>
+        <div class="feedback-strip" id="fb2-1"></div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-num">Question 3 of 4</div>
+        <div class="q-text">How many minutes are there in one week?</div>
+        <div class="typed-wrap">
+          <input class="typed-input" id="ti2-2" type="text" placeholder="Answer…"/>
+          <span class="typed-unit">minutes</span>
+          <button class="check-btn" onclick="typed(2,2,'10080','7 days × 24 hours × 60 minutes = 7 × 1,440 = 10,080 minutes.')">Check</button>
+        </div>
+        <div class="feedback-strip" id="fb2-2"></div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-num">Question 4 of 4</div>
+        <div class="q-text">Write 7:25 pm in 24-hour clock format.</div>
+        <div class="typed-wrap">
+          <input class="typed-input" id="ti2-3" type="text" placeholder="e.g. 19:25"/>
+          <button class="check-btn" onclick="typed(2,3,'19:25','7:25 pm → add 12 to the hours → 7 + 12 = 19 → 19:25.')">Check</button>
+        </div>
+        <div class="feedback-strip" id="fb2-3"></div>
+      </div>
+
+      <div class="lesson-footer">
+        <button class="complete-btn" id="complete-2" onclick="markDone(2)">Mark Lesson Complete ✓</button>
+        <button class="next-btn" onclick="goLesson(3)">Next Lesson →</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════ LESSON 3 ══ -->
+    <div class="lesson" id="lesson-3">
+      <div class="lesson-eyebrow">Lesson 04 · Unit 1: Conversions</div>
+      <div class="lesson-title">Decimals &amp; Scaling</div>
+      <div class="lesson-subtitle">Map scales, model scales, and decimal measurement problems</div>
+
+      <div class="key-fact">
+        <strong>Map / Model scales:</strong> A scale of 1:25,000 means every 1 cm on the map = 25,000 cm in real life
+        <span class="formula">Real distance = map distance × scale number</span>
+      </div>
+
+      <div class="diagram-wrap">
+        <svg width="480" height="120" viewBox="0 0 480 120" xmlns="http://www.w3.org/2000/svg" font-family="DM Sans, sans-serif">
+          <rect x="10" y="20" width="140" height="80" rx="4" fill="#f0ebe1" stroke="#d4cfc6" stroke-width="1.5"/>
+          <text x="80" y="48" text-anchor="middle" fill="#4a5568" font-size="10">MAP</text>
+          <text x="80" y="68" text-anchor="middle" fill="#0d0d0d" font-size="13" font-weight="700">6 cm</text>
+          <text x="80" y="86" text-anchor="middle" fill="#4a5568" font-size="9">Scale 1:50,000</text>
+          <!-- arrow -->
+          <line x1="155" y1="60" x2="210" y2="60" stroke="#0d0d0d" stroke-width="2" marker-end="url(#arr3)"/>
+          <text x="182" y="52" text-anchor="middle" fill="#1a7d6e" font-size="10" font-weight="600">×50,000</text>
+          <!-- real box -->
+          <rect x="215" y="20" width="255" height="80" rx="4" fill="#d4f0eb" stroke="#1a7d6e" stroke-width="1.5"/>
+          <text x="342" y="44" text-anchor="middle" fill="#1a7d6e" font-size="10">REAL LIFE</text>
+          <text x="342" y="64" text-anchor="middle" fill="#0d0d0d" font-size="13" font-weight="700">300,000 cm</text>
+          <text x="342" y="84" text-anchor="middle" fill="#1a7d6e" font-size="12" font-weight="700">= 3 km</text>
+          <defs>
+            <marker id="arr3" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#0d0d0d"/></marker>
+          </defs>
+        </svg>
+        <div class="diagram-caption">Map scale example: 6 cm at 1:50,000 = 300,000 cm = 3 km in real life</div>
+      </div>
+
+      <div class="example">
+        <div class="example-label">Example — Model car</div>
+        <p>A model car is built at scale 1:20. The real car is 3.6 m long. How long is the model in cm?</p>
+        <span class="ans">3.6 m = 360 cm · 360 ÷ 20 = 18 cm</span>
+      </div>
+      <div class="tip">Always convert to the same units first before applying the scale. Watch out for m vs cm!</div>
+
+      <div class="practice-header">Practice Questions</div>
+
+      <div class="q-card">
+        <div class="q-num">Question 1 of 3</div>
+        <div class="q-text">A map has scale 1:25,000. Two villages are 12 cm apart on the map. What is the real distance in km?</div>
+        <div class="options-grid">
+          <button class="opt" onclick="mc(3,0,0,2,'12 × 25,000 = 300,000 cm = 3,000 m = 3 km')"><span class="opt-letter">A</span>1.2 km</button>
+          <button class="opt" onclick="mc(3,0,1,2,'12 × 25,000 = 300,000 cm = 3,000 m = 3 km')"><span class="opt-letter">B</span>2.5 km</button>
+          <button class="opt" onclick="mc(3,0,2,2,'12 × 25,000 = 300,000 cm = 3,000 m = 3 km')"><span class="opt-letter">C</span>3 km</button>
+          <button class="opt" onclick="mc(3,0,3,2,'12 × 25,000 = 300,000 cm = 3,000 m = 3 km')"><span class="opt-letter">D</span>30 km</button>
+        </div>
+        <div class="feedback-strip" id="fb3-0"></div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-num">Question 2 of 3</div>
+        <div class="q-text">A model train is 15 cm long. The real train is 90 m long. Write the scale in the form 1:n.</div>
+        <div class="typed-wrap">
+          <input class="typed-input" id="ti3-1" type="text" placeholder="1:…"/>
+          <button class="check-btn" onclick="typed(3,1,'1:600','90 m = 9,000 cm. Scale = 9,000 ÷ 15 = 600. So 1:600.')">Check</button>
+        </div>
+        <div class="feedback-strip" id="fb3-1"></div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-num">Question 3 of 3</div>
+        <div class="q-text">Four planks each 1.35 m long are laid end to end. What is the total length in metres?</div>
+        <div class="typed-wrap">
+          <input class="typed-input" id="ti3-2" type="text" placeholder="Answer…"/>
+          <span class="typed-unit">m</span>
+          <button class="check-btn" onclick="typed(3,2,'5.4','4 × 1.35 = 5.4 m. Careful with the decimal: 4 × 1.35 = 4 × 1 + 4 × 0.35 = 4 + 1.4 = 5.4')">Check</button>
+        </div>
+        <div class="feedback-strip" id="fb3-2"></div>
+      </div>
+
+      <div class="lesson-footer">
+        <button class="complete-btn" id="complete-3" onclick="markDone(3)">Mark Lesson Complete ✓</button>
+        <button class="next-btn" onclick="goLesson(4)">Next Lesson →</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════ LESSON 4 ══ -->
+    <div class="lesson" id="lesson-4">
+      <div class="lesson-eyebrow">Lesson 05 · Unit 1: Conversions</div>
+      <div class="lesson-title">Standard Units to 3 d.p.</div>
+      <div class="lesson-subtitle">Reading, writing and converting with decimals up to 3 decimal places</div>
+
+      <div class="key-fact">
+        <strong>3 decimal places = thousandths</strong><br>
+        1.075 kg = 1 kg and 75 g &nbsp;·&nbsp; NOT 1 kg 750 g!<br>
+        <span class="formula">kg + g:  g ÷ 1000 → decimal kg</span>
+        <span class="formula">km + m:  m ÷ 1000 → decimal km</span>
+      </div>
+
+      <div class="diagram-wrap">
+        <svg width="460" height="90" viewBox="0 0 460 90" xmlns="http://www.w3.org/2000/svg" font-family="DM Mono, monospace">
+          <text x="10" y="30" fill="#0d0d0d" font-size="13" font-weight="500">3 . 0 4 5  kg</text>
+          <!-- brackets -->
+          <rect x="6" y="36" width="16" height="3" fill="#e8a020"/>
+          <text x="14" y="56" text-anchor="middle" fill="#e8a020" font-size="9">kg</text>
+          <rect x="26" y="36" width="6" height="3" fill="#d94f3d"/>
+          <text x="29" y="56" text-anchor="middle" fill="#d94f3d" font-size="9">.</text>
+          <rect x="36" y="36" width="10" height="3" fill="#1a7d6e"/>
+          <text x="41" y="56" text-anchor="middle" fill="#1a7d6e" font-size="9">tenths</text>
+          <rect x="48" y="36" width="10" height="3" fill="#1a7d6e"/>
+          <text x="53" y="56" text-anchor="middle" fill="#1a7d6e" font-size="9">100ths</text>
+          <rect x="60" y="36" width="10" height="3" fill="#d94f3d"/>
+          <text x="65" y="56" text-anchor="middle" fill="#d94f3d" font-size="9">1000ths</text>
+          <!-- explanation -->
+          <text x="10" y="80" fill="#4a5568" font-size="11">3.045 kg  =  3 kg and 45 g  (045 thousandths of a kg)</text>
+        </svg>
+        <div class="diagram-caption">The zero in the hundredths column is crucial — 3.045 ≠ 3.45</div>
+      </div>
+
+      <div class="example">
+        <div class="example-label">Example A</div>
+        <p>Write 4 km 60 m as a decimal number of km.</p>
+        <span class="ans">60 ÷ 1,000 = 0.060 = 0.06 → Answer: 4.060 km (or 4.06 km)</span>
+      </div>
+      <div class="example">
+        <div class="example-label">Example B</div>
+        <p>Write 2.037 litres in ml.</p>
+        <span class="ans">2.037 × 1,000 = 2,037 ml</span>
+      </div>
+      <div class="tip">Zeros between the decimal point and a digit matter! 1.045 ≠ 1.45. Write them carefully.</div>
+
+      <div class="practice-header">Practice Questions</div>
+
+      <div class="q-card">
+        <div class="q-num">Question 1 of 3</div>
+        <div class="q-text">Write 3 kg 45 g as a decimal number of kg.</div>
+        <div class="options-grid">
+          <button class="opt" onclick="mc(4,0,0,1,'45 ÷ 1,000 = 0.045, so 3 kg 45 g = 3.045 kg. Note the zero in the hundredths place!')"><span class="opt-letter">A</span>3.45 kg</button>
+          <button class="opt" onclick="mc(4,0,1,1,'45 ÷ 1,000 = 0.045, so 3 kg 45 g = 3.045 kg. Note the zero in the hundredths place!')"><span class="opt-letter">B</span>3.045 kg</button>
+          <button class="opt" onclick="mc(4,0,2,1,'45 ÷ 1,000 = 0.045, so 3 kg 45 g = 3.045 kg. Note the zero in the hundredths place!')"><span class="opt-letter">C</span>3.0045 kg</button>
+          <button class="opt" onclick="mc(4,0,3,1,'45 ÷ 1,000 = 0.045, so 3 kg 45 g = 3.045 kg. Note the zero in the hundredths place!')"><span class="opt-letter">D</span>34.5 kg</button>
+        </div>
+        <div class="feedback-strip" id="fb4-0"></div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-num">Question 2 of 3</div>
+        <div class="q-text">Write 2.056 litres in ml.</div>
+        <div class="typed-wrap">
+          <input class="typed-input" id="ti4-1" type="text" placeholder="Answer…"/>
+          <span class="typed-unit">ml</span>
+          <button class="check-btn" onclick="typed(4,1,'2056','2.056 × 1,000 = 2,056 ml')">Check</button>
+        </div>
+        <div class="feedback-strip" id="fb4-1"></div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-num">Question 3 of 3</div>
+        <div class="q-text">Which is greater: 1.045 kg or 1.45 kg? By how many grams?</div>
+        <div class="options-grid">
+          <button class="opt" onclick="mc(4,2,0,1,'1.45 kg = 1,450 g · 1.045 kg = 1,045 g · Difference = 405 g. The zero placeholder makes 1.045 much smaller than 1.45!')"><span class="opt-letter">A</span>1.045 kg is greater, by 405 g</button>
+          <button class="opt" onclick="mc(4,2,1,1,'1.45 kg = 1,450 g · 1.045 kg = 1,045 g · Difference = 405 g. The zero placeholder makes 1.045 much smaller than 1.45!')"><span class="opt-letter">B</span>1.45 kg is greater, by 405 g</button>
+          <button class="opt" onclick="mc(4,2,2,1,'1.45 kg = 1,450 g · 1.045 kg = 1,045 g · Difference = 405 g. The zero placeholder makes 1.045 much smaller than 1.45!')"><span class="opt-letter">C</span>They are equal</button>
+          <button class="opt" onclick="mc(4,2,3,1,'1.45 kg = 1,450 g · 1.045 kg = 1,045 g · Difference = 405 g. The zero placeholder makes 1.045 much smaller than 1.45!')"><span class="opt-letter">D</span>1.45 kg is greater, by 5 g</button>
+        </div>
+        <div class="feedback-strip" id="fb4-2"></div>
+      </div>
+
+      <div class="lesson-footer">
+        <button class="complete-btn" id="complete-4" onclick="markDone(4)">Mark Lesson Complete ✓</button>
+        <button class="next-btn" onclick="goLesson(5)">Next Lesson →</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════ LESSON 5 ══ -->
+    <div class="lesson" id="lesson-5">
+      <div class="lesson-eyebrow">Lesson 06 · Unit 1: Conversions</div>
+      <div class="lesson-title">Miles &amp; Kilometres</div>
+      <div class="lesson-subtitle">The 5:8 ratio — the most tested conversion in the 11+</div>
+
+      <div class="key-fact">
+        <strong>The ratio to memorise:</strong> 5 miles = 8 km
+        <span class="formula">miles → km: ÷ 5 then × 8</span>
+        <span class="formula">km → miles: ÷ 8 then × 5</span>
+      </div>
+
+      <div class="diagram-wrap">
+        <svg width="420" height="80" viewBox="0 0 420 80" xmlns="http://www.w3.org/2000/svg" font-family="DM Sans, sans-serif">
+          <!-- scale bar miles -->
+          <rect x="20" y="20" width="150" height="20" rx="3" fill="#e8a020"/>
+          <text x="95" y="35" text-anchor="middle" fill="#0d0d0d" font-size="11" font-weight="700">5 miles</text>
+          <!-- scale bar km -->
+          <rect x="20" y="45" width="240" height="20" rx="3" fill="#1a7d6e"/>
+          <text x="140" y="60" text-anchor="middle" fill="white" font-size="11" font-weight="700">8 km</text>
+          <!-- tick marks -->
+          <line x1="20" y1="18" x2="20" y2="68" stroke="#0d0d0d" stroke-width="1"/>
+          <line x1="170" y1="18" x2="170" y2="43" stroke="#0d0d0d" stroke-width="1"/>
+          <line x1="260" y1="43" x2="260" y2="68" stroke="#0d0d0d" stroke-width="1"/>
+          <text x="310" y="35" fill="#4a5568" font-size="11">5 miles</text>
+          <text x="290" y="60" fill="#4a5568" font-size="11">= 8 km</text>
+        </svg>
+        <div class="diagram-caption">5 miles is always equal to 8 km — the bars show the ratio</div>
+      </div>
+
+      <div class="example">
+        <div class="example-label">Example A — Miles to km</div>
+        <p>Convert 40 miles to km.</p>
+        <span class="ans">40 ÷ 5 = 8 &nbsp;·&nbsp; 8 × 8 = 64 km</span>
+      </div>
+      <div class="example">
+        <div class="example-label">Example B — km to miles</div>
+        <p>Convert 56 km to miles.</p>
+        <span class="ans">56 ÷ 8 = 7 &nbsp;·&nbsp; 7 × 5 = 35 miles</span>
+      </div>
+      <div class="tip">Divide first — it's always easier to work with smaller numbers before multiplying back up.</div>
+
+      <div class="practice-header">Practice Questions</div>
+
+      <div class="q-card">
+        <div class="q-num">Question 1 of 3</div>
+        <div class="q-text">Convert 25 miles to km. (5 miles = 8 km)</div>
+        <div class="options-grid">
+          <button class="opt" onclick="mc(5,0,0,2,'25 ÷ 5 = 5 · 5 × 8 = 40 km')"><span class="opt-letter">A</span>30 km</button>
+          <button class="opt" onclick="mc(5,0,1,2,'25 ÷ 5 = 5 · 5 × 8 = 40 km')"><span class="opt-letter">B</span>35 km</button>
+          <button class="opt" onclick="mc(5,0,2,2,'25 ÷ 5 = 5 · 5 × 8 = 40 km')"><span class="opt-letter">C</span>40 km</button>
+          <button class="opt" onclick="mc(5,0,3,2,'25 ÷ 5 = 5 · 5 × 8 = 40 km')"><span class="opt-letter">D</span>45 km</button>
+        </div>
+        <div class="feedback-strip" id="fb5-0"></div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-num">Question 2 of 3</div>
+        <div class="q-text">Convert 72 km to miles. (5 miles = 8 km)</div>
+        <div class="typed-wrap">
+          <input class="typed-input" id="ti5-1" type="text" placeholder="Answer…"/>
+          <span class="typed-unit">miles</span>
+          <button class="check-btn" onclick="typed(5,1,'45','72 ÷ 8 = 9 · 9 × 5 = 45 miles')">Check</button>
+        </div>
+        <div class="feedback-strip" id="fb5-1"></div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-num">Question 3 of 3</div>
+        <div class="q-text">A motorway speed limit is 120 km/h. Approximately what is this in mph?</div>
+        <div class="typed-wrap">
+          <input class="typed-input" id="ti5-2" type="text" placeholder="Answer…"/>
+          <span class="typed-unit">mph</span>
+          <button class="check-btn" onclick="typed(5,2,'75','120 ÷ 8 = 15 · 15 × 5 = 75 mph')">Check</button>
+        </div>
+        <div class="feedback-strip" id="fb5-2"></div>
+      </div>
+
+      <div class="lesson-footer">
+        <button class="complete-btn" id="complete-5" onclick="markDone(5)">Mark Lesson Complete ✓</button>
+        <button class="next-btn" onclick="goLesson(6)">Next Lesson →</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════ LESSON 6 ══ -->
+    <div class="lesson" id="lesson-6">
+      <div class="lesson-eyebrow">Lesson 07 · Unit 2: Perimeter &amp; Area</div>
+      <div class="lesson-title">Perimeter of Composite Shapes</div>
+      <div class="lesson-subtitle">L-shapes, T-shapes and other rectilinear figures</div>
+
+      <div class="key-fact">
+        Perimeter = <strong>total distance around the outside</strong><br>
+        For composite shapes: label ALL sides first, find missing ones using opposite-side relationships, then add everything up.
+        <span class="formula">Missing side = overall length − known portion</span>
+      </div>
+
+      <div class="diagram-wrap">
+        <svg width="380" height="160" viewBox="0 0 380 160" xmlns="http://www.w3.org/2000/svg" font-family="DM Sans, sans-serif" font-size="11">
+          <!-- L-shape -->
+          <polygon points="30,20 180,20 180,80 110,80 110,140 30,140" fill="#fef3dc" stroke="#e8a020" stroke-width="2.5" stroke-linejoin="round"/>
+          <!-- labels -->
+          <text x="105" y="14" text-anchor="middle" fill="#0d0d0d" font-weight="700">150</text>
+          <text x="188" y="54" fill="#0d0d0d" font-weight="700">60</text>
+          <text x="148" y="76" text-anchor="middle" fill="#d94f3d" font-weight="700">70</text>
+          <text x="118" y="114" fill="#d94f3d" font-weight="700">60</text>
+          <text x="70" y="148" text-anchor="middle" fill="#0d0d0d" font-weight="700">80</text>
+          <text x="18" y="84" fill="#0d0d0d" font-weight="700">120</text>
+          <!-- arrows for missing sides -->
+          <text x="210" y="50" fill="#d94f3d" font-size="10">← missing</text>
+          <text x="210" y="100" fill="#d94f3d" font-size="10">← missing</text>
+          <!-- perimeter working -->
+          <text x="300" y="40" fill="#4a5568" font-size="10">P = 150 + 60</text>
+          <text x="300" y="56" fill="#4a5568" font-size="10">  + 70 + 60</text>
+          <text x="300" y="72" fill="#4a5568" font-size="10">  + 80 + 120</text>
+          <text x="300" y="92" fill="#1a7d6e" font-size="12" font-weight="700">= 540 units</text>
+          <text x="210" y="130" fill="#4a5568" font-size="9">Red = sides worked</text>
+          <text x="210" y="143" fill="#4a5568" font-size="9">out from given info</text>
+        </svg>
+        <div class="diagram-caption">Always label all 6 sides before adding — don't skip the missing ones!</div>
+      </div>
+
+      <div class="example">
+        <div class="example-label">Finding a missing side</div>
+        <p>An L-shape is 12 cm wide overall. The top part is 7 cm wide. What is the bottom step width?</p>
+        <span class="ans">12 − 7 = 5 cm (opposite sides of rectilinear shapes always reconcile)</span>
+      </div>
+      <div class="tip">Rectilinear = only right angles. The sum of the right-going sides equals the sum of the left-going sides. Use this to find unknowns!</div>
+
+      <div class="practice-header">Practice Questions</div>
+
+      <div class="q-card">
+        <div class="q-num">Question 1 of 3</div>
+        <div class="q-text">A rectangle is 15 cm long and 8 cm wide. What is its perimeter?</div>
+        <div class="options-grid">
+          <button class="opt" onclick="mc(6,0,0,2,'P = 2 × (15 + 8) = 2 × 23 = 46 cm')"><span class="opt-letter">A</span>23 cm</button>
+          <button class="opt" onclick="mc(6,0,1,2,'P = 2 × (15 + 8) = 2 × 23 = 46 cm')"><span class="opt-letter">B</span>120 cm²</button>
+          <button class="opt" onclick="mc(6,0,2,2,'P = 2 × (15 + 8) = 2 × 23 = 46 cm')"><span class="opt-letter">C</span>46 cm</button>
+          <button class="opt" onclick="mc(6,0,3,2,'P = 2 × (15 + 8) = 2 × 23 = 46 cm')"><span class="opt-letter">D</span>52 cm</button>
+        </div>
+        <div class="feedback-strip" id="fb6-0"></div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-num">Question 2 of 3</div>
+        <div class="q-text">A square has a perimeter of 52 cm. What is the length of one side?</div>
+        <div class="typed-wrap">
+          <input class="typed-input" id="ti6-1" type="text" placeholder="Answer…"/>
+          <span class="typed-unit">cm</span>
+          <button class="check-btn" onclick="typed(6,1,'13','52 ÷ 4 = 13 cm. A square has 4 equal sides.')">Check</button>
+        </div>
+        <div class="feedback-strip" id="fb6-1"></div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-num">Question 3 of 3</div>
+        <div class="q-text">An L-shape has an overall width of 10 cm and height of 8 cm. A 4 cm × 3 cm rectangle is removed from the top-right corner. What is the perimeter of the L-shape?</div>
+        <div class="options-grid">
+          <button class="opt" onclick="mc(6,2,0,3,'The 6 sides are: 10, 8, 4, 3, 6, 5. Check: vertical sides 8 = 3+5 ✓, horizontal sides 10 = 4+6 ✓. P = 36 cm')"><span class="opt-letter">A</span>30 cm</button>
+          <button class="opt" onclick="mc(6,2,1,3,'The 6 sides are: 10, 8, 4, 3, 6, 5. Check: vertical sides 8 = 3+5 ✓, horizontal sides 10 = 4+6 ✓. P = 36 cm')"><span class="opt-letter">B</span>32 cm</button>
+          <button class="opt" onclick="mc(6,2,2,3,'The 6 sides are: 10, 8, 4, 3, 6, 5. Check: vertical sides 8 = 3+5 ✓, horizontal sides 10 = 4+6 ✓. P = 36 cm')"><span class="opt-letter">C</span>34 cm</button>
+          <button class="opt" onclick="mc(6,2,3,3,'The 6 sides are: 10, 8, 4, 3, 6, 5. Check: vertical sides 8 = 3+5 ✓, horizontal sides 10 = 4+6 ✓. P = 36 cm')"><span class="opt-letter">D</span>36 cm</button>
+        </div>
+        <div class="feedback-strip" id="fb6-2"></div>
+      </div>
+
+      <div class="lesson-footer">
+        <button class="complete-btn" id="complete-6" onclick="markDone(6)">Mark Lesson Complete ✓</button>
+        <button class="next-btn" onclick="goLesson(7)">Next Lesson →</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════ LESSON 7 ══ -->
+    <div class="lesson" id="lesson-7">
+      <div class="lesson-eyebrow">Lesson 08 · Unit 2: Perimeter &amp; Area</div>
+      <div class="lesson-title">Area of Rectangles &amp; Squares</div>
+      <div class="lesson-subtitle">A = l × w and A = s² — including working backwards</div>
+
+      <div class="key-fact">
+        <strong>Rectangle:</strong> A = length × width
+        <span class="formula">A = l × w</span>
+        <strong>Square:</strong> A = side²
+        <span class="formula">A = s × s</span>
+        Area is always in <strong>square units</strong>: cm², m², km²
+      </div>
+
+      <div class="example">
+        <div class="example-label">Example — Working backwards (11+ favourite!)</div>
+        <p>A rectangle has area 48 cm² and length 8 cm. Find the width.</p>
+        <span class="ans">width = 48 ÷ 8 = 6 cm</span>
+      </div>
+      <div class="tip">If they give you the area and one side, always divide. Area ÷ known side = unknown side.</div>
+
+      <div class="practice-header">Practice Questions</div>
+
+      <div class="q-card">
+        <div class="q-num">Question 1 of 4</div>
+        <div class="q-text">A rectangle is 9 cm × 6 cm. What is its area?</div>
+        <div class="options-grid">
+          <button class="opt" onclick="mc(7,0,0,2,'A = 9 × 6 = 54 cm²')"><span class="opt-letter">A</span>30 cm²</button>
+          <button class="opt" onclick="mc(7,0,1,2,'A = 9 × 6 = 54 cm²')"><span class="opt-letter">B</span>45 cm²</button>
+          <button class="opt" onclick="mc(7,0,2,2,'A = 9 × 6 = 54 cm²')"><span class="opt-letter">C</span>54 cm²</button>
+          <button class="opt" onclick="mc(7,0,3,2,'A = 9 × 6 = 54 cm²')"><span class="opt-letter">D</span>63 cm²</button>
+        </div>
+        <div class="feedback-strip" id="fb7-0"></div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-num">Question 2 of 4</div>
+        <div class="q-text">A square has an area of 64 m². What is the length of one side?</div>
+        <div class="typed-wrap">
+          <input class="typed-input" id="ti7-1" type="text" placeholder="Answer…"/>
+          <span class="typed-unit">m</span>
+          <button class="check-btn" onclick="typed(7,1,'8','√64 = 8. So side = 8 m. (8 × 8 = 64 ✓)')">Check</button>
+        </div>
+        <div class="feedback-strip" id="fb7-1"></div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-num">Question 3 of 4</div>
+        <div class="q-text">A room is 4.5 m × 3.2 m. What is its area?</div>
+        <div class="typed-wrap">
+          <input class="typed-input" id="ti7-2" type="text" placeholder="Answer…"/>
+          <span class="typed-unit">m²</span>
+          <button class="check-btn" onclick="typed(7,2,'14.4','4.5 × 3.2 = 14.4 m². Try: 4 × 3.2 = 12.8, then 0.5 × 3.2 = 1.6, total = 14.4')">Check</button>
+        </div>
+        <div class="feedback-strip" id="fb7-2"></div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-num">Question 4 of 4</div>
+        <div class="q-text">A rectangle has area 84 cm² and length 12 cm. What is its width?</div>
+        <div class="typed-wrap">
+          <input class="typed-input" id="ti7-3" type="text" placeholder="Answer…"/>
+          <span class="typed-unit">cm</span>
+          <button class="check-btn" onclick="typed(7,3,'7','84 ÷ 12 = 7 cm')">Check</button>
+        </div>
+        <div class="feedback-strip" id="fb7-3"></div>
+      </div>
+
+      <div class="lesson-footer">
+        <button class="complete-btn" id="complete-7" onclick="markDone(7)">Mark Lesson Complete ✓</button>
+        <button class="next-btn" onclick="goLesson(8)">Next Lesson →</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════ LESSON 8 ══ -->
+    <div class="lesson" id="lesson-8">
+      <div class="lesson-eyebrow">Lesson 09 · Unit 2: Perimeter &amp; Area</div>
+      <div class="lesson-title">Estimating Area of Irregular Shapes</div>
+      <div class="lesson-subtitle">Grid counting method for curves and irregular outlines</div>
+
+      <div class="key-fact">
+        <strong>Grid method (3 steps):</strong><br>
+        1. Count all <strong>complete squares</strong> inside<br>
+        2. Count squares <strong>more than half</strong> inside — add these<br>
+        3. Ignore squares less than half inside
+        <span class="formula">Estimated area ≈ complete + mostly-inside squares</span>
+      </div>
+
+      <div class="diagram-wrap">
+        <svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+          <!-- grid -->
+          <defs><pattern id="grid10" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#d4cfc6" stroke-width="0.5"/></pattern></defs>
+          <rect x="10" y="10" width="200" height="180" fill="url(#grid10)" stroke="#d4cfc6"/>
+          <!-- irregular blob -->
+          <path d="M60,40 Q130,20 160,60 Q190,100 170,140 Q150,170 100,165 Q50,160 40,120 Q25,80 60,40Z" fill="#fef3dc" stroke="#e8a020" stroke-width="2" opacity="0.9"/>
+          <!-- some full squares highlighted -->
+          <rect x="70" y="60" width="20" height="20" fill="#1a7d6e" opacity="0.3"/>
+          <rect x="90" y="60" width="20" height="20" fill="#1a7d6e" opacity="0.3"/>
+          <rect x="110" y="60" width="20" height="20" fill="#1a7d6e" opacity="0.3"/>
+          <rect x="70" y="80" width="20" height="20" fill="#1a7d6e" opacity="0.3"/>
+          <rect x="90" y="80" width="20" height="20" fill="#1a7d6e" opacity="0.3"/>
+          <rect x="110" y="80" width="20" height="20" fill="#1a7d6e" opacity="0.3"/>
+          <rect x="130" y="80" width="20" height="20" fill="#1a7d6e" opacity="0.3"/>
+          <rect x="70" y="100" width="20" height="20" fill="#1a7d6e" opacity="0.3"/>
+          <rect x="90" y="100" width="20" height="20" fill="#1a7d6e" opacity="0.3"/>
+          <rect x="110" y="100" width="20" height="20" fill="#1a7d6e" opacity="0.3"/>
+          <rect x="130" y="100" width="20" height="20" fill="#1a7d6e" opacity="0.3"/>
+          <!-- partial squares -->
+          <rect x="50" y="80" width="20" height="20" fill="#e8a020" opacity="0.3"/>
+          <rect x="150" y="80" width="20" height="20" fill="#e8a020" opacity="0.3"/>
+          <rect x="50" y="100" width="20" height="20" fill="#e8a020" opacity="0.3"/>
+          <rect x="150" y="100" width="20" height="20" fill="#e8a020" opacity="0.3"/>
+          <!-- legend -->
+          <rect x="220" y="60" width="12" height="12" fill="#1a7d6e" opacity="0.6"/>
+          <text x="236" y="71" font-size="9" font-family="DM Sans,sans-serif" fill="#4a5568">Full squares</text>
+          <rect x="220" y="80" width="12" height="12" fill="#e8a020" opacity="0.6"/>
+          <text x="236" y="91" font-size="9" font-family="DM Sans,sans-serif" fill="#4a5568">Mostly inside</text>
+        </svg>
+        <div class="diagram-caption">Green = count fully · Amber = count if more than half inside · White = ignore</div>
+      </div>
+
+      <div class="tip">Always show your working: write "Complete squares: X, Partial squares: Y, Total ≈ X+Y cm²". Examiners want to see method!</div>
+
+      <div class="practice-header">Practice Questions</div>
+
+      <div class="q-card">
+        <div class="q-num">Question 1 of 2</div>
+        <div class="q-text">A leaf on 1 cm² squared paper has 22 complete squares and 9 squares more than half inside. Estimate the area.</div>
+        <div class="typed-wrap">
+          <input class="typed-input" id="ti8-0" type="text" placeholder="Answer…"/>
+          <span class="typed-unit">cm²</span>
+          <button class="check-btn" onclick="typed(8,0,'31','22 + 9 = 31 cm²')">Check</button>
+        </div>
+        <div class="feedback-strip" id="fb8-0"></div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-num">Question 2 of 2</div>
+        <div class="q-text">Why does using smaller squares on the grid give a more accurate estimate?</div>
+        <div class="options-grid">
+          <button class="opt" onclick="mc(8,1,0,2,'With smaller squares there are more of them, so the squares that straddle the boundary are a smaller fraction of the total — the estimate has a lower percentage error.')"><span class="opt-letter">A</span>Smaller squares are easier to count</button>
+          <button class="opt" onclick="mc(8,1,1,2,'With smaller squares there are more of them, so the squares that straddle the boundary are a smaller fraction of the total — the estimate has a lower percentage error.')"><span class="opt-letter">B</span>Bigger squares are more accurate</button>
+          <button class="opt" onclick="mc(8,1,2,2,'With smaller squares there are more of them, so the squares that straddle the boundary are a smaller fraction of the total — the estimate has a lower percentage error.')"><span class="opt-letter">C</span>The boundary squares are a smaller proportion of the total, so errors are smaller</button>
+          <button class="opt" onclick="mc(8,1,3,2,'With smaller squares there are more of them, so the squares that straddle the boundary are a smaller fraction of the total — the estimate has a lower percentage error.')"><span class="opt-letter">D</span>It makes no difference</button>
+        </div>
+        <div class="feedback-strip" id="fb8-1"></div>
+      </div>
+
+      <div class="lesson-footer">
+        <button class="complete-btn" id="complete-8" onclick="markDone(8)">Mark Lesson Complete ✓</button>
+        <button class="next-btn" onclick="goLesson(9)">Next Lesson →</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════ LESSON 9 ══ -->
+    <div class="lesson" id="lesson-9">
+      <div class="lesson-eyebrow">Lesson 10 · Unit 2: Volume &amp; Capacity</div>
+      <div class="lesson-title">Estimating Volume &amp; Capacity</div>
+      <div class="lesson-subtitle">1 ml = 1 cm³ — the link between capacity and volume</div>
+
+      <div class="key-fact">
+        <strong>Key link:</strong> 1 ml = 1 cm³ &nbsp;·&nbsp; 1 litre = 1,000 cm³
+        <span class="formula">Volume (cm³) = Capacity (ml)</span>
+        Reference: teaspoon ≈ 5 ml · mug ≈ 250 ml · bottle ≈ 500 ml · carton ≈ 1,000 ml
+      </div>
+
+      <div class="example">
+        <div class="example-label">Example — Fish tank</div>
+        <p>A tank is 40 cm × 20 cm × 25 cm. Capacity in litres?</p>
+        <span class="ans">V = 40 × 20 × 25 = 20,000 cm³ = 20,000 ml = 20 litres</span>
+      </div>
+
+      <div class="practice-header">Practice Questions</div>
+
+      <div class="q-card">
+        <div class="q-num">Question 1 of 2</div>
+        <div class="q-text">A fish tank is 50 cm × 30 cm × 25 cm. What is its capacity in litres?</div>
+        <div class="typed-wrap">
+          <input class="typed-input" id="ti9-0" type="text" placeholder="Answer…"/>
+          <span class="typed-unit">litres</span>
+          <button class="check-btn" onclick="typed(9,0,'37.5','50 × 30 × 25 = 37,500 cm³ = 37,500 ml = 37.5 litres')">Check</button>
+        </div>
+        <div class="feedback-strip" id="fb9-0"></div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-num">Question 2 of 2</div>
+        <div class="q-text">A container holds 3.5 litres. How many cm³ is that?</div>
+        <div class="options-grid">
+          <button class="opt" onclick="mc(9,1,0,2,'1 litre = 1,000 cm³, so 3.5 litres = 3,500 cm³')"><span class="opt-letter">A</span>35 cm³</button>
+          <button class="opt" onclick="mc(9,1,1,2,'1 litre = 1,000 cm³, so 3.5 litres = 3,500 cm³')"><span class="opt-letter">B</span>350 cm³</button>
+          <button class="opt" onclick="mc(9,1,2,2,'1 litre = 1,000 cm³, so 3.5 litres = 3,500 cm³')"><span class="opt-letter">C</span>3,500 cm³</button>
+          <button class="opt" onclick="mc(9,1,3,2,'1 litre = 1,000 cm³, so 3.5 litres = 3,500 cm³')"><span class="opt-letter">D</span>35,000 cm³</button>
+        </div>
+        <div class="feedback-strip" id="fb9-1"></div>
+      </div>
+
+      <div class="lesson-footer">
+        <button class="complete-btn" id="complete-9" onclick="markDone(9)">Mark Lesson Complete ✓</button>
+        <button class="next-btn" onclick="goLesson(10)">Next Lesson →</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════ LESSON 10 ══ -->
+    <div class="lesson" id="lesson-10">
+      <div class="lesson-eyebrow">Lesson 11 · Unit 2: Perimeter &amp; Area</div>
+      <div class="lesson-title">Same Area, Different Perimeter</div>
+      <div class="lesson-subtitle">A classic 11+ trap — and how to beat it</div>
+
+      <div class="key-fact">
+        Two shapes can have the <strong>same area but completely different perimeters</strong>.<br>
+        The squarer the shape → the smaller the perimeter for a given area.<br>
+        The more stretched → the larger the perimeter.
+      </div>
+
+      <div class="diagram-wrap">
+        <svg width="480" height="130" viewBox="0 0 480 130" xmlns="http://www.w3.org/2000/svg" font-family="DM Sans, sans-serif" font-size="10">
+          <!-- Shape A: 6×4 -->
+          <rect x="10" y="30" width="72" height="48" fill="#fef3dc" stroke="#e8a020" stroke-width="2"/>
+          <text x="46" y="24" text-anchor="middle" fill="#0d0d0d" font-size="9">6 × 4</text>
+          <text x="46" y="58" text-anchor="middle" fill="#0d0d0d" font-weight="700">Area: 24</text>
+          <text x="46" y="94" text-anchor="middle" fill="#e8a020" font-size="9">P = 20</text>
+          <!-- Shape B: 8×3 -->
+          <rect x="110" y="40" width="96" height="36" fill="#d4f0eb" stroke="#1a7d6e" stroke-width="2"/>
+          <text x="158" y="34" text-anchor="middle" fill="#0d0d0d" font-size="9">8 × 3</text>
+          <text x="158" y="62" text-anchor="middle" fill="#0d0d0d" font-weight="700">Area: 24</text>
+          <text x="158" y="94" text-anchor="middle" fill="#1a7d6e" font-size="9">P = 22</text>
+          <!-- Shape C: 12×2 -->
+          <rect x="230" y="50" width="144" height="24" fill="#fdecea" stroke="#d94f3d" stroke-width="2"/>
+          <text x="302" y="44" text-anchor="middle" fill="#0d0d0d" font-size="9">12 × 2</text>
+          <text x="302" y="66" text-anchor="middle" fill="#0d0d0d" font-weight="700">Area: 24</text>
+          <text x="302" y="90" text-anchor="middle" fill="#d94f3d" font-size="9">P = 28</text>
+          <!-- labels -->
+          <text x="46" y="114" text-anchor="middle" fill="#e8a020" font-weight="700" font-size="9">smallest P</text>
+          <text x="302" y="110" text-anchor="middle" fill="#d94f3d" font-weight="700" font-size="9">largest P</text>
+          <text x="240" y="120" text-anchor="middle" fill="#4a5568" font-size="9">All three have area = 24 cm²</text>
+        </svg>
+        <div class="diagram-caption">Same area (24 cm²), very different perimeters. The squarish shape always wins on perimeter!</div>
+      </div>
+
+      <div class="tip">The square is always the most efficient rectangle — it has the smallest perimeter for any given area. This comes up in "fencing" questions!</div>
+
+      <div class="practice-header">Practice Questions</div>
+
+      <div class="q-card">
+        <div class="q-num">Question 1 of 2</div>
+        <div class="q-text">A 5 × 10 cm rectangle and a 2 × 25 cm rectangle. Do they have the same area? Which has the larger perimeter?</div>
+        <div class="options-grid">
+          <button class="opt" onclick="mc(10,0,0,2,'Both have area 50 cm². P of 5×10 = 30 cm. P of 2×25 = 54 cm. The 2×25 rectangle has the much bigger perimeter — it is far more stretched out.')"><span class="opt-letter">A</span>Same area, 5×10 has larger perimeter</button>
+          <button class="opt" onclick="mc(10,0,1,2,'Both have area 50 cm². P of 5×10 = 30 cm. P of 2×25 = 54 cm. The 2×25 rectangle has the much bigger perimeter — it is far more stretched out.')"><span class="opt-letter">B</span>Different areas, cannot compare</button>
+          <button class="opt" onclick="mc(10,0,2,2,'Both have area 50 cm². P of 5×10 = 30 cm. P of 2×25 = 54 cm. The 2×25 rectangle has the much bigger perimeter — it is far more stretched out.')"><span class="opt-letter">C</span>Same area, 2×25 has larger perimeter</button>
+          <button class="opt" onclick="mc(10,0,3,2,'Both have area 50 cm². P of 5×10 = 30 cm. P of 2×25 = 54 cm. The 2×25 rectangle has the much bigger perimeter — it is far more stretched out.')"><span class="opt-letter">D</span>Same area and same perimeter</button>
+        </div>
+        <div class="feedback-strip" id="fb10-0"></div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-num">Question 2 of 2</div>
+        <div class="q-text">A farmer has 40 m of fencing to make a rectangular pen. What whole-number dimensions give the maximum area?</div>
+        <div class="options-grid">
+          <button class="opt" onclick="mc(10,1,0,3,'Maximum area for a fixed perimeter = square shape. P=40m → each side = 10m. Area = 100 m². Any other rectangle (e.g. 9×11=99, 8×12=96) gives less area.')"><span class="opt-letter">A</span>1 m × 19 m</button>
+          <button class="opt" onclick="mc(10,1,1,3,'Maximum area for a fixed perimeter = square shape. P=40m → each side = 10m. Area = 100 m². Any other rectangle (e.g. 9×11=99, 8×12=96) gives less area.')"><span class="opt-letter">B</span>8 m × 12 m</button>
+          <button class="opt" onclick="mc(10,1,2,3,'Maximum area for a fixed perimeter = square shape. P=40m → each side = 10m. Area = 100 m². Any other rectangle (e.g. 9×11=99, 8×12=96) gives less area.')"><span class="opt-letter">C</span>5 m × 15 m</button>
+          <button class="opt" onclick="mc(10,1,3,3,'Maximum area for a fixed perimeter = square shape. P=40m → each side = 10m. Area = 100 m². Any other rectangle (e.g. 9×11=99, 8×12=96) gives less area.')"><span class="opt-letter">D</span>10 m × 10 m</button>
+        </div>
+        <div class="feedback-strip" id="fb10-1"></div>
+      </div>
+
+      <div class="lesson-footer">
+        <button class="complete-btn" id="complete-10" onclick="markDone(10)">Mark Lesson Complete ✓</button>
+        <button class="next-btn" onclick="goLesson(11)">Next Lesson →</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════ LESSON 11 ══ -->
+    <div class="lesson" id="lesson-11">
+      <div class="lesson-eyebrow">Lesson 12 · Unit 2: Perimeter &amp; Area</div>
+      <div class="lesson-title">Using Formulae for Composite Shapes</div>
+      <div class="lesson-subtitle">Splitting irregular shapes into rectangles and calculating total area</div>
+
+      <div class="key-fact">
+        <strong>When to use a formula:</strong> Standard shapes (rectangle, triangle, parallelogram, cuboid)<br>
+        <strong>When to split:</strong> Composite shapes → split into rectangles → add (or subtract)
+        <span class="formula">Total area = Area₁ + Area₂ (or − if a piece removed)</span>
+      </div>
+
+      <div class="diagram-wrap">
+        <svg width="380" height="160" viewBox="0 0 380 160" xmlns="http://www.w3.org/2000/svg" font-family="DM Sans, sans-serif" font-size="10">
+          <!-- L-shape split into two rectangles -->
+          <rect x="20" y="20" width="140" height="50" fill="#fef3dc" stroke="#e8a020" stroke-width="2"/>
+          <text x="90" y="50" text-anchor="middle" fill="#0d0d0d" font-weight="700">10 × 4 = 40 cm²</text>
+          <rect x="20" y="70" width="80" height="70" fill="#d4f0eb" stroke="#1a7d6e" stroke-width="2"/>
+          <text x="60" y="110" text-anchor="middle" fill="#0d0d0d" font-weight="700">6 × 3 = 18 cm²</text>
+          <!-- dashed split line -->
+          <line x1="20" y1="70" x2="160" y2="70" stroke="#4a5568" stroke-dasharray="4,3" stroke-width="1.5"/>
+          <!-- labels -->
+          <text x="200" y="55" fill="#0d0d0d" font-size="12">Rectangle 1: 40 cm²</text>
+          <text x="200" y="75" fill="#0d0d0d" font-size="12">Rectangle 2: 18 cm²</text>
+          <line x1="197" y1="82" x2="310" y2="82" stroke="#d4cfc6" stroke-width="1"/>
+          <text x="200" y="100" fill="#1a7d6e" font-size="14" font-weight="700">Total: 58 cm²</text>
+          <text x="200" y="125" fill="#4a5568" font-size="9">Split the L along the dashed</text>
+          <text x="200" y="138" fill="#4a5568" font-size="9">line → two separate rectangles</text>
+        </svg>
+        <div class="diagram-caption">Split composites into rectangles — there's often more than one valid split!</div>
+      </div>
+
+      <div class="practice-header">Practice Questions</div>
+
+      <div class="q-card">
+        <div class="q-num">Question 1 of 3</div>
+        <div class="q-text">An L-shape is split into a 10 × 4 cm rectangle and a 6 × 3 cm rectangle. What is the total area?</div>
+        <div class="typed-wrap">
+          <input class="typed-input" id="ti11-0" type="text" placeholder="Answer…"/>
+          <span class="typed-unit">cm²</span>
+          <button class="check-btn" onclick="typed(11,0,'58','10 × 4 = 40, 6 × 3 = 18, 40 + 18 = 58 cm²')">Check</button>
+        </div>
+        <div class="feedback-strip" id="fb11-0"></div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-num">Question 2 of 3</div>
+        <div class="q-text">A 12 × 8 cm rectangle has a 3 × 3 cm square cut from one corner. What is the remaining area?</div>
+        <div class="typed-wrap">
+          <input class="typed-input" id="ti11-1" type="text" placeholder="Answer…"/>
+          <span class="typed-unit">cm²</span>
+          <button class="check-btn" onclick="typed(11,1,'87','12 × 8 = 96 cm², then 3 × 3 = 9 cm² removed. 96 - 9 = 87 cm²')">Check</button>
+        </div>
+        <div class="feedback-strip" id="fb11-1"></div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-num">Question 3 of 3</div>
+        <div class="q-text">A shape is a 10 × 6 cm rectangle with a 2 × 4 cm rectangle joined to its right side. What is the total area?</div>
+        <div class="typed-wrap">
+          <input class="typed-input" id="ti11-2" type="text" placeholder="Answer…"/>
+          <span class="typed-unit">cm²</span>
+          <button class="check-btn" onclick="typed(11,2,'68','10 × 6 = 60, 2 × 4 = 8, total = 68 cm²')">Check</button>
+        </div>
+        <div class="feedback-strip" id="fb11-2"></div>
+      </div>
+
+      <div class="lesson-footer">
+        <button class="complete-btn" id="complete-11" onclick="markDone(11)">Mark Lesson Complete ✓</button>
+        <button class="next-btn" onclick="goLesson(12)">Next Lesson →</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════ LESSON 12 ══ -->
+    <div class="lesson" id="lesson-12">
+      <div class="lesson-eyebrow">Lesson 13 · Unit 2: Area</div>
+      <div class="lesson-title">Area of Triangles</div>
+      <div class="lesson-subtitle">½ × base × height — and the perpendicular height trap</div>
+
+      <div class="key-fact">
+        <strong>Area of a triangle = ½ × base × perpendicular height</strong>
+        <span class="formula">A = ½ × b × h</span>
+        ⚠️ The height MUST be perpendicular (90°) to the base — never the slant side!
+      </div>
+
+      <div class="diagram-wrap">
+        <svg width="420" height="150" viewBox="0 0 420 150" xmlns="http://www.w3.org/2000/svg" font-family="DM Sans, sans-serif" font-size="11">
+          <!-- right-angled triangle -->
+          <polygon points="40,130 160,130 160,40" fill="#fef3dc" stroke="#e8a020" stroke-width="2"/>
+          <text x="100" y="145" text-anchor="middle" fill="#0d0d0d" font-weight="700">b = 120</text>
+          <text x="168" y="90" fill="#1a7d6e" font-weight="700">h = 90</text>
+          <rect x="151" y="121" width="9" height="9" fill="none" stroke="#1a7d6e" stroke-width="1.5"/>
+          <text x="100" y="90" text-anchor="middle" fill="#e8a020" font-size="10">A = ½ × 120 × 90</text>
+          <text x="100" y="106" text-anchor="middle" fill="#e8a020" font-size="10">= 5,400 units²</text>
+          <!-- scalene triangle with slant -->
+          <polygon points="260,130 380,130 310,50" fill="#d4f0eb" stroke="#1a7d6e" stroke-width="2"/>
+          <line x1="310" y1="50" x2="310" y2="130" stroke="#d94f3d" stroke-dasharray="4,3" stroke-width="2"/>
+          <rect x="301" y="121" width="9" height="9" fill="none" stroke="#d94f3d" stroke-width="1.5"/>
+          <text x="320" y="95" fill="#d94f3d" font-weight="700">h</text>
+          <text x="317" y="14" fill="#4a5568" font-size="9">NOT the slant!</text>
+          <text x="317" y="26" fill="#4a5568" font-size="9">Use dashed h</text>
+          <!-- slant label -->
+          <text x="360" y="90" fill="#4a5568" font-size="9" transform="rotate(-55,360,90)">slant ≠ h</text>
+        </svg>
+        <div class="diagram-caption">Left: right-angled triangle (h is a side). Right: scalene — h is the dashed vertical, NOT the slant side!</div>
+      </div>
+
+      <div class="example">
+        <div class="example-label">Working backwards</div>
+        <p>Area = 30 cm², height = 6 cm. Find the base.</p>
+        <span class="ans">30 = ½ × b × 6 → 30 = 3b → b = 10 cm</span>
+      </div>
+      <div class="tip">Memory trick: a triangle is always exactly half the rectangle that fits around it. Sketch the rectangle if you're confused!</div>
+
+      <div class="practice-header">Practice Questions</div>
+
+      <div class="q-card">
+        <div class="q-num">Question 1 of 4</div>
+        <div class="q-text">A triangle has base 12 cm and perpendicular height 7 cm. Find its area.</div>
+        <div class="typed-wrap">
+          <input class="typed-input" id="ti12-0" type="text" placeholder="Answer…"/>
+          <span class="typed-unit">cm²</span>
+          <button class="check-btn" onclick="typed(12,0,'42','½ × 12 × 7 = 42 cm²')">Check</button>
+        </div>
+        <div class="feedback-strip" id="fb12-0"></div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-num">Question 2 of 4</div>
+        <div class="q-text">A triangle has base 9 cm and area 36 cm². Find the perpendicular height.</div>
+        <div class="typed-wrap">
+          <input class="typed-input" id="ti12-1" type="text" placeholder="Answer…"/>
+          <span class="typed-unit">cm</span>
+          <button class="check-btn" onclick="typed(12,1,'8','36 = ½ × 9 × h → 36 = 4.5h → h = 8 cm')">Check</button>
+        </div>
+        <div class="feedback-strip" id="fb12-1"></div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-num">Question 3 of 4</div>
+        <div class="q-text">A right-angled triangle has its two shorter sides measuring 8 cm and 6 cm. What is its area?</div>
+        <div class="typed-wrap">
+          <input class="typed-input" id="ti12-2" type="text" placeholder="Answer…"/>
+          <span class="typed-unit">cm²</span>
+          <button class="check-btn" onclick="typed(12,2,'24','In a right-angled triangle the two shorter sides ARE the base and height. ½ × 8 × 6 = 24 cm²')">Check</button>
+        </div>
+        <div class="feedback-strip" id="fb12-2"></div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-num">Question 4 of 4</div>
+        <div class="q-text">A triangle has area 45 cm² and height 10 cm. Find the base.</div>
+        <div class="typed-wrap">
+          <input class="typed-input" id="ti12-3" type="text" placeholder="Answer…"/>
+          <span class="typed-unit">cm</span>
+          <button class="check-btn" onclick="typed(12,3,'9','45 = ½ × b × 10 → 45 = 5b → b = 9 cm')">Check</button>
+        </div>
+        <div class="feedback-strip" id="fb12-3"></div>
+      </div>
+
+      <div class="lesson-footer">
+        <button class="complete-btn" id="complete-12" onclick="markDone(12)">Mark Lesson Complete ✓</button>
+        <button class="next-btn" onclick="goLesson(13)">Next Lesson →</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════ LESSON 13 ══ -->
+    <div class="lesson" id="lesson-13">
+      <div class="lesson-eyebrow">Lesson 14 · Unit 2: Area</div>
+      <div class="lesson-title">Area of Parallelograms</div>
+      <div class="lesson-subtitle">base × perpendicular height — and why the slant side is a red herring</div>
+
+      <div class="key-fact">
+        <strong>Area of a parallelogram = base × perpendicular height</strong>
+        <span class="formula">A = b × h</span>
+        ⚠️ NOT base × slant side. The slant side is always a distractor in exam questions!
+      </div>
+
+      <div class="diagram-wrap">
+        <svg width="400" height="140" viewBox="0 0 400 140" xmlns="http://www.w3.org/2000/svg" font-family="DM Sans, sans-serif" font-size="11">
+          <!-- parallelogram -->
+          <polygon points="50,110 210,110 260,30 100,30" fill="#fef3dc" stroke="#e8a020" stroke-width="2.5"/>
+          <!-- height line -->
+          <line x1="130" y1="30" x2="130" y2="110" stroke="#d94f3d" stroke-dasharray="5,3" stroke-width="2"/>
+          <rect x="121" y="101" width="9" height="9" fill="none" stroke="#d94f3d" stroke-width="1.5"/>
+          <!-- labels -->
+          <text x="130" y="125" text-anchor="middle" fill="#0d0d0d" font-weight="700">base = 160</text>
+          <text x="90" y="73" fill="#d94f3d" font-weight="700">h = 80</text>
+          <text x="270" y="73" fill="#4a5568" font-size="9">slant side</text>
+          <text x="270" y="85" fill="#4a5568" font-size="9">≠ height!</text>
+          <!-- formula result -->
+          <text x="310" y="40" fill="#1a7d6e" font-size="12" font-weight="700">A = 160 × 80</text>
+          <text x="310" y="58" fill="#1a7d6e" font-size="12" font-weight="700">= 12,800 units²</text>
+        </svg>
+        <div class="diagram-caption">The dashed red line is the perpendicular height — always at 90° to the base</div>
+      </div>
+
+      <div class="tip">Why does this formula work? Slice the triangle off one end and slide it to the other — you get a rectangle with the same base and height. Rectangle area = b × h!</div>
+
+      <div class="practice-header">Practice Questions</div>
+
+      <div class="q-card">
+        <div class="q-num">Question 1 of 3</div>
+        <div class="q-text">A parallelogram has base 11 cm and perpendicular height 6 cm. Find its area.</div>
+        <div class="typed-wrap">
+          <input class="typed-input" id="ti13-0" type="text" placeholder="Answer…"/>
+          <span class="typed-unit">cm²</span>
+          <button class="check-btn" onclick="typed(13,0,'66','A = 11 × 6 = 66 cm²')">Check</button>
+        </div>
+        <div class="feedback-strip" id="fb13-0"></div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-num">Question 2 of 3</div>
+        <div class="q-text">A parallelogram has base 8 cm and area 56 cm². What is the perpendicular height?</div>
+        <div class="typed-wrap">
+          <input class="typed-input" id="ti13-1" type="text" placeholder="Answer…"/>
+          <span class="typed-unit">cm</span>
+          <button class="check-btn" onclick="typed(13,1,'7','56 = 8 × h → h = 7 cm')">Check</button>
+        </div>
+        <div class="feedback-strip" id="fb13-1"></div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-num">Question 3 of 3</div>
+        <div class="q-text">A parallelogram has base 14 cm, slant side 10 cm, and perpendicular height 8 cm. Find its area.</div>
+        <div class="options-grid">
+          <button class="opt" onclick="mc(13,2,0,2,'A = base × perpendicular height = 14 × 8 = 112 cm². The slant side of 10 cm is a red herring — ignore it!')"><span class="opt-letter">A</span>80 cm² (10 × 8)</button>
+          <button class="opt" onclick="mc(13,2,1,2,'A = base × perpendicular height = 14 × 8 = 112 cm². The slant side of 10 cm is a red herring — ignore it!')"><span class="opt-letter">B</span>140 cm² (14 × 10)</button>
+          <button class="opt" onclick="mc(13,2,2,2,'A = base × perpendicular height = 14 × 8 = 112 cm². The slant side of 10 cm is a red herring — ignore it!')"><span class="opt-letter">C</span>112 cm² (14 × 8)</button>
+          <button class="opt" onclick="mc(13,2,3,2,'A = base × perpendicular height = 14 × 8 = 112 cm². The slant side of 10 cm is a red herring — ignore it!')"><span class="opt-letter">D</span>56 cm² (½ × 14 × 8)</button>
+        </div>
+        <div class="feedback-strip" id="fb13-2"></div>
+      </div>
+
+      <div class="lesson-footer">
+        <button class="complete-btn" id="complete-13" onclick="markDone(13)">Mark Lesson Complete ✓</button>
+        <button class="next-btn" onclick="goLesson(14)">Next Lesson →</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════ LESSON 14 ══ -->
+    <div class="lesson" id="lesson-14">
+      <div class="lesson-eyebrow">Lesson 15 · Unit 3: Volume</div>
+      <div class="lesson-title">Volume of Cubes &amp; Cuboids</div>
+      <div class="lesson-subtitle">V = l × w × h and V = s³ — the most important 3D formula</div>
+
+      <div class="key-fact">
+        <strong>Cuboid:</strong> V = length × width × height
+        <span class="formula">V = l × w × h</span>
+        <strong>Cube:</strong> V = side³
+        <span class="formula">V = s × s × s</span>
+        Volume in cm³ · Remember: 1 cm³ = 1 ml · 1,000 cm³ = 1 litre
+      </div>
+
+      <div class="diagram-wrap">
+        <svg width="380" height="150" viewBox="0 0 380 150" xmlns="http://www.w3.org/2000/svg" font-family="DM Sans, sans-serif" font-size="10">
+          <!-- cuboid isometric -->
+          <polygon points="60,100 180,100 180,40 60,40" fill="#fef3dc" stroke="#e8a020" stroke-width="2"/>
+          <polygon points="60,40 100,10 220,10 180,40" fill="#f5e8c0" stroke="#e8a020" stroke-width="2"/>
+          <polygon points="180,40 220,10 220,70 180,100" fill="#e8d4a0" stroke="#e8a020" stroke-width="2"/>
+          <!-- labels -->
+          <text x="120" y="125" text-anchor="middle" fill="#0d0d0d" font-weight="700">length = 12</text>
+          <text x="205" y="55" fill="#0d0d0d" font-weight="700">h = 6</text>
+          <text x="140" y="28" text-anchor="middle" fill="#0d0d0d" font-weight="700">width = 5</text>
+          <!-- formula -->
+          <text x="260" y="50" fill="#1a7d6e" font-size="12" font-weight="700">V = 12 × 5 × 6</text>
+          <text x="260" y="68" fill="#1a7d6e" font-size="12" font-weight="700">= 360 cm³</text>
+          <text x="260" y="86" fill="#4a5568" font-size="9">= 360 ml</text>
+          <text x="260" y="99" fill="#4a5568" font-size="9">= 0.36 litres</text>
+        </svg>
+        <div class="diagram-caption">Cuboid volume — multiply all three dimensions together</div>
+      </div>
+
+      <div class="example">
+        <div class="example-label">Working backwards</div>
+        <p>V = 120 cm³, l = 6 cm, w = 4 cm. Find the height.</p>
+        <span class="ans">h = 120 ÷ (6 × 4) = 120 ÷ 24 = 5 cm</span>
+      </div>
+      <div class="tip">For working backwards: find the area of the base first (l × w), then divide the volume by that area to get the height.</div>
+
+      <div class="practice-header">Practice Questions</div>
+
+      <div class="q-card">
+        <div class="q-num">Question 1 of 4</div>
+        <div class="q-text">A cuboid is 8 cm × 3 cm × 5 cm. Find its volume.</div>
+        <div class="typed-wrap">
+          <input class="typed-input" id="ti14-0" type="text" placeholder="Answer…"/>
+          <span class="typed-unit">cm³</span>
+          <button class="check-btn" onclick="typed(14,0,'120','8 × 3 × 5 = 120 cm³. Try: 8 × 3 = 24, then 24 × 5 = 120')">Check</button>
+        </div>
+        <div class="feedback-strip" id="fb14-0"></div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-num">Question 2 of 4</div>
+        <div class="q-text">A cube has side length 6 cm. Find its volume.</div>
+        <div class="typed-wrap">
+          <input class="typed-input" id="ti14-1" type="text" placeholder="Answer…"/>
+          <span class="typed-unit">cm³</span>
+          <button class="check-btn" onclick="typed(14,1,'216','6³ = 6 × 6 × 6 = 36 × 6 = 216 cm³')">Check</button>
+        </div>
+        <div class="feedback-strip" id="fb14-1"></div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-num">Question 3 of 4</div>
+        <div class="q-text">A cuboid has volume 180 cm³, length 9 cm and width 4 cm. Find its height.</div>
+        <div class="typed-wrap">
+          <input class="typed-input" id="ti14-2" type="text" placeholder="Answer…"/>
+          <span class="typed-unit">cm</span>
+          <button class="check-btn" onclick="typed(14,2,'5','Base area = 9 × 4 = 36 cm². h = 180 ÷ 36 = 5 cm')">Check</button>
+        </div>
+        <div class="feedback-strip" id="fb14-2"></div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-num">Question 4 of 4</div>
+        <div class="q-text">A fish tank is 60 cm × 30 cm × 40 cm. How many litres does it hold when full?</div>
+        <div class="typed-wrap">
+          <input class="typed-input" id="ti14-3" type="text" placeholder="Answer…"/>
+          <span class="typed-unit">litres</span>
+          <button class="check-btn" onclick="typed(14,3,'72','60 × 30 × 40 = 72,000 cm³ = 72,000 ml = 72 litres')">Check</button>
+        </div>
+        <div class="feedback-strip" id="fb14-3"></div>
+      </div>
+
+      <div class="lesson-footer">
+        <button class="complete-btn" id="complete-14" onclick="markDone(14)">Mark Lesson Complete ✓</button>
+        <button class="next-btn" onclick="goLesson(15)">Well Done — See Formula Sheet →</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════ FORMULA SHEET ══ -->
+    <div class="lesson" id="lesson-15">
+      <div class="lesson-eyebrow">Reference</div>
+      <div class="lesson-title">Formula Sheet</div>
+      <div class="lesson-subtitle">Print this out — it belongs on your wall!</div>
+
+      <div class="formula-sheet">
+        <div class="f-card"><div class="f-icon">📏</div><div class="f-name">Perimeter</div><div class="f-formula">P = sum of all sides</div></div>
+        <div class="f-card"><div class="f-icon">🟦</div><div class="f-name">Rectangle Area</div><div class="f-formula">A = l × w</div></div>
+        <div class="f-card"><div class="f-icon">🟧</div><div class="f-name">Square Area</div><div class="f-formula">A = s²</div></div>
+        <div class="f-card"><div class="f-icon">🔺</div><div class="f-name">Triangle Area</div><div class="f-formula">A = ½ × b × h</div></div>
+        <div class="f-card"><div class="f-icon">▱</div><div class="f-name">Parallelogram</div><div class="f-formula">A = b × h</div></div>
+        <div class="f-card"><div class="f-icon">📦</div><div class="f-name">Cuboid Volume</div><div class="f-formula">V = l × w × h</div></div>
+        <div class="f-card"><div class="f-icon">🎲</div><div class="f-name">Cube Volume</div><div class="f-formula">V = s³</div></div>
+        <div class="f-card"><div class="f-icon">🚗</div><div class="f-name">Miles ↔ km</div><div class="f-formula">5 mi = 8 km</div></div>
+        <div class="f-card"><div class="f-icon">💧</div><div class="f-name">Volume ↔ Capacity</div><div class="f-formula">1 cm³ = 1 ml</div></div>
+      </div>
+
+      <div class="key-fact">
+        <strong>Conversion chain:</strong><br>
+        km ×1000→ m ×100→ cm ×10→ mm<br>
+        kg ×1000→ g &nbsp;&nbsp;&nbsp;&nbsp; litres ×1000→ ml<br>
+        <br>
+        <strong>Imperial:</strong> 5 miles = 8 km · 1 kg ≈ 2.2 lb · 1 litre ≈ 1.75 pints · 1 ft ≈ 30 cm
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════ MIXED QUIZ ══ -->
+    <div class="lesson" id="lesson-16">
+      <div class="lesson-eyebrow">11+ Challenge</div>
+      <div class="lesson-title">Mixed Quiz</div>
+      <div class="lesson-subtitle">10 questions across all 15 topics — 11+ exam style</div>
+
+      <div class="quiz-score-banner">
+        <div>
+          <div class="score-num" id="quizScore">0</div>
+          <div class="score-label">/ 10 correct</div>
+        </div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.6);max-width:300px">
+          Answer all questions, then review your score. Show your working on paper!
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-num">Question 1</div>
+        <div class="q-text">Convert 2.75 km to metres.</div>
+        <div class="typed-wrap"><input class="typed-input" id="mq0" placeholder="…"/><span class="typed-unit">m</span><button class="check-btn" onclick="mq(0,'2750','2.75 × 1,000 = 2,750 m')">Check</button></div>
+        <div class="feedback-strip" id="mfb0"></div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-num">Question 2</div>
+        <div class="q-text">Convert 48 km to miles. (5 miles = 8 km)</div>
+        <div class="typed-wrap"><input class="typed-input" id="mq1" placeholder="…"/><span class="typed-unit">miles</span><button class="check-btn" onclick="mq(1,'30','48 ÷ 8 = 6 · 6 × 5 = 30 miles')">Check</button></div>
+        <div class="feedback-strip" id="mfb1"></div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-num">Question 3</div>
+        <div class="q-text">A rectangle has length 13 cm and width 6 cm. What is its area?</div>
+        <div class="typed-wrap"><input class="typed-input" id="mq2" placeholder="…"/><span class="typed-unit">cm²</span><button class="check-btn" onclick="mq(2,'78','13 × 6 = 78 cm²')">Check</button></div>
+        <div class="feedback-strip" id="mfb2"></div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-num">Question 4</div>
+        <div class="q-text">A triangle has base 10 cm and perpendicular height 9 cm. Find its area.</div>
+        <div class="typed-wrap"><input class="typed-input" id="mq3" placeholder="…"/><span class="typed-unit">cm²</span><button class="check-btn" onclick="mq(3,'45','½ × 10 × 9 = 45 cm²')">Check</button></div>
+        <div class="feedback-strip" id="mfb3"></div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-num">Question 5</div>
+        <div class="q-text">A cube has side 4 cm. What is its volume?</div>
+        <div class="typed-wrap"><input class="typed-input" id="mq4" placeholder="…"/><span class="typed-unit">cm³</span><button class="check-btn" onclick="mq(4,'64','4³ = 4 × 4 × 4 = 64 cm³')">Check</button></div>
+        <div class="feedback-strip" id="mfb4"></div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-num">Question 6</div>
+        <div class="q-text">A parallelogram has base 7 cm and perpendicular height 8 cm. Find its area.</div>
+        <div class="typed-wrap"><input class="typed-input" id="mq5" placeholder="…"/><span class="typed-unit">cm²</span><button class="check-btn" onclick="mq(5,'56','7 × 8 = 56 cm²')">Check</button></div>
+        <div class="feedback-strip" id="mfb5"></div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-num">Question 7</div>
+        <div class="q-text">Convert 3.5 hours to minutes.</div>
+        <div class="typed-wrap"><input class="typed-input" id="mq6" placeholder="…"/><span class="typed-unit">minutes</span><button class="check-btn" onclick="mq(6,'210','3.5 × 60 = 210 minutes')">Check</button></div>
+        <div class="feedback-strip" id="mfb6"></div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-num">Question 8</div>
+        <div class="q-text">A cuboid is 6 cm × 4 cm × 5 cm. What is its volume?</div>
+        <div class="typed-wrap"><input class="typed-input" id="mq7" placeholder="…"/><span class="typed-unit">cm³</span><button class="check-btn" onclick="mq(7,'120','6 × 4 × 5 = 120 cm³')">Check</button></div>
+        <div class="feedback-strip" id="mfb7"></div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-num">Question 9</div>
+        <div class="q-text">A square has area 49 m². What is its perimeter?</div>
+        <div class="typed-wrap"><input class="typed-input" id="mq8" placeholder="…"/><span class="typed-unit">m</span><button class="check-btn" onclick="mq(8,'28','√49 = 7 m per side · P = 4 × 7 = 28 m')">Check</button></div>
+        <div class="feedback-strip" id="mfb8"></div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-num">Question 10</div>
+        <div class="q-text">Write 5 kg 8 g as a decimal number of kg.</div>
+        <div class="typed-wrap"><input class="typed-input" id="mq9" placeholder="…"/><span class="typed-unit">kg</span><button class="check-btn" onclick="mq(9,'5.008','8 g ÷ 1,000 = 0.008 kg · Answer: 5.008 kg (note the two zeros!)')">Check</button></div>
+        <div class="feedback-strip" id="mfb9"></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+let completed = new Set();
+let quizCorrect = 0;
+const TOTAL = 15;
+
+function goLesson(id) {
+  document.querySelectorAll('.lesson').forEach(l => l.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const l = document.getElementById('lesson-' + id);
+  const n = document.getElementById('nav-' + id);
+  if (l) { l.classList.add('active'); l.scrollIntoView({behavior:'smooth',block:'start'}); }
+  if (n) n.classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function mc(lessonId, qIdx, chosen, correct, explain) {
+  const card = document.querySelector(`#q${lessonId}-${qIdx}, .q-card:has(#fb${lessonId}-${qIdx})`);
+  const fb = document.getElementById(`fb${lessonId}-${qIdx}`);
+  const allOpts = fb.closest('.q-card').querySelectorAll('.opt');
+  allOpts.forEach(b => b.disabled = true);
+  allOpts[correct].classList.add('correct');
+  if (chosen !== correct) allOpts[chosen].classList.add('wrong');
+  fb.style.display = 'block';
+  fb.className = 'feedback-strip ' + (chosen === correct ? 'ok' : 'bad');
+  fb.textContent = chosen === correct ? '✓ Correct! ' + explain : '✗ Not quite. ' + explain;
+  if (chosen === correct) celebrate();
+}
+
+function typed(lessonId, qIdx, answer, explain) {
+  const inp = document.getElementById(`ti${lessonId}-${qIdx}`);
+  const fb = document.getElementById(`fb${lessonId}-${qIdx}`);
+  const val = inp.value.trim().replace(',', '').toLowerCase();
+  const ok = val === String(answer).toLowerCase().replace(',','');
+  fb.style.display = 'block';
+  fb.className = 'feedback-strip ' + (ok ? 'ok' : 'bad');
+  fb.textContent = ok ? '✓ Correct! ' + explain : '✗ Not quite. ' + explain;
+  inp.disabled = true;
+  if (ok) celebrate();
+}
+
+function markDone(id) {
+  if (!completed.has(id)) {
+    completed.add(id);
+    const navItem = document.getElementById('nav-' + id);
+    if (navItem) { navItem.classList.add('done'); }
+    const btn = document.getElementById('complete-' + id);
+    if (btn) { btn.textContent = '✓ Completed!'; btn.classList.add('done-state'); }
+    updateProgress();
+    celebrate();
+  }
+}
+
+function updateProgress() {
+  const n = completed.size;
+  document.getElementById('doneCount').textContent = n;
+  const circ = document.getElementById('progressCircle');
+  const circumference = 150.8;
+  const offset = circumference - (n / TOTAL) * circumference;
+  circ.style.strokeDashoffset = offset;
+}
+
+let quizScores = {};
+function mq(idx, answer, explain) {
+  if (quizScores[idx] !== undefined) return;
+  const inp = document.getElementById('mq' + idx);
+  const fb = document.getElementById('mfb' + idx);
+  const val = inp.value.trim().replace(',', '').toLowerCase();
+  const ok = val === String(answer).toLowerCase().replace(',','');
+  quizScores[idx] = ok ? 1 : 0;
+  fb.style.display = 'block';
+  fb.className = 'feedback-strip ' + (ok ? 'ok' : 'bad');
+  fb.textContent = (ok ? '✓ Correct! ' : '✗ ') + explain;
+  inp.disabled = true;
+  const total = Object.values(quizScores).reduce((a,b) => a+b, 0);
+  document.getElementById('quizScore').textContent = total;
+  if (ok) celebrate();
+}
+
+function celebrate() {
+  const overlay = document.getElementById('starsOverlay');
+  overlay.style.display = 'block';
+  const emojis = ['⭐','🌟','✨','🎉','🏆'];
+  for (let i = 0; i < 6; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    s.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    s.style.left = (20 + Math.random() * 60) + '%';
+    s.style.top = (40 + Math.random() * 40) + '%';
+    s.style.animationDelay = (i * 0.08) + 's';
+    overlay.appendChild(s);
+  }
+  setTimeout(() => { overlay.innerHTML = ''; overlay.style.display = 'none'; }, 1500);
+}
+
+// keyboard enter support
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.activeElement.classList.contains('typed-input')) {
+    const btn = document.activeElement.nextElementSibling;
+    if (btn && btn.tagName === 'BUTTON') btn.click();
+    else { const btn2 = document.activeElement.parentElement.querySelector('.check-btn'); if (btn2) btn2.click(); }
+  }
+});
+</script>
+</body>
+</html>
