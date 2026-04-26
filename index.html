@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sacha's 11+ Progress Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f5f0e8;
+  --ink: #1c1810;
+  --paper: #faf7f2;
+  --rule: #e8e0d0;
+  --gold: #b8860b;
+  --gold-light: #f5e8c0;
+  --green: #2d6a4f;
+  --green-light: #d8f0e4;
+  --amber: #c97d00;
+  --amber-light: #fef0d0;
+  --red: #a83232;
+  --red-light: #fde8e8;
+  --blue: #1e3f6e;
+  --blue-light: #dce8f5;
+  --mid: #6b6050;
+  --light: #a89880;
+  --mono: 'DM Mono', monospace;
+  --serif: 'Playfair Display', Georgia, serif;
+  --sans: 'DM Sans', sans-serif;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  min-height: 100vh;
+  padding: 0;
+}
+
+/* ── HEADER ── */
+.header {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 2.5rem 3rem 2rem;
+  position: relative;
+  overflow: hidden;
+}
+.header::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 220px; height: 220px;
+  border: 40px solid rgba(184,134,11,0.15);
+  border-radius: 50%;
+}
+.header::after {
+  content: '';
+  position: absolute;
+  bottom: -30px; left: 40%;
+  width: 120px; height: 120px;
+  border: 20px solid rgba(184,134,11,0.08);
+  border-radius: 50%;
+}
+.header-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+}
+.header h1 {
+  font-family: var(--serif);
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+.header h1 em {
+  font-style: italic;
+  color: var(--gold);
+  text-shadow: 0 0 40px rgba(184,134,11,0.3);
+}
+.header-sub {
+  font-size: 0.85rem;
+  color: rgba(250,247,242,0.55);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 500;
+  margin-top: 0.5rem;
+}
+.overall-ring {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+  z-index: 1;
+}
+.ring-wrap {
+  position: relative;
+  width: 90px; height: 90px;
+}
+.ring-wrap svg {
+  transform: rotate(-90deg);
+}
+.ring-pct {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.ring-pct .num {
+  font-family: var(--mono);
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: var(--gold);
+  line-height: 1;
+}
+.ring-pct .lbl {
+  font-size: 0.6rem;
+  color: rgba(250,247,242,0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.ring-label {
+  font-size: 0.7rem;
+  color: rgba(250,247,242,0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-align: center;
+}
+
+/* ── SUMMARY BAR ── */
+.summary-bar {
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
+  padding: 1rem 3rem;
+  display: flex;
+  gap: 2.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.stat {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+}
+.stat .n {
+  font-family: var(--mono);
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: var(--ink);
+}
+.stat .of {
+  font-size: 0.85rem;
+  color: var(--light);
+}
+.stat-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  margin-right: -1rem;
+}
+
+/* ── GRID ── */
+.grid-wrap {
+  padding: 2.5rem 3rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+/* ── DOMAIN CARD ── */
+.card {
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  overflow: hidden;
+  transition: box-shadow 0.2s, transform 0.2s;
+  position: relative;
+}
+.card:hover {
+  box-shadow: 0 6px 24px rgba(28,24,16,0.1);
+  transform: translateY(-2px);
+}
+.card-accent {
+  height: 4px;
+  width: 100%;
+}
+.card-head {
+  padding: 1.2rem 1.4rem 0.8rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.card-num {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--light);
+  letter-spacing: 0.1em;
+  margin-bottom: 0.25rem;
+}
+.card-title {
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.card-badge {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  font-weight: 500;
+  padding: 0.2rem 0.5rem;
+  border-radius: 2px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.badge-done    { background: var(--green-light); color: var(--green); }
+.badge-active  { background: var(--amber-light); color: var(--amber); }
+.badge-pending { background: var(--rule); color: var(--light); }
+
+/* progress bar */
+.card-progress {
+  padding: 0 1.4rem 0.6rem;
+}
+.prog-track {
+  background: var(--rule);
+  border-radius: 2px;
+  height: 4px;
+  margin-bottom: 0.35rem;
+}
+.prog-fill {
+  height: 4px;
+  border-radius: 2px;
+  transition: width 0.6s ease;
+}
+.prog-label {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--light);
+  display: flex;
+  justify-content: space-between;
+}
+
+/* topics list */
+.card-topics {
+  padding: 0.6rem 1.4rem 1.2rem;
+  border-top: 1px solid var(--rule);
+}
+.topic-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.35rem 0;
+  font-size: 0.8rem;
+  color: var(--mid);
+  line-height: 1.4;
+  border-bottom: 1px solid transparent;
+}
+.topic-item:last-child { border-bottom: none; }
+
+/* Confidence buttons */
+.conf-btns {
+  display: flex;
+  gap: 3px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.conf-btn {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  padding: 2px 6px;
+  border-radius: 2px;
+  border: 1px solid var(--rule);
+  background: transparent;
+  color: var(--light);
+  cursor: pointer;
+  transition: all 0.15s;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+.conf-btn:hover { border-color: var(--mid); color: var(--mid); }
+.conf-btn.active-low  { background: var(--red-light);   border-color: var(--red);   color: var(--red);   }
+.conf-btn.active-med  { background: var(--amber-light); border-color: var(--amber); color: var(--amber); }
+.conf-btn.active-high { background: var(--green-light); border-color: var(--green); color: var(--green); }
+
+.topic-item { cursor: default; }
+.topic-item:hover { color: var(--mid); }
+.topic-text { flex: 1; }
+.topic-text.done { text-decoration: line-through; color: var(--light); }
+
+/* Notes area */
+.card-notes {
+  padding: 0 1.4rem 1rem;
+}
+.notes-input {
+  width: 100%;
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  color: var(--mid);
+  background: var(--bg);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  padding: 0.5rem 0.7rem;
+  resize: vertical;
+  min-height: 48px;
+  outline: none;
+  line-height: 1.5;
+}
+.notes-input:focus { border-color: var(--gold); }
+.notes-input::placeholder { color: var(--light); font-style: italic; }
+
+/* ── FOOTER ── */
+footer {
+  padding: 1.5rem 3rem;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.footer-note {
+  font-size: 0.75rem;
+  color: var(--light);
+  font-style: italic;
+}
+.btn-reset {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--light);
+  background: none;
+  border: 1px solid var(--rule);
+  padding: 0.4rem 0.8rem;
+  border-radius: 2px;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  transition: all 0.15s;
+}
+.btn-reset:hover { color: var(--red); border-color: var(--red); }
+
+@media (max-width: 600px) {
+  .header, .summary-bar, .grid-wrap, footer { padding-left: 1.25rem; padding-right: 1.25rem; }
+  .grid-wrap { grid-template-columns: 1fr; }
+  .summary-bar { gap: 1.2rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <h1>Sacha's <em>11+</em><br>Progress</h1>
+      <div class="header-sub">City of London &amp; Westminster · 2026</div>
+    </div>
+    <div class="overall-ring">
+      <div class="ring-wrap">
+        <svg width="90" height="90" viewBox="0 0 90 90">
+          <circle cx="45" cy="45" r="36" fill="none" stroke="rgba(250,247,242,0.1)" stroke-width="8"/>
+          <circle cx="45" cy="45" r="36" fill="none" stroke="#b8860b" stroke-width="8"
+            stroke-dasharray="226.2" stroke-dashoffset="226.2" stroke-linecap="round"
+            id="overallRing"/>
+        </svg>
+        <div class="ring-pct">
+          <span class="num" id="overallPct">0%</span>
+          <span class="lbl">done</span>
+        </div>
+      </div>
+      <div class="ring-label">Overall<br>progress</div>
+    </div>
+  </div>
+</div>
+
+<div class="summary-bar">
+  <div class="stat">
+    <span class="n" id="statDone">0</span>
+    <span class="of">/ 11 domains active</span>
+  </div>
+  <div class="stat">
+    <span class="n" id="statTopics">0</span>
+    <span class="of">/ <span id="statTotal">0</span> topics rated</span>
+  </div>
+  <div class="stat">
+    <span class="n" style="color:var(--red)" id="statLow">0</span>
+    <span class="of">low confidence</span>
+  </div>
+  <div class="stat">
+    <span class="n" style="color:var(--amber)" id="statMed">0</span>
+    <span class="of">medium</span>
+  </div>
+  <div class="stat">
+    <span class="n" style="color:var(--green)" id="statHigh">0</span>
+    <span class="of">high</span>
+  </div>
+</div>
+
+<div class="grid-wrap" id="grid"></div>
+
+<footer>
+  <span class="footer-note">Click any ○ to mark a topic complete. Progress saves automatically.</span>
+  <button class="btn-reset" onclick="resetAll()">Reset all progress</button>
+</footer>
+
+<script>
+const DOMAINS = [
+  {
+    id: 1,
+    title: 'Number',
+    sub: 'Place value',
+    color: '#1e3f6e',
+    topics: [
+      'Read, write, order and compare numbers to 1,000,000',
+      'Determine the value of each digit to 1,000,000',
+      'Count forwards and backwards in powers of 10',
+      'Interpret negative numbers in context and count through zero',
+      'Round whole numbers to nearest 10, 100, 1,000, 10,000, 100,000',
+      'Solve place value problems with large whole numbers',
+      'Read Roman numerals to 1,000',
+      'Read, write, order and compare numbers to 10,000,000',
+      'Determine the value of each digit to 10,000,000',
+      'Round whole numbers to a required degree of accuracy',
+      'Use negative numbers and calculate intervals across zero',
+    ]
+  },
+  {
+    id: 2,
+    title: 'Arithmetic',
+    sub: 'Addition, subtraction, multiplication & division',
+    color: '#6b2f9e',
+    topics: [
+      'Column addition with numbers over 4 digits',
+      'Column subtraction with numbers over 4 digits',
+      'Add and subtract mentally with large numbers',
+      'Use rounding and estimation to check answers',
+      'Solve multi-step addition and subtraction word problems',
+      'Identify multiples, factors and factor pairs',
+      'Find common factors of two numbers',
+      'Recognise prime numbers, prime factors and composite numbers',
+      'Recall primes to 19 and test whether a number to 100 is prime',
+      'Multiply up to 4 digits by a 1-digit number',
+      'Multiply up to 4 digits by a 2-digit number (long multiplication)',
+      'Divide up to 4 digits by a 1-digit number (short division)',
+      'Divide up to 4 digits by a 2-digit number (long division)',
+      'Interpret remainders as whole number, fraction or rounded',
+      'Multiply and divide mentally using known facts',
+      'Multiply and divide by 10, 100 and 1,000',
+      'Recognise and use square and cube numbers',
+      'Use order of operations with all four operations and brackets',
+      'Solve problems involving scaling and simple rates',
+      'Solve mixed-operation problems and use the equals sign to show equivalence',
+    ]
+  },
+  {
+    id: 3,
+    title: 'Fractions',
+    sub: 'All fraction operations',
+    color: '#c0392b',
+    topics: [
+      'Compare and order fractions (related denominators)',
+      'Equivalent fractions',
+      'Convert between improper fractions and mixed numbers',
+      'Add and subtract fractions — same denominator',
+      'Add and subtract fractions — related denominators',
+      'Multiply fractions by whole numbers',
+      'Simplify fractions using common factors',
+      'Find common denominators using LCM',
+      'Compare and order fractions greater than 1',
+      'Add and subtract fractions — different denominators',
+      'Multiply pairs of proper fractions',
+      'Divide proper fractions by whole numbers',
+      'Fractions as operators (e.g. ¾ of 48)',
+    ]
+  },
+  {
+    id: 4,
+    title: 'Decimals',
+    sub: 'Place value, operations, rounding',
+    color: '#1a6e5e',
+    topics: [
+      'Decimals as fractions (read & write)',
+      'Tenths, hundredths, thousandths (recognise & relate)',
+      'Rounding to nearest whole & 1 d.p.',
+      'Order and compare up to 3 d.p.',
+      'Decimal problem solving (word problems)',
+      'Value of each digit to 3 d.p.',
+      'Multiply decimals by whole numbers to 2 d.p.',
+      'Written division with decimals to 2 d.p.',
+      'Multiply and divide by 10, 100, 1,000',
+      'Rounding to specified accuracy',
+    ]
+  },
+  {
+    id: 5,
+    title: 'Percentages',
+    sub: 'Equivalences, calculation',
+    color: '#7a4f1a',
+    topics: [
+      'Understand % as parts per hundred',
+      'Write percentages as fractions and decimals',
+      'Recall fraction–decimal–percentage equivalences',
+      'Calculate percentages of amounts',
+    ]
+  },
+  {
+    id: 6,
+    title: 'Ratio & Proportion',
+    sub: 'Scaling, sharing, notation',
+    color: '#4a1a6e',
+    topics: [
+      'Find missing values in proportional situations',
+      'Use ratio notation to compare quantities',
+      'Solve problems involving similar shapes and scale factors',
+      'Solve problems involving unequal sharing and grouping',
+    ]
+  },
+  {
+    id: 7,
+    title: 'Algebra',
+    sub: 'Formulae, sequences, unknowns',
+    color: '#1a4a1a',
+    topics: [
+      'Use simple formulae',
+      'Generate and describe linear number sequences',
+      'Express missing number problems algebraically',
+      'Find pairs of numbers satisfying an equation with two unknowns',
+      'Enumerate combinations of two variables',
+    ]
+  },
+  {
+    id: 8,
+    title: 'Measurement',
+    sub: 'Units, conversion, perimeter, area, volume',
+    color: '#1a3f5e',
+    topics: [
+      'Convert between metric units of length, mass and capacity',
+      'Use approximate metric/imperial equivalences',
+      'Solve problems converting between units of time',
+      'Solve measure problems using decimal notation and scaling',
+      'Convert between standard units with decimals up to 3 d.p.',
+      'Convert between miles and kilometres',
+      'Measure and calculate the perimeter of composite rectilinear shapes',
+      'Calculate and compare the area of rectangles and squares',
+      'Estimate the area of irregular shapes',
+      'Estimate volume and capacity',
+      'Recognise that same area can have different perimeters (and vice versa)',
+      'Recognise when formulae can be used for area and volume',
+      'Calculate the area of triangles',
+      'Calculate the area of parallelograms',
+      'Calculate, estimate and compare the volume of cubes and cuboids',
+    ]
+  },
+  {
+    id: 9,
+    title: 'Geometry',
+    sub: 'Properties of shape, position & direction',
+    color: '#5e1a3f',
+    topics: [
+      'Identify 3D shapes from 2D representations',
+      'Estimate and compare acute, obtuse and reflex angles',
+      'Draw given angles and measure them in degrees',
+      'Use angle facts: at a point, on a straight line, multiples of 90°',
+      'Use rectangle properties to find missing lengths and angles',
+      'Distinguish between regular and irregular polygons',
+      'Draw 2D shapes using given dimensions and angles',
+      'Recognise, describe and build 3D shapes including nets',
+      'Compare and classify geometric shapes by properties and size',
+      'Find unknown angles in triangles, quadrilaterals and regular polygons',
+      'Name and use circle parts: radius, diameter and circumference',
+      'Use angle facts for vertically opposite angles',
+      'Reflect and translate shapes using appropriate language',
+      'Describe positions on the full coordinate grid (all 4 quadrants)',
+      'Draw and translate simple shapes on the coordinate plane',
+      'Reflect shapes in the axes',
+    ]
+  },
+  {
+    id: 10,
+    title: 'Statistics',
+    sub: 'Graphs, tables, averages',
+    color: '#3f5e1a',
+    topics: [
+      'Solve comparison, sum and difference problems using line graphs',
+      'Complete, read and interpret tables and timetables',
+      'Interpret and construct pie charts and line graphs',
+      'Calculate and interpret the mean as an average',
+    ]
+  },
+  {
+    id: 11,
+    title: 'Working Mathematically',
+    sub: 'Vocabulary, reasoning, communication',
+    color: '#5e3a1a',
+    topics: [
+      'Read, spell and pronounce mathematical vocabulary correctly',
+      'Use mathematical vocabulary to describe and explain',
+      'Reason logically and present arguments clearly',
+      'Apply mathematics to unfamiliar problems',
+      'Check answers using estimation and inverse operations',
+    ]
+  },
+];
+
+// ── STATE ──────────────────────────────────────────────────────────────────
+const STORAGE_KEY = 'sacha_11plus_progress_v2';
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    const s = raw ? JSON.parse(raw) : {};
+    return { ticked: s.ticked || {}, notes: s.notes || {}, conf: s.conf || {} };
+  } catch(e) { return { ticked: {}, notes: {}, conf: {} }; }
+}
+
+function saveState(state) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+}
+
+let STATE = loadState();
+
+function tickKey(domainId, topicIdx) { return `d${domainId}_t${topicIdx}`; }
+
+function toggleTopic(domainId, topicIdx) {
+  const k = tickKey(domainId, topicIdx);
+  STATE.ticked[k] = !STATE.ticked[k];
+  if (!STATE.ticked[k]) delete STATE.conf[k]; // clear confidence when unticking
+  saveState(STATE);
+  render();
+}
+
+function setConfidence(domainId, topicIdx, level, event) {
+  event.stopPropagation();
+  const k = tickKey(domainId, topicIdx);
+  if (STATE.conf[k] === level) {
+    // clicking same level toggles off
+    delete STATE.conf[k];
+    delete STATE.ticked[k];
+  } else {
+    STATE.conf[k] = level;
+    STATE.ticked[k] = true; // auto-mark done when confidence is set
+  }
+  saveState(STATE);
+  render();
+}
+
+function saveNote(domainId, value) {
+  STATE.notes[`d${domainId}`] = value;
+  saveState(STATE);
+}
+
+function resetAll() {
+  if (confirm('Reset all progress? This cannot be undone.')) {
+    STATE = { ticked: {}, notes: {} };
+    saveState(STATE);
+    render();
+  }
+}
+
+// ── COMPUTE ────────────────────────────────────────────────────────────────
+function getDomainProgress(d) {
+  const done = d.topics.filter((_, i) => STATE.ticked[tickKey(d.id, i)]).length;
+  const low  = d.topics.filter((_, i) => STATE.conf[tickKey(d.id, i)] === 'low').length;
+  const med  = d.topics.filter((_, i) => STATE.conf[tickKey(d.id, i)] === 'med').length;
+  const high = d.topics.filter((_, i) => STATE.conf[tickKey(d.id, i)] === 'high').length;
+  return { done, total: d.topics.length, pct: d.topics.length ? Math.round(done / d.topics.length * 100) : 0, low, med, high };
+}
+
+function getOverall() {
+  let totalDone = 0, totalAll = 0;
+  DOMAINS.forEach(d => {
+    const p = getDomainProgress(d);
+    totalDone += p.done;
+    totalAll += p.total;
+  });
+  return { done: totalDone, total: totalAll, pct: totalAll ? Math.round(totalDone / totalAll * 100) : 0 };
+}
+
+// ── RENDER ─────────────────────────────────────────────────────────────────
+function statusBadge(pct) {
+  if (pct === 100) return ['badge-done', 'Complete ✓'];
+  if (pct > 0) return ['badge-active', 'In Progress'];
+  return ['badge-pending', 'Not started'];
+}
+
+function render() {
+  const overall = getOverall();
+
+  // Ring
+  const circumference = 2 * Math.PI * 36;
+  const offset = circumference * (1 - overall.pct / 100);
+  document.getElementById('overallRing').setAttribute('stroke-dashoffset', offset.toFixed(1));
+  document.getElementById('overallPct').textContent = overall.pct + '%';
+
+  // Stats
+  const activeDomains = DOMAINS.filter(d => getDomainProgress(d).done > 0).length;
+  let totalLow = 0, totalMed = 0, totalHigh = 0;
+  DOMAINS.forEach(d => { const p = getDomainProgress(d); totalLow += p.low; totalMed += p.med; totalHigh += p.high; });
+  document.getElementById('statDone').textContent = activeDomains;
+  document.getElementById('statTopics').textContent = overall.done;
+  document.getElementById('statTotal').textContent = overall.total;
+  document.getElementById('statLow').textContent = totalLow;
+  document.getElementById('statMed').textContent = totalMed;
+  document.getElementById('statHigh').textContent = totalHigh;
+
+  // Cards
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+
+  DOMAINS.forEach(d => {
+    const prog = getDomainProgress(d);
+    const [badgeClass, badgeLabel] = statusBadge(prog.pct);
+    const note = STATE.notes[`d${d.id}`] || '';
+
+    const card = document.createElement('div');
+    card.className = 'card';
+
+    const fillColor = prog.high === prog.done && prog.done > 0 ? '#2d6a4f'
+      : prog.low > 0 ? '#a83232'
+      : prog.pct > 0 ? '#c97d00' : '#d0c8b8';
+
+    const confSummary = prog.done > 0 ? `
+      <div style="display:flex;gap:6px;margin-top:4px;font-family:var(--mono);font-size:0.6rem;">
+        ${prog.low  > 0 ? `<span style="color:var(--red)">▪ ${prog.low} low</span>` : ''}
+        ${prog.med  > 0 ? `<span style="color:var(--amber)">▪ ${prog.med} med</span>` : ''}
+        ${prog.high > 0 ? `<span style="color:var(--green)">▪ ${prog.high} high</span>` : ''}
+      </div>` : '';
+
+    card.innerHTML = `
+      <div class="card-accent" style="background:${d.color}"></div>
+      <div class="card-head">
+        <div>
+          <div class="card-num">DOMAIN ${String(d.id).padStart(2,'0')}</div>
+          <div class="card-title">${d.title}</div>
+          <div style="font-size:0.75rem;color:var(--light);margin-top:2px">${d.sub}</div>
+        </div>
+        <span class="card-badge ${badgeClass}">${badgeLabel}</span>
+      </div>
+      <div class="card-progress">
+        <div class="prog-track">
+          <div class="prog-fill" style="width:${prog.pct}%;background:${fillColor}"></div>
+        </div>
+        <div class="prog-label">
+          <span>${prog.done} of ${prog.total} topics</span>
+          <span>${prog.pct}%</span>
+        </div>
+        ${confSummary}
+      </div>
+      <div class="card-topics">
+        ${d.topics.map((t, i) => {
+          const k = tickKey(d.id, i);
+          const done = !!STATE.ticked[k];
+          const conf = STATE.conf[k] || '';
+          return `<div class="topic-item">
+            <span class="topic-text ${done ? 'done' : ''}">${t}</span>
+            <div class="conf-btns">
+              <button class="conf-btn ${conf==='low'?'active-low':''}" onclick="setConfidence(${d.id},${i},'low',event)" title="Low confidence">L</button>
+              <button class="conf-btn ${conf==='med'?'active-med':''}" onclick="setConfidence(${d.id},${i},'med',event)" title="Medium confidence">M</button>
+              <button class="conf-btn ${conf==='high'?'active-high':''}" onclick="setConfidence(${d.id},${i},'high',event)" title="High confidence">H</button>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+      <div class="card-notes">
+        <textarea class="notes-input" placeholder="Notes, weak spots, next steps…" 
+          onchange="saveNote(${d.id},this.value)"
+          oninput="saveNote(${d.id},this.value)">${note}</textarea>
+      </div>
+    `;
+
+    grid.appendChild(card);
+  });
+}
+
+render();
+</script>
+</body>
+</html>
