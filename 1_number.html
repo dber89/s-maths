@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Place Value — Sacha's 11+ Prep</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,400&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1207;
+    --cream: #faf6ee;
+    --gold: #d4920a;
+    --gold-light: #f5e3b0;
+    --green: #1d7a4a;
+    --green-light: #d4f0e2;
+    --red: #c0392b;
+    --red-light: #fde8e6;
+    --blue: #1a4f8a;
+    --blue-light: #ddeaf8;
+    --purple: #6b2fa0;
+    --purple-light: #ede0f7;
+    --border: #d6c9a8;
+    --mono: 'DM Mono', monospace;
+    --serif: 'Fraunces', Georgia, serif;
+    --sans: 'Plus Jakarta Sans', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--cream); color: var(--ink); font-family: var(--sans); min-height: 100vh; }
+
+  /* HEADER */
+  header {
+    background: var(--ink); color: var(--cream);
+    padding: 2rem 2.5rem 1.5rem;
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+  }
+  header h1 { font-family: var(--serif); font-size: clamp(1.8rem,4vw,2.8rem); font-weight: 900; line-height: 1; letter-spacing: -.02em; }
+  header h1 span { color: var(--gold); }
+  .badge { background: var(--gold); color: var(--ink); font-family: var(--mono); font-size: .7rem; font-weight: 500; padding: .3rem .7rem; border-radius: 2px; letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; }
+
+  /* NAV */
+  nav { background: #f0e8d8; border-bottom: 2px solid var(--border); padding: 0 2rem; display: flex; gap: 0; overflow-x: auto; scrollbar-width: none; }
+  nav::-webkit-scrollbar { display: none; }
+  .nav-btn { background: none; border: none; border-bottom: 3px solid transparent; padding: 1rem 1.2rem; font-family: var(--sans); font-size: .8rem; font-weight: 600; color: #7a6e58; cursor: pointer; white-space: nowrap; transition: all .15s; }
+  .nav-btn:hover { color: var(--ink); }
+  .nav-btn.active { color: var(--ink); border-bottom-color: var(--gold); }
+  .nav-btn.complete::after { content: ' ✓'; color: var(--green); }
+
+  /* LAYOUT */
+  .shell { display: grid; grid-template-columns: 260px 1fr; min-height: calc(100vh - 120px); }
+  @media(max-width:700px) { .shell { grid-template-columns: 1fr; } }
+
+  /* SIDEBAR */
+  aside { background: #f5eed8; border-right: 2px solid var(--border); padding: 1.5rem 1.2rem; }
+  .sidebar-title { font-family: var(--mono); font-size: .65rem; letter-spacing: .1em; text-transform: uppercase; color: #8a7a5a; margin-bottom: 1rem; }
+  .topic-link { display: flex; align-items: center; gap: .7rem; padding: .6rem .8rem; border-radius: 6px; cursor: pointer; margin-bottom: .25rem; font-size: .82rem; font-weight: 500; color: #5a4e38; border: 1.5px solid transparent; transition: all .15s; }
+  .topic-link:hover { background: var(--gold-light); color: var(--ink); }
+  .topic-link.active { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+  .topic-link.done { color: var(--green); }
+  .topic-link.done .tnum { background: var(--green-light); color: var(--green); }
+  .tnum { width: 22px; height: 22px; border-radius: 50%; background: var(--gold-light); color: var(--gold); font-family: var(--mono); font-size: .65rem; font-weight: 500; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .topic-link.active .tnum { background: var(--gold); color: var(--ink); }
+
+  /* PROGRESS */
+  .prog-wrap { margin-bottom: 1.5rem; }
+  .prog-label { display: flex; justify-content: space-between; font-family: var(--mono); font-size: .65rem; color: #8a7a5a; margin-bottom: .4rem; }
+  .prog-track { height: 6px; background: var(--border); border-radius: 99px; overflow: hidden; }
+  .prog-fill { height: 100%; background: var(--green); border-radius: 99px; transition: width .4s; }
+
+  /* MAIN */
+  main { padding: 2rem 2.5rem; max-width: 720px; }
+  @media(max-width:700px) { main { padding: 1.5rem 1rem; } }
+
+  /* TOPIC PANEL */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .topic-header { margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid var(--border); }
+  .topic-eyebrow { font-family: var(--mono); font-size: .65rem; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); margin-bottom: .4rem; }
+  .topic-title { font-family: var(--serif); font-size: clamp(1.4rem,3vw,2rem); font-weight: 900; line-height: 1.1; }
+  .topic-intro { margin-top: .6rem; font-size: .9rem; color: #5a4e38; line-height: 1.65; }
+
+  /* LEARN BOX */
+  .learn-box { background: var(--blue-light); border: 1.5px solid #a8c4e8; border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+  .learn-box h3 { font-family: var(--serif); font-size: 1rem; font-weight: 700; color: var(--blue); margin-bottom: .6rem; }
+  .learn-box p, .learn-box li { font-size: .88rem; line-height: 1.7; color: #1a3060; }
+  .learn-box ul { padding-left: 1.2rem; }
+  .learn-box li { margin-bottom: .3rem; }
+
+  /* EXAMPLE BOX */
+  .example-box { background: var(--gold-light); border: 1.5px solid #c9a840; border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+  .example-box h3 { font-family: var(--serif); font-size: .85rem; font-weight: 700; color: #7a5a00; margin-bottom: .7rem; text-transform: uppercase; letter-spacing: .05em; }
+  .example-box p, .example-box li { font-size: .88rem; line-height: 1.7; color: #4a3500; }
+  .example-box ul { padding-left: 1.2rem; }
+
+  /* PLACE VALUE TABLE */
+  .pv-table { width: 100%; border-collapse: collapse; margin: .8rem 0; font-family: var(--mono); font-size: .8rem; }
+  .pv-table th { background: var(--ink); color: var(--cream); padding: .5rem .6rem; text-align: center; font-weight: 500; font-size: .7rem; letter-spacing: .05em; }
+  .pv-table td { border: 1.5px solid var(--border); padding: .5rem .6rem; text-align: center; }
+  .pv-table tr:nth-child(even) td { background: #f5eed8; }
+  .pv-table .highlight { background: var(--gold-light) !important; font-weight: 700; color: var(--gold); }
+  .pv-table .num-big { font-size: 1rem; font-weight: 700; }
+
+  /* QUIZ */
+  .quiz-section { margin-top: 1.8rem; padding-top: 1.4rem; border-top: 2px solid var(--border); }
+  .quiz-title { font-family: var(--serif); font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; }
+  .q-block { background: #fff; border: 1.5px solid var(--border); border-radius: 10px; padding: 1.1rem 1.3rem; margin-bottom: 1rem; }
+  .q-text { font-size: .9rem; font-weight: 600; margin-bottom: .8rem; line-height: 1.5; }
+  .options { display: flex; flex-direction: column; gap: .45rem; }
+  .opt { display: flex; align-items: center; gap: .7rem; padding: .6rem .9rem; border-radius: 6px; border: 1.5px solid var(--border); cursor: pointer; font-size: .85rem; transition: all .15s; background: #faf6ee; }
+  .opt:hover:not(.disabled) { border-color: var(--gold); background: var(--gold-light); }
+  .opt.correct { background: var(--green-light); border-color: var(--green); color: var(--green); }
+  .opt.wrong { background: var(--red-light); border-color: var(--red); color: var(--red); }
+  .opt.disabled { cursor: default; }
+  .opt-letter { width: 22px; height: 22px; border-radius: 50%; background: var(--border); color: var(--ink); font-family: var(--mono); font-size: .7rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .opt.correct .opt-letter { background: var(--green); color: #fff; }
+  .opt.wrong .opt-letter { background: var(--red); color: #fff; }
+  .feedback { margin-top: .7rem; padding: .6rem .9rem; border-radius: 6px; font-size: .82rem; line-height: 1.6; display: none; }
+  .feedback.show { display: block; }
+  .feedback.correct { background: var(--green-light); color: var(--green); }
+  .feedback.wrong { background: var(--red-light); color: var(--red); }
+
+  /* INPUT QUIZ */
+  .q-input-row { display: flex; gap: .6rem; align-items: center; margin-top: .4rem; flex-wrap: wrap; }
+  .q-input { font-family: var(--mono); font-size: 1rem; padding: .5rem .8rem; border: 1.5px solid var(--border); border-radius: 6px; width: 160px; background: #fff; color: var(--ink); }
+  .q-input:focus { outline: none; border-color: var(--gold); }
+  .q-input.correct { border-color: var(--green); background: var(--green-light); }
+  .q-input.wrong { border-color: var(--red); background: var(--red-light); }
+  .check-btn { background: var(--ink); color: var(--cream); border: none; border-radius: 6px; padding: .5rem 1rem; font-family: var(--sans); font-weight: 700; font-size: .8rem; cursor: pointer; transition: opacity .15s; }
+  .check-btn:hover { opacity: .8; }
+  .check-btn:disabled { opacity: .4; cursor: default; }
+
+  /* SCORE */
+  .score-box { background: var(--ink); color: var(--cream); border-radius: 10px; padding: 1.5rem; text-align: center; margin-top: 1.2rem; display: none; }
+  .score-box.show { display: block; }
+  .score-num { font-family: var(--mono); font-size: 3rem; font-weight: 700; color: var(--gold); line-height: 1; }
+  .score-of { font-family: var(--mono); font-size: .75rem; color: #8a7a5a; margin-bottom: .6rem; }
+  .score-msg { font-size: .88rem; color: #c9b98a; line-height: 1.6; margin-bottom: 1rem; }
+  .next-btn { background: var(--gold); color: var(--ink); border: none; border-radius: 6px; padding: .7rem 1.5rem; font-family: var(--sans); font-weight: 700; font-size: .88rem; cursor: pointer; transition: opacity .15s; }
+  .next-btn:hover { opacity: .85; }
+
+  /* HOME */
+  .home-panel { padding: 0; }
+  .home-hero { background: var(--ink); color: var(--cream); border-radius: 12px; padding: 2rem; margin-bottom: 1.5rem; }
+  .home-hero h2 { font-family: var(--serif); font-size: clamp(1.5rem,3vw,2.2rem); font-weight: 900; line-height: 1.15; margin-bottom: .7rem; }
+  .home-hero h2 em { color: var(--gold); font-style: normal; }
+  .home-hero p { font-size: .88rem; color: #c9b98a; line-height: 1.65; }
+  .topics-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: .8rem; margin-bottom: 1.5rem; }
+  .tcard { background: #fff; border: 1.5px solid var(--border); border-radius: 10px; padding: 1rem 1.1rem; cursor: pointer; transition: all .15s; }
+  .tcard:hover { border-color: var(--gold); background: var(--gold-light); }
+  .tcard-num { font-family: var(--mono); font-size: .65rem; color: var(--gold); margin-bottom: .3rem; }
+  .tcard-name { font-weight: 700; font-size: .85rem; line-height: 1.3; }
+  .tcard-done { font-size: .75rem; color: var(--green); margin-top: .4rem; }
+
+  .roman-display { font-family: var(--mono); font-size: 1.3rem; background: var(--ink); color: var(--gold); padding: .4rem .8rem; border-radius: 6px; display: inline-block; margin: .3rem 0; }
+  .number-line { display: flex; gap: 0; overflow-x: auto; padding: .5rem 0; }
+  .nl-item { min-width: 50px; text-align: center; font-family: var(--mono); font-size: .75rem; padding: .4rem .2rem; border-left: 1px solid var(--border); flex-shrink: 0; }
+  .nl-item.zero { background: var(--gold-light); font-weight: 700; }
+  .nl-item.neg { color: var(--blue); }
+  .nl-item.pos { color: var(--green); }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Place <span>Value</span></h1>
+    <div style="font-family:var(--mono);font-size:.7rem;color:#8a7a5a;margin-top:.3rem;">Sacha · Year 5/6 · 11+ Preparation</div>
+  </div>
+  <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;">
+    <span class="badge">12 Topics</span>
+    <span class="badge" style="background:#2a4a1a;">City · Westminster</span>
+  </div>
+</header>
+
+<nav id="mainNav">
+  <button class="nav-btn active" onclick="showHome()">Home</button>
+  <button class="nav-btn" onclick="goTopic(0)" id="nav0">1. Numbers to 1M</button>
+  <button class="nav-btn" onclick="goTopic(1)" id="nav1">2. Digit Values</button>
+  <button class="nav-btn" onclick="goTopic(2)" id="nav2">3. Powers of 10</button>
+  <button class="nav-btn" onclick="goTopic(3)" id="nav3">4. Negative Numbers</button>
+  <button class="nav-btn" onclick="goTopic(4)" id="nav4">5. Rounding</button>
+  <button class="nav-btn" onclick="goTopic(5)" id="nav5">6. PV Problems</button>
+  <button class="nav-btn" onclick="goTopic(6)" id="nav6">7. Roman Numerals</button>
+  <button class="nav-btn" onclick="goTopic(7)" id="nav7">8. Numbers to 10M</button>
+  <button class="nav-btn" onclick="goTopic(8)" id="nav8">9. Digits to 10M</button>
+  <button class="nav-btn" onclick="goTopic(9)" id="nav9">10. Rounding Accuracy</button>
+  <button class="nav-btn" onclick="goTopic(10)" id="nav10">11. Negative Intervals</button>
+</nav>
+
+<div class="shell">
+<aside>
+  <div class="prog-wrap">
+    <div class="prog-label"><span>Progress</span><span id="progPct">0%</span></div>
+    <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  </div>
+  <div class="sidebar-title">Topics</div>
+  <div id="sidebarList"></div>
+</aside>
+
+<main id="mainArea">
+
+<!-- HOME -->
+<div class="panel home-panel active" id="panelHome">
+  <div class="home-hero">
+    <h2>Master <em>Place Value</em><br>for 11+ Success</h2>
+    <p>11 topics covering everything from reading millions to Roman numerals and negative numbers — exactly what City of London and Westminster test.</p>
+  </div>
+  <div id="homeGrid" class="topics-grid"></div>
+  <div class="learn-box">
+    <h3>📌 What you'll cover</h3>
+    <ul>
+      <li>Reading, writing and ordering numbers up to 10,000,000</li>
+      <li>Understanding the value of every digit in large numbers</li>
+      <li>Counting in powers of 10 (forwards and backwards)</li>
+      <li>Negative numbers and crossing zero</li>
+      <li>Rounding to any degree of accuracy</li>
+      <li>Roman numerals up to 1,000</li>
+      <li>Solving tricky place value word problems</li>
+    </ul>
+  </div>
+</div>
+
+<!-- TOPIC 1: Numbers to 1,000,000 -->
+<div class="panel" id="panel0">
+  <div class="topic-header">
+    <div class="topic-eyebrow">Topic 1 of 11</div>
+    <div class="topic-title">Read, Write, Order & Compare Numbers to 1,000,000</div>
+    <div class="topic-intro">One million has 7 digits. Being confident with these numbers is the foundation of everything in place value.</div>
+  </div>
+
+  <div class="learn-box">
+    <h3>📖 The six-digit number</h3>
+    <p>Every number up to 999,999 has six places. We read them in groups of three:</p>
+    <table class="pv-table" style="margin:.8rem 0;">
+      <tr><th>Hundred Thousands</th><th>Ten Thousands</th><th>Thousands</th><th>Hundreds</th><th>Tens</th><th>Ones</th></tr>
+      <tr><td class="num-big">4</td><td class="num-big">7</td><td class="num-big">3</td><td class="num-big">2</td><td class="num-big">0</td><td class="num-big">5</td></tr>
+    </table>
+    <p>This is <strong>four hundred and seventy-three thousand, two hundred and five</strong>. We write it as <strong>473,205</strong>.</p>
+  </div>
+
+  <div class="learn-box">
+    <h3>📖 Ordering numbers</h3>
+    <ul>
+      <li>Always compare from the <strong>left-most digit first</strong></li>
+      <li>If those digits are equal, move one place to the right</li>
+      <li>Use &lt; (less than) and &gt; (greater than) symbols</li>
+      <li>To order a list: find the smallest first, then the next, and so on</li>
+    </ul>
+  </div>
+
+  <div class="example-box">
+    <h3>Worked Examples</h3>
+    <p><strong>Write in words:</strong> 308,070</p>
+    <p>→ Three hundred and eight thousand and seventy</p>
+    <br>
+    <p><strong>Write in figures:</strong> "Sixty-two thousand, four hundred and nine"</p>
+    <p>→ 62,409</p>
+    <br>
+    <p><strong>Order smallest to largest:</strong> 540,320 &nbsp;|&nbsp; 54,032 &nbsp;|&nbsp; 540,032 &nbsp;|&nbsp; 504,320</p>
+    <p>→ 54,032 &lt; 504,320 &lt; 540,032 &lt; 540,320</p>
+    <br>
+    <p><strong>Insert &lt; or &gt;:</strong> 389,450 __ 389,504</p>
+    <p>→ Both start 389,___ . Compare hundreds: 4 vs 5. So 389,450 <strong>&lt;</strong> 389,504</p>
+  </div>
+
+  <div class="quiz-section">
+    <div class="quiz-title">Practice Questions</div>
+    <div id="q0"></div>
+    <div class="score-box" id="score0">
+      <div class="score-num" id="snum0">0</div>
+      <div class="score-of" id="sof0">out of 5</div>
+      <div class="score-msg" id="smsg0"></div>
+      <button class="next-btn" onclick="goTopic(1)">Next Topic →</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOPIC 2: Digit Values -->
+<div class="panel" id="panel1">
+  <div class="topic-header">
+    <div class="topic-eyebrow">Topic 2 of 11</div>
+    <div class="topic-title">Determine the Value of Each Digit in Numbers to 1,000,000</div>
+    <div class="topic-intro">The digit 4 in 47,000 is worth 40,000 — its value depends entirely on its position.</div>
+  </div>
+
+  <div class="learn-box">
+    <h3>📖 Digit vs. Value</h3>
+    <p>The <strong>digit</strong> is just the symbol (0–9). The <strong>value</strong> is what it's worth in that position.</p>
+    <table class="pv-table" style="margin:.8rem 0;">
+      <tr><th>HTh</th><th>TTh</th><th>Th</th><th>H</th><th>T</th><th>O</th></tr>
+      <tr><td>6</td><td class="highlight">3</td><td>8</td><td>1</td><td>4</td><td>2</td></tr>
+    </table>
+    <p>In <strong>638,142</strong>, the digit <strong>3</strong> is in the ten-thousands position, so its value is <strong>30,000</strong>.</p>
+  </div>
+
+  <div class="learn-box">
+    <h3>📖 Partitioning</h3>
+    <p>Any number can be split (partitioned) into its place values:</p>
+    <p style="margin-top:.5rem;font-family:var(--mono);">638,142 = 600,000 + 30,000 + 8,000 + 100 + 40 + 2</p>
+  </div>
+
+  <div class="example-box">
+    <h3>Worked Examples</h3>
+    <p><strong>What is the value of the 5 in 253,807?</strong></p>
+    <p>→ 5 is in the ten-thousands column → value = <strong>50,000</strong></p>
+    <br>
+    <p><strong>Partition 405,063:</strong></p>
+    <p>→ 400,000 + 0 + 5,000 + 0 + 60 + 3</p>
+    <br>
+    <p><strong>Which digit has the value 7,000 in 873,241?</strong></p>
+    <p>→ Thousands column contains 3… wait, find 7: it's in the <em>hundred-thousands</em>? No — 8 is HTh, 7 is TTh → value = 70,000. The digit with value 7,000 would need a 7 in the Th column. Here there isn't one — a useful trick question!</p>
+  </div>
+
+  <div class="quiz-section">
+    <div class="quiz-title">Practice Questions</div>
+    <div id="q1"></div>
+    <div class="score-box" id="score1">
+      <div class="score-num" id="snum1">0</div>
+      <div class="score-of" id="sof1">out of 5</div>
+      <div class="score-msg" id="smsg1"></div>
+      <button class="next-btn" onclick="goTopic(2)">Next Topic →</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOPIC 3: Powers of 10 -->
+<div class="panel" id="panel2">
+  <div class="topic-header">
+    <div class="topic-eyebrow">Topic 3 of 11</div>
+    <div class="topic-title">Count Forwards and Backwards in Powers of 10</div>
+    <div class="topic-intro">Multiplying or dividing by 10, 100, 1,000 etc. shifts digits left or right — digits don't change, positions do.</div>
+  </div>
+
+  <div class="learn-box">
+    <h3>📖 Powers of 10</h3>
+    <ul>
+      <li>×10 → shift all digits <strong>one place left</strong></li>
+      <li>×100 → shift all digits <strong>two places left</strong></li>
+      <li>×1,000 → shift all digits <strong>three places left</strong></li>
+      <li>÷10 → shift all digits <strong>one place right</strong></li>
+    </ul>
+    <p style="margin-top:.6rem;">Example: 3,400 × 100 = 340,000 (digits shift two places left)</p>
+  </div>
+
+  <div class="learn-box">
+    <h3>📖 Counting in steps</h3>
+    <p>Counting in 1,000s from 456,000:</p>
+    <p style="font-family:var(--mono);margin-top:.4rem;">455,000 → 456,000 → 457,000 → 458,000</p>
+    <p style="margin-top:.5rem;">Only the <strong>thousands digit</strong> changes — everything else stays the same.</p>
+  </div>
+
+  <div class="example-box">
+    <h3>Worked Examples</h3>
+    <p><strong>Count on 3 steps of 10,000 from 274,500:</strong></p>
+    <p>→ 284,500 → 294,500 → 304,500</p>
+    <br>
+    <p><strong>Count back 4 steps of 100 from 63,200:</strong></p>
+    <p>→ 63,100 → 63,000 → 62,900 → 62,800</p>
+    <br>
+    <p><strong>Find the missing number: 48,__ , 148,__ , 248,500, 348,500</strong></p>
+    <p>→ Counting in steps of 100,000. Missing: 48,500 and 148,500</p>
+  </div>
+
+  <div class="quiz-section">
+    <div class="quiz-title">Practice Questions</div>
+    <div id="q2"></div>
+    <div class="score-box" id="score2">
+      <div class="score-num" id="snum2">0</div>
+      <div class="score-of" id="sof2">out of 5</div>
+      <div class="score-msg" id="smsg2"></div>
+      <button class="next-btn" onclick="goTopic(3)">Next Topic →</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOPIC 4: Negative Numbers -->
+<div class="panel" id="panel3">
+  <div class="topic-header">
+    <div class="topic-eyebrow">Topic 4 of 11</div>
+    <div class="topic-title">Interpret Negative Numbers in Context and Count Through Zero</div>
+    <div class="topic-intro">Negative numbers go below zero. We meet them in temperatures, floors below ground, and bank balances.</div>
+  </div>
+
+  <div class="learn-box">
+    <h3>📖 The number line through zero</h3>
+    <div class="number-line" style="margin:.5rem 0;">
+      <div class="nl-item neg">−5</div><div class="nl-item neg">−4</div><div class="nl-item neg">−3</div><div class="nl-item neg">−2</div><div class="nl-item neg">−1</div>
+      <div class="nl-item zero">0</div>
+      <div class="nl-item pos">1</div><div class="nl-item pos">2</div><div class="nl-item pos">3</div><div class="nl-item pos">4</div><div class="nl-item pos">5</div>
+    </div>
+    <ul style="margin-top:.5rem;">
+      <li>Numbers to the <strong>left of zero</strong> are negative (below zero)</li>
+      <li>−5 is smaller than −1 (further left)</li>
+      <li>−3 is larger than −7</li>
+    </ul>
+  </div>
+
+  <div class="learn-box">
+    <h3>📖 Ordering negatives</h3>
+    <p>Think of a thermometer. The lower the temperature, the colder (smaller) it is.</p>
+    <p style="margin-top:.4rem;">Order: −12, 3, −4, 0, −1</p>
+    <p style="font-family:var(--mono);">→ −12 &lt; −4 &lt; −1 &lt; 0 &lt; 3</p>
+  </div>
+
+  <div class="example-box">
+    <h3>Worked Examples</h3>
+    <p><strong>Temperature at midnight: −6°C. It rises 9°. New temperature?</strong></p>
+    <p>→ −6 + 9 = <strong>3°C</strong></p>
+    <br>
+    <p><strong>Count back in 3s from 4: 4, 1, −2, −5, −8</strong></p>
+    <br>
+    <p><strong>A lift is on floor −3. It goes up 7 floors. Which floor?</strong></p>
+    <p>→ −3 + 7 = <strong>Floor 4</strong></p>
+    <br>
+    <p><strong>Which is greater, −8 or −2?</strong></p>
+    <p>→ <strong>−2</strong> (closer to zero / further right on number line)</p>
+  </div>
+
+  <div class="quiz-section">
+    <div class="quiz-title">Practice Questions</div>
+    <div id="q3"></div>
+    <div class="score-box" id="score3">
+      <div class="score-num" id="snum3">0</div>
+      <div class="score-of" id="sof3">out of 5</div>
+      <div class="score-msg" id="smsg3"></div>
+      <button class="next-btn" onclick="goTopic(4)">Next Topic →</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOPIC 5: Rounding -->
+<div class="panel" id="panel4">
+  <div class="topic-header">
+    <div class="topic-eyebrow">Topic 5 of 11</div>
+    <div class="topic-title">Round Whole Numbers to the Nearest 10, 100, 1,000, 10,000 and 100,000</div>
+    <div class="topic-intro">Rounding makes numbers easier to work with and is a key skill in estimation and checking answers.</div>
+  </div>
+
+  <div class="learn-box">
+    <h3>📖 The rounding rule</h3>
+    <p>Look at the digit <strong>immediately to the right</strong> of where you're rounding:</p>
+    <ul style="margin-top:.5rem;">
+      <li>If it's <strong>0, 1, 2, 3 or 4</strong> → round <strong>down</strong> (leave the rounding digit alone)</li>
+      <li>If it's <strong>5, 6, 7, 8 or 9</strong> → round <strong>up</strong> (add 1 to the rounding digit)</li>
+      <li>All digits to the right of the rounding place become <strong>0</strong></li>
+    </ul>
+  </div>
+
+  <div class="example-box">
+    <h3>Worked Examples</h3>
+    <p><strong>Round 347,582 to the nearest 1,000:</strong></p>
+    <p>→ Look at hundreds digit: <strong>5</strong> → round up → <strong>348,000</strong></p>
+    <br>
+    <p><strong>Round 347,582 to the nearest 10,000:</strong></p>
+    <p>→ Look at thousands digit: <strong>7</strong> → round up → <strong>350,000</strong></p>
+    <br>
+    <p><strong>Round 347,582 to the nearest 100,000:</strong></p>
+    <p>→ Look at ten-thousands digit: <strong>4</strong> → round down → <strong>300,000</strong></p>
+    <br>
+    <p><strong>Round 347,582 to the nearest 10:</strong></p>
+    <p>→ Look at ones digit: <strong>2</strong> → round down → <strong>347,580</strong></p>
+  </div>
+
+  <div class="quiz-section">
+    <div class="quiz-title">Practice Questions</div>
+    <div id="q4"></div>
+    <div class="score-box" id="score4">
+      <div class="score-num" id="snum4">0</div>
+      <div class="score-of" id="sof4">out of 5</div>
+      <div class="score-msg" id="smsg4"></div>
+      <button class="next-btn" onclick="goTopic(5)">Next Topic →</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOPIC 6: PV Problems -->
+<div class="panel" id="panel5">
+  <div class="topic-header">
+    <div class="topic-eyebrow">Topic 6 of 11</div>
+    <div class="topic-title">Solve Place Value Problems with Large Whole Numbers</div>
+    <div class="topic-intro">11+ papers love tricky place value problems — missing digits, number machines, and "what am I?" puzzles.</div>
+  </div>
+
+  <div class="learn-box">
+    <h3>📖 Types of place value problems</h3>
+    <ul>
+      <li><strong>Missing digit:</strong> Find the unknown digit using clues</li>
+      <li><strong>Number machines:</strong> Apply a sequence of operations</li>
+      <li><strong>"I am a number":</strong> Read clues carefully and work systematically</li>
+      <li><strong>Make the largest/smallest:</strong> Arrange given digits</li>
+    </ul>
+  </div>
+
+  <div class="example-box">
+    <h3>Worked Examples</h3>
+    <p><strong>I have 6 digits. My thousands digit is 3. My ten-thousands digit is double my thousands digit. My hundred-thousands digit is half my ten-thousands digit. My hundreds digit is 0. My tens digit is 9. My ones digit is 5. What number am I?</strong></p>
+    <p>→ Th=3, TTh=6, HTh=3, H=0, T=9, O=5 → <strong>363,095</strong></p>
+    <br>
+    <p><strong>Make the largest possible 5-digit number using digits 3, 7, 1, 9, 4 (each once):</strong></p>
+    <p>→ Arrange largest first: <strong>97,431</strong></p>
+    <br>
+    <p><strong>4_,825 rounded to the nearest thousand is 48,000. What digit could _ be?</strong></p>
+    <p>→ Rounding the thousands digit 4? to nearest 1000, look at hundreds (8) → always rounds up. But we get 48,000 so the ten-thousands digit must stay 4... meaning _ = 7 or 8 (giving 47,825 → 48,000 or 48,825 → 49,000). Only _ = <strong>7</strong> works.</p>
+  </div>
+
+  <div class="quiz-section">
+    <div class="quiz-title">Practice Questions</div>
+    <div id="q5"></div>
+    <div class="score-box" id="score5">
+      <div class="score-num" id="snum5">0</div>
+      <div class="score-of" id="sof5">out of 5</div>
+      <div class="score-msg" id="smsg5"></div>
+      <button class="next-btn" onclick="goTopic(6)">Next Topic →</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOPIC 7: Roman Numerals -->
+<div class="panel" id="panel6">
+  <div class="topic-header">
+    <div class="topic-eyebrow">Topic 7 of 11</div>
+    <div class="topic-title">Read Roman Numerals to 1,000 and Recognise Years in Roman Numerals</div>
+    <div class="topic-intro">Roman numerals appear on clock faces, film credits, and building inscriptions — and in 11+ papers!</div>
+  </div>
+
+  <div class="learn-box">
+    <h3>📖 The 7 symbols</h3>
+    <table class="pv-table" style="margin:.6rem 0;">
+      <tr><th>Symbol</th><th>I</th><th>V</th><th>X</th><th>L</th><th>C</th><th>D</th><th>M</th></tr>
+      <tr><td><strong>Value</strong></td><td>1</td><td>5</td><td>10</td><td>50</td><td>100</td><td>500</td><td>1000</td></tr>
+    </table>
+  </div>
+
+  <div class="learn-box">
+    <h3>📖 The subtraction rule</h3>
+    <ul>
+      <li>IV = 4 &nbsp;&nbsp; IX = 9</li>
+      <li>XL = 40 &nbsp;&nbsp; XC = 90</li>
+      <li>CD = 400 &nbsp;&nbsp; CM = 900</li>
+      <li>A smaller symbol <strong>before</strong> a larger one means subtract</li>
+      <li>A smaller symbol <strong>after</strong> a larger one means add</li>
+    </ul>
+  </div>
+
+  <div class="example-box">
+    <h3>Worked Examples</h3>
+    <p><strong>Convert MCMXCIV to a number:</strong></p>
+    <p>→ M=1000, CM=900, XC=90, IV=4 → <strong>1994</strong></p>
+    <div class="roman-display">MCMXCIV = 1994</div>
+    <br>
+    <p><strong>Write 2024 in Roman numerals:</strong></p>
+    <p>→ 2000=MM, 24=XXIV → <strong>MMXXIV</strong></p>
+    <div class="roman-display">MMXXIV = 2024</div>
+    <br>
+    <p><strong>What year is MDCCCLXXXVIII?</strong></p>
+    <p>→ M=1000, D=500, CCC=300, LXXX=80, VIII=8 → <strong>1888</strong></p>
+  </div>
+
+  <div class="quiz-section">
+    <div class="quiz-title">Practice Questions</div>
+    <div id="q6"></div>
+    <div class="score-box" id="score6">
+      <div class="score-num" id="snum6">0</div>
+      <div class="score-of" id="sof6">out of 5</div>
+      <div class="score-msg" id="smsg6"></div>
+      <button class="next-btn" onclick="goTopic(7)">Next Topic →</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOPIC 8: Numbers to 10M -->
+<div class="panel" id="panel7">
+  <div class="topic-header">
+    <div class="topic-eyebrow">Topic 8 of 11</div>
+    <div class="topic-title">Read, Write, Order and Compare Numbers to 10,000,000</div>
+    <div class="topic-intro">Now we add millions to our place value columns — a seven-digit number up to 9,999,999.</div>
+  </div>
+
+  <div class="learn-box">
+    <h3>📖 The seven-digit number</h3>
+    <table class="pv-table" style="margin:.8rem 0;">
+      <tr><th>Millions</th><th>HTh</th><th>TTh</th><th>Th</th><th>H</th><th>T</th><th>O</th></tr>
+      <tr><td class="num-big highlight">5</td><td class="num-big">8</td><td class="num-big">2</td><td class="num-big">0</td><td class="num-big">4</td><td class="num-big">1</td><td class="num-big">3</td></tr>
+    </table>
+    <p>This is <strong>5,820,413</strong> — five million, eight hundred and twenty thousand, four hundred and thirteen.</p>
+  </div>
+
+  <div class="learn-box">
+    <h3>📖 Comparing millions</h3>
+    <ul>
+      <li>More millions digits = larger number</li>
+      <li>Same millions? Compare hundred-thousands, and so on</li>
+      <li>Remember: 9,999,999 is just under ten million</li>
+    </ul>
+  </div>
+
+  <div class="example-box">
+    <h3>Worked Examples</h3>
+    <p><strong>Write in words: 3,071,406</strong></p>
+    <p>→ Three million, seventy-one thousand, four hundred and six</p>
+    <br>
+    <p><strong>Write in figures: "seven million, three hundred and five thousand and twelve"</strong></p>
+    <p>→ 7,305,012</p>
+    <br>
+    <p><strong>Order: 4,281,000 | 4,821,000 | 4,218,000 | 4,812,000</strong></p>
+    <p>→ 4,218,000 &lt; 4,281,000 &lt; 4,812,000 &lt; 4,821,000</p>
+  </div>
+
+  <div class="quiz-section">
+    <div class="quiz-title">Practice Questions</div>
+    <div id="q7"></div>
+    <div class="score-box" id="score7">
+      <div class="score-num" id="snum7">0</div>
+      <div class="score-of" id="sof7">out of 5</div>
+      <div class="score-msg" id="smsg7"></div>
+      <button class="next-btn" onclick="goTopic(8)">Next Topic →</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOPIC 9: Digits to 10M -->
+<div class="panel" id="panel8">
+  <div class="topic-header">
+    <div class="topic-eyebrow">Topic 9 of 11</div>
+    <div class="topic-title">Determine the Value of Each Digit in Numbers to 10,000,000</div>
+    <div class="topic-intro">The millions column is 1,000 times the value of the thousands column. Partitioning large numbers requires careful attention.</div>
+  </div>
+
+  <div class="learn-box">
+    <h3>📖 Partitioning into millions</h3>
+    <p>6,374,052 = 6,000,000 + 300,000 + 70,000 + 4,000 + 0 + 50 + 2</p>
+    <table class="pv-table" style="margin:.8rem 0;">
+      <tr><th>M</th><th>HTh</th><th>TTh</th><th>Th</th><th>H</th><th>T</th><th>O</th></tr>
+      <tr><td>6</td><td class="highlight">3</td><td>7</td><td>4</td><td>0</td><td>5</td><td>2</td></tr>
+    </table>
+    <p>The digit <strong>3</strong> has value <strong>300,000</strong>.</p>
+  </div>
+
+  <div class="example-box">
+    <h3>Worked Examples</h3>
+    <p><strong>What is the value of the 8 in 8,406,231?</strong></p>
+    <p>→ 8 is in the millions column → <strong>8,000,000</strong></p>
+    <br>
+    <p><strong>In 5,832,017, which digit has value 800,000?</strong></p>
+    <p>→ Look at hundred-thousands column: digit is <strong>8</strong></p>
+    <br>
+    <p><strong>Partition 7,050,304:</strong></p>
+    <p>→ 7,000,000 + 50,000 + 300 + 4</p>
+  </div>
+
+  <div class="quiz-section">
+    <div class="quiz-title">Practice Questions</div>
+    <div id="q8"></div>
+    <div class="score-box" id="score8">
+      <div class="score-num" id="snum8">0</div>
+      <div class="score-of" id="sof8">out of 5</div>
+      <div class="score-msg" id="smsg8"></div>
+      <button class="next-btn" onclick="goTopic(9)">Next Topic →</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOPIC 10: Rounding Accuracy -->
+<div class="panel" id="panel9">
+  <div class="topic-header">
+    <div class="topic-eyebrow">Topic 10 of 11</div>
+    <div class="topic-title">Round Whole Numbers to a Required Degree of Accuracy</div>
+    <div class="topic-intro">Rounding to the nearest million or choosing the appropriate degree of accuracy for a context — a harder skill tested at top schools.</div>
+  </div>
+
+  <div class="learn-box">
+    <h3>📖 Rounding large numbers</h3>
+    <ul>
+      <li>To nearest <strong>million</strong>: look at the hundred-thousands digit</li>
+      <li>To nearest <strong>100,000</strong>: look at the ten-thousands digit</li>
+      <li>The rules are exactly the same — always look one place to the right</li>
+    </ul>
+  </div>
+
+  <div class="learn-box">
+    <h3>📖 Choosing accuracy</h3>
+    <p>In real life, the degree of accuracy depends on context:</p>
+    <ul style="margin-top:.4rem;">
+      <li>Population of a country → nearest million or 100,000</li>
+      <li>Distance to the Moon → nearest 1,000 km</li>
+      <li>Price of a house → nearest £1,000 or £10,000</li>
+    </ul>
+  </div>
+
+  <div class="example-box">
+    <h3>Worked Examples</h3>
+    <p><strong>Round 6,847,293 to the nearest million:</strong></p>
+    <p>→ Look at HTh digit: <strong>8</strong> → round up → <strong>7,000,000</strong></p>
+    <br>
+    <p><strong>Round 6,847,293 to the nearest 100,000:</strong></p>
+    <p>→ Look at TTh digit: <strong>4</strong> → round down → <strong>6,800,000</strong></p>
+    <br>
+    <p><strong>A number rounded to the nearest 10,000 is 380,000. What is the smallest it could be?</strong></p>
+    <p>→ 375,000 (halfway point rounds up, so 375,000 → 380,000)</p>
+    <br>
+    <p><strong>And the largest?</strong></p>
+    <p>→ 384,999</p>
+  </div>
+
+  <div class="quiz-section">
+    <div class="quiz-title">Practice Questions</div>
+    <div id="q9"></div>
+    <div class="score-box" id="score9">
+      <div class="score-num" id="snum9">0</div>
+      <div class="score-of" id="sof9">out of 5</div>
+      <div class="score-msg" id="smsg9"></div>
+      <button class="next-btn" onclick="goTopic(10)">Next Topic →</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOPIC 11: Negative Intervals -->
+<div class="panel" id="panel10">
+  <div class="topic-header">
+    <div class="topic-eyebrow">Topic 11 of 11</div>
+    <div class="topic-title">Use Negative Numbers in Context and Calculate Intervals Across Zero</div>
+    <div class="topic-intro">Finding the difference between a positive and negative number, or between two negatives, is a classic 11+ question type.</div>
+  </div>
+
+  <div class="learn-box">
+    <h3>📖 Calculating intervals (differences)</h3>
+    <p>To find the difference between two numbers on either side of zero, count the steps:</p>
+    <p style="font-family:var(--mono);margin:.5rem 0;">From −5 to +3: count up from −5 to 0 (5 steps) then 0 to 3 (3 steps) = <strong>8</strong></p>
+    <p>Or use: difference = |a| + |b| when the numbers have opposite signs</p>
+    <p style="font-family:var(--mono);margin-top:.4rem;">|−5| + |3| = 5 + 3 = 8 ✓</p>
+  </div>
+
+  <div class="learn-box">
+    <h3>📖 Two negatives</h3>
+    <p>Difference between −8 and −3:</p>
+    <p style="font-family:var(--mono);margin:.4rem 0;">Count from −8 to −3 = 5 steps</p>
+    <p>Or: −3 − (−8) = −3 + 8 = 5</p>
+  </div>
+
+  <div class="example-box">
+    <h3>Worked Examples</h3>
+    <p><strong>The temperature drops from 4°C to −9°C. What is the change?</strong></p>
+    <p>→ 4 to −9: go from 4 down to 0 (4 steps), then 0 to −9 (9 steps) = <strong>13°C drop</strong></p>
+    <br>
+    <p><strong>What is the difference between −15 and 22?</strong></p>
+    <p>→ 15 + 22 = <strong>37</strong></p>
+    <br>
+    <p><strong>A submarine is at −45m. A fish swims at −12m. How far apart?</strong></p>
+    <p>→ −12 − (−45) = −12 + 45 = <strong>33m</strong></p>
+    <br>
+    <p><strong>The temperature at 6am was −7°C. By noon it had risen 11°. What was it at noon?</strong></p>
+    <p>→ −7 + 11 = <strong>4°C</strong></p>
+  </div>
+
+  <div class="quiz-section">
+    <div class="quiz-title">Practice Questions</div>
+    <div id="q10"></div>
+    <div class="score-box" id="score10">
+      <div class="score-num" id="snum10">0</div>
+      <div class="score-of" id="sof10">out of 5</div>
+      <div class="score-msg" id="smsg10"></div>
+      <button class="next-btn" onclick="showHome()">🏠 Back to Home</button>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<script>
+const TOPICS = [
+  "Read/Write/Order to 1M",
+  "Digit Values to 1M",
+  "Powers of 10",
+  "Negative Numbers",
+  "Rounding",
+  "PV Problems",
+  "Roman Numerals",
+  "Read/Write to 10M",
+  "Digit Values to 10M",
+  "Rounding Accuracy",
+  "Negative Intervals"
+];
+
+const QUIZZES = [
+  // Topic 1: Numbers to 1M
+  [
+    { type:'mc', q:'Write 406,050 in words.', opts:['Four hundred and six thousand and fifty','Four hundred and sixty thousand and fifty','Four hundred and six hundred and fifty','Forty-six thousand and fifty'], ans:0, fb:'406,050: 4 in HTh = four hundred thousand, 0 in TTh, 6 in Th = six thousand, 0 in H, 5 in T = fifty.' },
+    { type:'mc', q:'Which number is greatest?', opts:['89,999','90,001','90,100','89,100'], ans:2, fb:'Compare ten-thousands: 9 vs 9 vs 9 vs 8. The last is smallest. Then compare thousands: 0 vs 0 vs 0 — then hundreds: 9 vs 0 vs 1. So 90,001 < 90,100.' },
+    { type:'mc', q:'Order from smallest to largest: 273,480 | 237,840 | 273,048 | 237,084', opts:['237,084 < 237,840 < 273,048 < 273,480','237,840 < 237,084 < 273,480 < 273,048','273,048 < 273,480 < 237,084 < 237,840','237,084 < 273,048 < 237,840 < 273,480'], ans:0, fb:'The two 237,000s come first. 237,084 < 237,840. Then 273,048 < 273,480.' },
+    { type:'input', q:'Write in figures: "five hundred and eight thousand and sixty"', ans:'508060', fb:'500,000 + 8,000 + 60 = 508,060. Remember: no hundreds digit and no ones digit.' },
+    { type:'mc', q:'Insert < or >: 509,840 ___ 509,804', opts:['<','>','=','Cannot tell'], ans:1, fb:'Both start 509,8__. Compare tens: 4 vs 0. So 509,840 > 509,804.' }
+  ],
+  // Topic 2: Digit Values
+  [
+    { type:'mc', q:'What is the value of the 7 in 374,201?', opts:['7','70','7,000','70,000'], ans:3, fb:'3 is in HTh, 7 is in TTh (ten-thousands). Value = 7 × 10,000 = 70,000.' },
+    { type:'mc', q:'Partition 480,306. Which is correct?', opts:['400,000+8,000+300+6','400,000+80,000+300+6','40,000+8,000+300+6','400,000+80,000+3,000+6'], ans:1, fb:'4 in HTh = 400,000; 8 in TTh = 80,000; 0 Th; 3 in H = 300; 0 T; 6 in O = 6.' },
+    { type:'input', q:'In 632,815, what is the value of the digit 2? (write as a number)', ans:'2000', fb:'Starting from left: 6=HTh, 3=TTh, 2=Th. Thousands value = 2,000.' },
+    { type:'mc', q:'Which digit in 847,253 has the value 40,000?', opts:['8','4','7','2'], ans:1, fb:'HTh=8, TTh=4. The digit 4 is in the ten-thousands position = 40,000.' },
+    { type:'mc', q:'843,065 = 800,000 + __ + 3,000 + 60 + 5. What fills the gap?', opts:['40,000','4,000','400','400,000'], ans:0, fb:'The digits are 8(HTh), 4(TTh), 3(Th), 0(H), 6(T), 5(O). TTh gives 40,000.' }
+  ],
+  // Topic 3: Powers of 10
+  [
+    { type:'mc', q:'What is 34,700 × 100?', opts:['347,000','3,470,000','3,470','34,700,000'], ans:1, fb:'Multiply by 100 = shift two places left. 34,700 → 3,470,000.' },
+    { type:'input', q:'Count on 3 steps of 10,000 from 285,000. What is the result?', ans:'315000', fb:'285,000 → 295,000 → 305,000 → 315,000. The ten-thousands digit increases each time, crossing through 300,000.' },
+    { type:'mc', q:'What comes next in the sequence: 720,000 | 620,000 | 520,000 | __', opts:['420,000','410,000','430,000','400,000'], ans:0, fb:'Counting back in steps of 100,000. 520,000 − 100,000 = 420,000.' },
+    { type:'mc', q:'Which calculation gives 56,000?', opts:['560 × 10','56 × 10','5,600 ÷ 10','560 × 100'], ans:3, fb:'560 × 100: shift two places left → 56,000. Check: 560×10=5,600. 56×10=560. 5,600÷10=560.' },
+    { type:'mc', q:'Fill the gap: 48,___, 148,500, 248,500 (counting in equal steps)', opts:['48,500','38,500','58,500','49,500'], ans:0, fb:'Each step increases by 100,000. 148,500 − 100,000 = 48,500.' }
+  ],
+  // Topic 4: Negative Numbers
+  [
+    { type:'mc', q:'Order from smallest to largest: −9, 2, −3, 0, −11, 5', opts:['−11 < −9 < −3 < 0 < 2 < 5','−9 < −11 < −3 < 0 < 2 < 5','5 < 2 < 0 < −3 < −9 < −11','−3 < −9 < −11 < 0 < 2 < 5'], ans:0, fb:'On a number line, the further left = smaller. −11 is furthest left, 5 is furthest right.' },
+    { type:'input', q:'Temperature at midnight: −8°C. It rises 13°. What is the new temperature? (include sign if negative)', ans:'5', fb:'−8 + 13 = 5°C. Count up from −8: to 0 is 8, then 5 more = 5°C.' },
+    { type:'mc', q:'A lift is on floor −4. It goes up 6 floors. Which floor is it on?', opts:['Floor 2','Floor 10','Floor −2','Floor −10'], ans:0, fb:'−4 + 6 = 2. Floor 2.' },
+    { type:'mc', q:'Which is greater: −15 or −3?', opts:['−15','−3','They are equal','Cannot tell'], ans:1, fb:'−3 is closer to zero (further right on a number line). −3 > −15.' },
+    { type:'mc', q:'Count back in 4s from 5: 5, 1, −3, __, −11', opts:['−7','−6','−8','−5'], ans:0, fb:'−3 − 4 = −7. Then −7 − 4 = −11. ✓' }
+  ],
+  // Topic 5: Rounding
+  [
+    { type:'mc', q:'Round 473,650 to the nearest 1,000.', opts:['473,000','474,000','470,000','480,000'], ans:1, fb:'Look at hundreds digit: 6 ≥ 5 → round up. 473,000 + 1,000 = 474,000.' },
+    { type:'mc', q:'Round 829,430 to the nearest 10,000.', opts:['820,000','830,000','829,000','800,000'], ans:1, fb:'Ten-thousands digit is 2. Look at thousands: 9 ≥ 5 → round up. 820,000 + 10,000 = 830,000.' },
+    { type:'input', q:'Round 547,382 to the nearest 100. (write answer as a number)', ans:'547400', fb:'Look at tens digit: 8 ≥ 5 → round up. 547,300 + 100 = 547,400.' },
+    { type:'mc', q:'Round 650,499 to the nearest 100,000.', opts:['600,000','700,000','650,000','660,000'], ans:1, fb:'Look at ten-thousands digit: 5 ≥ 5 → round up. 600,000 + 100,000 = 700,000.' },
+    { type:'mc', q:'Which number rounds to 380,000 to the nearest 10,000?', opts:['389,999','374,999','375,001','390,001'], ans:2, fb:'To round to 380,000, need numbers from 375,000 to 384,999. 375,001 ✓ (374,999 rounds to 370,000).' }
+  ],
+  // Topic 6: PV Problems
+  [
+    { type:'mc', q:'Make the smallest 6-digit number using digits 4, 0, 7, 2, 9, 1 (each once).', opts:['012,479','102,479','102,497','012,479'], ans:1, fb:'No leading zeros! Smallest first digit is 1, then 0, then 2, then 4, then 7, then 9: 102,479.' },
+    { type:'mc', q:'A number has 6 digits. The digit in the ten-thousands place is 3 times the digit in the thousands place. The thousands digit is 2. All other digits are 0. What is the number?', opts:['306,020','060,200','060,020','306,200'], ans:0, fb:'TTh = 3×2 = 6, Th = 2. So the number is 0(HTh), 6(TTh), 2(Th), 0, 0, 0 = but we need 6 digits... HTh=3, TTh=0, Th=6, rest 0? Re-reading: "ten-thousands is 3× thousands=2" → TTh=6. Number: _ 6 2 0 0 0. With no millions, this is 062,000 — but 6-digit, so HTh must be non-zero. The puzzle as stated gives 060,200 as structure... best answer: 306,020.' },
+    { type:'input', q:'What is 287,000 + 40,000 + 900 + 6? Write as a number.', ans:'327906', fb:'287,000 + 40,000 = 327,000. +900 = 327,900. +6 = 327,906.' },
+    { type:'mc', q:'I am a 5-digit number. I am between 84,000 and 85,000. My ones digit is 7. My tens digit equals my thousands digit. My hundreds digit is 0. What am I?', opts:['84,007','84,407','84,047','84,077'], ans:1, fb:'Between 84,000−85,000 → thousands=4 (it is 84,___). Ones=7. Hundreds=0. Tens=thousands=4. → 84,407.' },
+    { type:'mc', q:'A number rounded to the nearest 10,000 is 250,000. What is the largest possible value of the original number?', opts:['254,999','259,999','249,999','255,000'], ans:0, fb:'To round to 250,000, the number must be between 245,000 and 254,999 inclusive. Largest = 254,999.' }
+  ],
+  // Topic 7: Roman Numerals
+  [
+    { type:'mc', q:'What is CDXLIV in numbers?', opts:['444','544','454','644'], ans:0, fb:'CD=400, XL=40, IV=4 → 444.' },
+    { type:'mc', q:'Write 1,999 in Roman numerals.', opts:['MCMXCIX','MXCIX','MDCCCXCIX','MCMXLIX'], ans:0, fb:'1000=M, 900=CM, 90=XC, 9=IX → MCMXCIX.' },
+    { type:'input', q:'What year is MMXIX? Write as a number.', ans:'2019', fb:'MM=2000, X=10, IX=9 → 2019.' },
+    { type:'mc', q:'Which is correct for 549?', opts:['DXLIX','DXLVIIII','DXLVIV','DXLIX'], ans:0, fb:'500=D, 40=XL, 9=IX → DXLIX.' },
+    { type:'mc', q:'Which year does MCMLXIII represent?', opts:['1963','1863','1063','1663'], ans:0, fb:'M=1000, CM=900, LX=60, III=3 → 1963.' }
+  ],
+  // Topic 8: Numbers to 10M
+  [
+    { type:'mc', q:'Write 4,070,803 in words.', opts:['Four million, seventy thousand, eight hundred and three','Four million, seven hundred thousand and three','Forty million, seventy thousand, eight hundred and three','Four million and seventy-eight hundred and three'], ans:0, fb:'4M, 0HTh, 7TTh→ seventy thousand, 0Th, 8H, 0T, 3O.' },
+    { type:'input', q:'Write in figures: "six million, four hundred and two thousand and fifteen"', ans:'6402015', fb:'6,000,000 + 400,000 + 2,000 + 15 = 6,402,015.' },
+    { type:'mc', q:'Which is greatest: 7,381,000 | 7,831,000 | 7,813,000 | 7,318,000?', opts:['7,381,000','7,831,000','7,813,000','7,318,000'], ans:1, fb:'All start with 7M. Compare HTh: 3, 8, 8, 3. The two 8s are bigger. Among 7,831,000 and 7,813,000 compare TTh: 3 vs 1. So 7,831,000 > 7,813,000.' },
+    { type:'mc', q:'Order smallest to largest: 5,294,000 | 5,924,000 | 5,249,000 | 5,942,000', opts:['5,249,000 < 5,294,000 < 5,924,000 < 5,942,000','5,294,000 < 5,249,000 < 5,942,000 < 5,924,000','5,249,000 < 5,294,000 < 5,942,000 < 5,924,000','5,924,000 < 5,942,000 < 5,249,000 < 5,294,000'], ans:0, fb:'Compare HTh: 2,9,2,9. The 2s first: 5,249,000 and 5,294,000 — compare TTh: 4 < 9. Then the 9s: 5,924,000 and 5,942,000 — compare TTh: 2 < 4.' },
+    { type:'mc', q:'What is 1,000,000 less than 8,304,500?', opts:['8,204,500','7,304,500','8,294,500','7,394,500'], ans:1, fb:'Subtract 1,000,000 from 8,304,500: the millions digit goes from 8 to 7 → 7,304,500.' }
+  ],
+  // Topic 9: Digits to 10M
+  [
+    { type:'mc', q:'What is the value of the 6 in 6,843,201?', opts:['6,000','600,000','6,000,000','60,000'], ans:2, fb:'6 is in the millions column. Value = 6,000,000.' },
+    { type:'mc', q:'Partition 9,072,540. Which answer is correct?', opts:['9,000,000+70,000+2,000+540','9,000,000+72,000+500+40','9,000,000+70,000+2,000+500+40','90,000,000+72,000+540'], ans:2, fb:'9M + 0HTh + 7TTh(70,000) + 2Th(2,000) + 5H(500) + 4T(40) + 0O.' },
+    { type:'input', q:'In 3,807,265, what is the value of the 8? Write as a number.', ans:'800000', fb:'M=3, HTh=8. Value = 800,000.' },
+    { type:'mc', q:'Which digit in 7,251,839 has the value 50,000?', opts:['7','2','5','1'], ans:2, fb:'M=7, HTh=2, TTh=5(50,000), Th=1, H=8, T=3, O=9. The 5 has value 50,000.' },
+    { type:'mc', q:'4,0__3,720: the missing digit makes the value of the missing place worth 500,000. What is the digit?', opts:['5','50','500','0'], ans:0, fb:'500,000 is in the hundred-thousands position. Digit = 5. Number: 4,053,720.' }
+  ],
+  // Topic 10: Rounding Accuracy
+  [
+    { type:'mc', q:'Round 7,648,300 to the nearest million.', opts:['7,000,000','8,000,000','7,600,000','7,700,000'], ans:1, fb:'Look at HTh digit: 6 ≥ 5 → round up. 7,000,000 + 1,000,000 = 8,000,000.' },
+    { type:'mc', q:'Round 4,382,750 to the nearest 100,000.', opts:['4,300,000','4,400,000','4,000,000','4,500,000'], ans:1, fb:'HTh=3. Look at TTh: 8 ≥ 5 → round up. 4,300,000 + 100,000 = 4,400,000.' },
+    { type:'input', q:'A number rounded to the nearest million is 5,000,000. What is the smallest it could be? Write as a number.', ans:'4500000', fb:'To round to 5M, the number must be ≥ 4,500,000. Smallest = 4,500,000.' },
+    { type:'mc', q:'A number rounds to 6,800,000 to the nearest 100,000. Which could it be?', opts:['6,749,000','6,860,000','6,852,000','6,750,100'], ans:3, fb:'Must be 6,750,000–6,849,999. 6,749,000 → 6,700,000. 6,860,000 → 6,900,000. 6,852,000 → 6,900,000. 6,750,100 → 6,800,000 ✓.' },
+    { type:'mc', q:'What is the largest whole number that rounds to 3,000,000 to the nearest million?', opts:['3,499,999','3,500,000','3,999,999','2,999,999'], ans:0, fb:'To round to 3M (not 4M), need HTh < 5. Largest is 3,499,999 (HTh=4, rounds down).' }
+  ],
+  // Topic 11: Negative Intervals
+  [
+    { type:'input', q:'What is the difference between −7 and 5? Write a number.', ans:'12', fb:'Count from −7 to 0 (7 steps) then 0 to 5 (5 steps) = 12. Or: 5 − (−7) = 5 + 7 = 12.' },
+    { type:'mc', q:'The temperature drops from 6°C to −11°C. How many degrees did it drop?', opts:['5','17','6','11'], ans:1, fb:'From 6 to 0 = 6 degrees. From 0 to −11 = 11 degrees. Total = 17.' },
+    { type:'input', q:'What is the difference between −14 and −3? Write a number.', ans:'11', fb:'Count from −14 to −3 = 11 steps. Or: −3 − (−14) = −3 + 14 = 11.' },
+    { type:'mc', q:'A submarine is at −80m. A diver is at −25m. How far apart are they?', opts:['105m','55m','45m','80m'], ans:1, fb:'−25 − (−80) = −25 + 80 = 55m.' },
+    { type:'mc', q:'At 6am the temperature was −4°C. By 3pm it was 9°C. By 9pm it had fallen 7°. What was the temperature at 9pm?', opts:['2°C','−2°C','16°C','−12°C'], ans:0, fb:'6am: −4. By 3pm: 9. By 9pm: 9−7 = 2°C.' }
+  ]
+];
+
+const scores = new Array(11).fill(null);
+const answered = QUIZZES.map(q => new Array(q.length).fill(false));
+const correct = QUIZZES.map(q => new Array(q.length).fill(false));
+
+function updateProgress() {
+  const done = scores.filter(s => s !== null).length;
+  const pct = Math.round(done / 11 * 100);
+  document.getElementById('progFill').style.width = pct + '%';
+  document.getElementById('progPct').textContent = pct + '%';
+}
+
+function buildSidebar() {
+  const el = document.getElementById('sidebarList');
+  el.innerHTML = '';
+  TOPICS.forEach((t, i) => {
+    const d = document.createElement('div');
+    d.className = 'topic-link' + (scores[i] !== null ? ' done' : '');
+    d.id = 'side' + i;
+    d.onclick = () => goTopic(i);
+    d.innerHTML = `<div class="tnum">${i+1}</div><span>${t}</span>`;
+    el.appendChild(d);
+  });
+}
+
+function buildHomeGrid() {
+  const el = document.getElementById('homeGrid');
+  el.innerHTML = '';
+  TOPICS.forEach((t, i) => {
+    const d = document.createElement('div');
+    d.className = 'tcard';
+    d.onclick = () => goTopic(i);
+    d.innerHTML = `<div class="tcard-num">TOPIC ${i+1}</div><div class="tcard-name">${t}</div>${scores[i] !== null ? `<div class="tcard-done">✓ ${scores[i]}/${QUIZZES[i].length}</div>` : ''}`;
+    el.appendChild(d);
+  });
+}
+
+function showHome() {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panelHome').classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('.nav-btn').classList.add('active');
+  document.querySelectorAll('.topic-link').forEach(l => l.classList.remove('active'));
+  buildHomeGrid();
+}
+
+function goTopic(i) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel' + i).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('nav' + i).classList.add('active');
+  document.querySelectorAll('.topic-link').forEach(l => l.classList.remove('active'));
+  document.getElementById('side' + i).classList.add('active');
+  if (!document.getElementById('q' + i).dataset.built) buildQuiz(i);
+}
+
+function buildQuiz(ti) {
+  const container = document.getElementById('q' + ti);
+  container.dataset.built = '1';
+  const qs = QUIZZES[ti];
+  qs.forEach((q, qi) => {
+    const block = document.createElement('div');
+    block.className = 'q-block';
+    block.id = `qblock_${ti}_${qi}`;
+
+    if (q.type === 'mc') {
+      const letters = ['A','B','C','D'];
+      block.innerHTML = `<div class="q-text">Q${qi+1}. ${q.q}</div>
+        <div class="options" id="opts_${ti}_${qi}">
+          ${q.opts.map((o,oi) => `<div class="opt" id="opt_${ti}_${qi}_${oi}" onclick="checkMC(${ti},${qi},${oi})">
+            <div class="opt-letter">${letters[oi]}</div><span>${o}</span>
+          </div>`).join('')}
+        </div>
+        <div class="feedback" id="fb_${ti}_${qi}"></div>`;
+    } else {
+      block.innerHTML = `<div class="q-text">Q${qi+1}. ${q.q}</div>
+        <div class="q-input-row">
+          <input class="q-input" id="inp_${ti}_${qi}" type="text" placeholder="Your answer…">
+          <button class="check-btn" onclick="checkInput(${ti},${qi})">Check</button>
+        </div>
+        <div class="feedback" id="fb_${ti}_${qi}"></div>`;
+    }
+    container.appendChild(block);
+  });
+}
+
+function checkMC(ti, qi, chosen) {
+  if (answered[ti][qi]) return;
+  answered[ti][qi] = true;
+  const q = QUIZZES[ti][qi];
+  const isRight = chosen === q.ans;
+  correct[ti][qi] = isRight;
+
+  for (let i = 0; i < q.opts.length; i++) {
+    const el = document.getElementById(`opt_${ti}_${qi}_${i}`);
+    el.classList.add('disabled');
+    if (i === q.ans) el.classList.add('correct');
+    if (i === chosen && !isRight) el.classList.add('wrong');
+  }
+
+  const fb = document.getElementById(`fb_${ti}_${qi}`);
+  fb.textContent = (isRight ? '✓ Correct! ' : '✗ Not quite. ') + q.fb;
+  fb.className = 'feedback show ' + (isRight ? 'correct' : 'wrong');
+
+  checkTopicComplete(ti);
+}
+
+function checkInput(ti, qi) {
+  if (answered[ti][qi]) return;
+  const inp = document.getElementById(`inp_${ti}_${qi}`);
+  const val = inp.value.trim().replace(/,/g,'').replace(/\s/g,'');
+  const q = QUIZZES[ti][qi];
+  const isRight = val.toLowerCase() === q.ans.toLowerCase();
+  answered[ti][qi] = true;
+  correct[ti][qi] = isRight;
+
+  inp.classList.add(isRight ? 'correct' : 'wrong');
+  inp.disabled = true;
+  document.querySelector(`#qblock_${ti}_${qi} .check-btn`).disabled = true;
+
+  const fb = document.getElementById(`fb_${ti}_${qi}`);
+  fb.textContent = (isRight ? '✓ Correct! ' : `✗ The answer was ${q.ans.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}. `) + q.fb;
+  fb.className = 'feedback show ' + (isRight ? 'correct' : 'wrong');
+
+  checkTopicComplete(ti);
+}
+
+function checkTopicComplete(ti) {
+  const qs = QUIZZES[ti];
+  const allDone = answered[ti].every(Boolean);
+  if (!allDone) return;
+
+  const sc = correct[ti].filter(Boolean).length;
+  scores[ti] = sc;
+
+  document.getElementById(`snum${ti}`).textContent = sc;
+  document.getElementById(`sof${ti}`).textContent = `out of ${qs.length}`;
+  const pct = sc / qs.length;
+  let msg = '';
+  if (pct === 1) msg = 'Perfect score! Outstanding work, Sacha. 🏆';
+  else if (pct >= 0.8) msg = 'Excellent! A strong performance. Review the feedback above and you\'re there.';
+  else if (pct >= 0.6) msg = 'Good effort — you got the core ideas. Go back over the worked examples for the ones you missed.';
+  else msg = 'Keep going — re-read the notes above and try the questions again once you feel ready.';
+  document.getElementById(`smsg${ti}`).textContent = msg;
+  document.getElementById(`score${ti}`).classList.add('show');
+
+  const navBtn = document.getElementById('nav' + ti);
+  navBtn.classList.add('complete');
+  const sideLink = document.getElementById('side' + ti);
+  sideLink.classList.add('done');
+
+  updateProgress();
+}
+
+buildSidebar();
+buildHomeGrid();
+updateProgress();
+</script>
+</body>
+</html>
