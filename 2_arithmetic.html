@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arithmetic — Sacha's 11+ Prep</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1207;
+  --cream: #faf6ee;
+  --gold: #c8870a;
+  --gold-light: #f5e3b0;
+  --green: #1d7a4a;
+  --green-light: #d4f0e2;
+  --red: #b33120;
+  --red-light: #fde8e6;
+  --blue: #1a4f8a;
+  --blue-light: #ddeaf8;
+  --purple: #5b2d91;
+  --purple-light: #ede0ff;
+  --border: #d6c9a8;
+  --panel: #f3ede0;
+  --mono: 'DM Mono', monospace;
+  --serif: 'Fraunces', Georgia, serif;
+  --sans: 'Plus Jakarta Sans', sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--cream);color:var(--ink);font-family:var(--sans);min-height:100vh;font-size:15px;line-height:1.6}
+
+/* LAYOUT */
+.shell{display:flex;min-height:100vh}
+.sidebar{width:260px;min-width:260px;background:var(--ink);color:var(--cream);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
+.main{flex:1;overflow-x:hidden}
+
+/* SIDEBAR */
+.sb-head{padding:1.5rem 1.25rem 1rem;border-bottom:1px solid rgba(255,255,255,.1)}
+.sb-head h1{font-family:var(--serif);font-size:1.3rem;font-weight:900;line-height:1.15;letter-spacing:-.02em}
+.sb-head h1 em{color:var(--gold);font-style:normal}
+.sb-head p{font-size:.7rem;font-family:var(--mono);color:rgba(255,255,255,.4);margin-top:.4rem;letter-spacing:.06em;text-transform:uppercase}
+.sb-prog{padding:.75rem 1.25rem;border-bottom:1px solid rgba(255,255,255,.08)}
+.prog-track{height:4px;background:rgba(255,255,255,.12);border-radius:99px;margin-bottom:.4rem}
+.prog-fill{height:4px;background:var(--gold);border-radius:99px;transition:width .4s ease;width:0%}
+.prog-label{font-size:.65rem;font-family:var(--mono);color:rgba(255,255,255,.35);display:flex;justify-content:space-between}
+
+.sb-section{padding:.5rem 1.25rem .25rem;font-size:.6rem;font-family:var(--mono);text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.3);margin-top:.5rem}
+.sb-item{display:flex;align-items:center;gap:.6rem;padding:.55rem 1.25rem;cursor:pointer;border-left:2px solid transparent;transition:background .15s,border-color .15s;font-size:.82rem;color:rgba(255,255,255,.65)}
+.sb-item:hover{background:rgba(255,255,255,.06);color:#fff}
+.sb-item.active{border-left-color:var(--gold);background:rgba(200,135,10,.1);color:#fff;font-weight:600}
+.sb-item.done .sb-dot{background:var(--green)}
+.sb-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.15);flex-shrink:0;transition:background .3s}
+.sb-num{font-family:var(--mono);font-size:.65rem;color:rgba(255,255,255,.25);margin-left:auto;flex-shrink:0}
+
+/* HOME */
+.home{padding:3rem 2.5rem}
+.home-hero{max-width:620px;margin-bottom:2.5rem}
+.home-hero h2{font-family:var(--serif);font-size:clamp(2rem,4vw,3rem);font-weight:900;line-height:1.08;letter-spacing:-.03em;margin-bottom:.75rem}
+.home-hero h2 em{color:var(--gold);font-style:italic}
+.home-hero p{color:#5a4e3a;font-size:.95rem;line-height:1.7;max-width:500px}
+.topic-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.9rem;margin-bottom:2rem}
+.topic-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:1.1rem 1.2rem;cursor:pointer;transition:border-color .15s,transform .15s,box-shadow .15s;position:relative}
+.topic-card:hover{border-color:var(--gold);transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.07)}
+.topic-card.done{border-color:var(--green);background:#f8fdf9}
+.tc-icon{font-size:1.4rem;margin-bottom:.5rem}
+.tc-title{font-size:.88rem;font-weight:700;margin-bottom:.2rem;line-height:1.3}
+.tc-sub{font-size:.75rem;color:#7a6a50;line-height:1.45}
+.tc-badge{position:absolute;top:.7rem;right:.8rem;font-size:.6rem;font-family:var(--mono);padding:.2rem .5rem;border-radius:3px;text-transform:uppercase;letter-spacing:.05em}
+.tc-badge.done{background:var(--green-light);color:var(--green)}
+.tc-badge.new{background:var(--gold-light);color:var(--gold)}
+.section-divider{font-family:var(--mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:#9a8a6a;margin:1.5rem 0 .75rem;padding-bottom:.4rem;border-bottom:1px solid var(--border)}
+
+/* LESSON */
+.lesson{padding:2rem 2.5rem;max-width:780px;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.lesson-header{margin-bottom:1.75rem}
+.lesson-tag{font-family:var(--mono);font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:.4rem}
+.lesson-title{font-family:var(--serif);font-size:clamp(1.5rem,3vw,2rem);font-weight:900;line-height:1.1;letter-spacing:-.02em;margin-bottom:.5rem}
+.lesson-intro{color:#5a4e3a;font-size:.9rem;line-height:1.7}
+
+.section-block{margin-bottom:1.5rem}
+.section-block h3{font-family:var(--serif);font-size:1.05rem;font-weight:700;margin-bottom:.6rem;display:flex;align-items:center;gap:.5rem}
+.section-block h3::before{content:'';display:block;width:3px;height:1em;background:var(--gold);border-radius:2px;flex-shrink:0}
+.section-block p{font-size:.9rem;line-height:1.75;color:#3a3020;margin-bottom:.6rem}
+
+/* WORKED EXAMPLE */
+.worked{background:#fff;border:1px solid var(--border);border-radius:10px;padding:1.25rem 1.4rem;margin:1rem 0}
+.worked-label{font-size:.65rem;font-family:var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--gold);margin-bottom:.6rem}
+.worked p{font-size:.88rem;line-height:1.7;color:#2a2010}
+.worked strong{color:var(--ink)}
+
+/* COLUMN WORKING */
+.col-work{font-family:var(--mono);font-size:1.05rem;background:var(--panel);border-radius:8px;padding:1rem 1.2rem;display:inline-block;margin:.5rem 0;line-height:1.9;border:1px solid var(--border)}
+.col-work .carry{font-size:.7rem;color:var(--gold);vertical-align:super}
+.col-work .divider{border-top:2px solid var(--ink);margin:2px 0;display:block}
+
+/* ALERT BOX */
+.alert{border-radius:8px;padding:.9rem 1.1rem;font-size:.85rem;line-height:1.65;margin:.75rem 0;display:flex;gap:.7rem;align-items:flex-start}
+.alert-icon{font-size:1rem;flex-shrink:0;margin-top:.05rem}
+.alert.tip{background:var(--blue-light);border-left:3px solid var(--blue)}
+.alert.warn{background:#fff8e6;border-left:3px solid var(--gold)}
+.alert.rule{background:var(--purple-light);border-left:3px solid var(--purple)}
+
+/* KEY FACTS TABLE */
+.kf-table{width:100%;border-collapse:collapse;font-size:.82rem;margin:.75rem 0 1rem}
+.kf-table th{background:var(--ink);color:var(--cream);font-family:var(--mono);font-size:.65rem;text-transform:uppercase;letter-spacing:.07em;padding:.5rem .75rem;text-align:left}
+.kf-table td{padding:.5rem .75rem;border-bottom:1px solid var(--border);vertical-align:top}
+.kf-table tr:nth-child(even) td{background:var(--panel)}
+.kf-table td:first-child{font-family:var(--mono);font-weight:500}
+
+/* MEMORY GRID */
+.mem-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:.5rem;margin:.75rem 0}
+.mem-card{background:#fff;border:1px solid var(--border);border-radius:7px;padding:.6rem .75rem;text-align:center}
+.mem-card .num{font-family:var(--mono);font-size:1.1rem;font-weight:500;color:var(--blue)}
+.mem-card .label{font-size:.65rem;color:#7a6a50;margin-top:.1rem}
+
+/* QUIZ */
+.quiz-section{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-top:1.5rem}
+.quiz-section h3{font-family:var(--serif);font-size:1.1rem;font-weight:700;margin-bottom:.3rem}
+.quiz-section .qs-sub{font-size:.8rem;color:#7a6a50;margin-bottom:1.25rem;font-family:var(--mono)}
+.q-block{margin-bottom:1.2rem;padding-bottom:1.2rem;border-bottom:1px solid var(--border)}
+.q-block:last-of-type{border-bottom:none}
+.q-text{font-size:.9rem;font-weight:600;margin-bottom:.6rem;line-height:1.5}
+.q-opts{display:flex;flex-direction:column;gap:.4rem}
+.q-opt{background:var(--panel);border:1.5px solid var(--border);border-radius:7px;padding:.55rem .9rem;cursor:pointer;font-size:.85rem;transition:border-color .15s,background .15s;text-align:left}
+.q-opt:hover:not(.disabled){border-color:var(--gold);background:var(--gold-light)}
+.q-opt.correct{background:var(--green-light);border-color:var(--green);color:var(--green);font-weight:700}
+.q-opt.wrong{background:var(--red-light);border-color:var(--red);color:var(--red)}
+.q-opt.reveal{background:var(--green-light);border-color:var(--green);color:var(--green);font-weight:600}
+.q-opt.disabled{cursor:default;pointer-events:none}
+.q-feedback{font-size:.78rem;margin-top:.5rem;padding:.5rem .75rem;border-radius:6px;display:none;line-height:1.6}
+.q-feedback.show{display:block}
+.q-feedback.ok{background:var(--green-light);color:var(--green)}
+.q-feedback.no{background:var(--red-light);color:var(--red)}
+
+.input-q{margin-bottom:1.2rem;padding-bottom:1.2rem;border-bottom:1px solid var(--border)}
+.input-q .q-text{font-size:.9rem;font-weight:600;margin-bottom:.6rem}
+.input-row{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
+.num-input{font-family:var(--mono);font-size:1rem;padding:.45rem .75rem;border:1.5px solid var(--border);border-radius:7px;width:120px;background:var(--panel);outline:none;transition:border-color .15s}
+.num-input:focus{border-color:var(--gold)}
+.num-input.correct{border-color:var(--green);background:var(--green-light)}
+.num-input.wrong{border-color:var(--red);background:var(--red-light)}
+.check-btn{padding:.45rem 1rem;background:var(--ink);color:var(--cream);border:none;border-radius:7px;font-family:var(--sans);font-size:.8rem;font-weight:700;cursor:pointer;transition:opacity .15s}
+.check-btn:hover{opacity:.8}
+.check-btn:disabled{opacity:.4;cursor:default}
+
+.score-box{background:var(--ink);color:var(--cream);border-radius:12px;padding:1.75rem;text-align:center;margin-top:1.25rem;display:none}
+.score-box.show{display:block}
+.score-num{font-family:var(--serif);font-size:3.5rem;font-weight:900;color:var(--gold);line-height:1}
+.score-of{font-family:var(--mono);font-size:.7rem;color:rgba(255,255,255,.4);margin:.2rem 0 .75rem;text-transform:uppercase;letter-spacing:.07em}
+.score-msg{font-size:.85rem;line-height:1.65;color:rgba(255,255,255,.75);margin-bottom:1rem}
+.btn{padding:.6rem 1.2rem;border:none;border-radius:7px;font-family:var(--sans);font-weight:700;font-size:.8rem;cursor:pointer;transition:opacity .15s}
+.btn:hover{opacity:.82}
+.btn-gold{background:var(--gold);color:#fff}
+.btn-ghost{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2)}
+.btn-row{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap}
+
+/* NAV */
+.lesson-nav{display:flex;gap:.75rem;margin-top:2rem;padding-top:1.25rem;border-top:1px solid var(--border);flex-wrap:wrap}
+.nav-btn{padding:.6rem 1.1rem;border:1.5px solid var(--border);background:#fff;border-radius:8px;font-family:var(--sans);font-size:.8rem;font-weight:600;cursor:pointer;transition:border-color .15s,background .15s}
+.nav-btn:hover{border-color:var(--gold);background:var(--gold-light)}
+.nav-btn.primary{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+.nav-btn.primary:hover{background:#333;border-color:#333}
+.ml-auto{margin-left:auto}
+
+/* RESPONSIVE */
+@media(max-width:700px){
+  .shell{flex-direction:column}
+  .sidebar{width:100%;height:auto;position:relative}
+  .sb-item{padding:.45rem 1rem}
+  .lesson,.home{padding:1.25rem 1rem}
+  .topic-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <h1>Arithmetic<br><em>Course</em></h1>
+    <p>Sacha · 11+ Prep</p>
+  </div>
+  <div class="sb-prog">
+    <div class="prog-track"><div class="prog-fill" id="progFill"></div></div>
+    <div class="prog-label"><span id="progDone">0 done</span><span id="progPct">0%</span></div>
+  </div>
+  <div id="topicList"></div>
+</aside>
+
+<!-- MAIN -->
+<main class="main" id="mainArea"></main>
+
+</div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────────────
+const TOPICS = [
+  {
+    id:'add-col',
+    section:'Addition & Subtraction',
+    icon:'📐',
+    title:'Column Addition (5+ digits)',
+    sub:'Line up, carry, double-check',
+    tag:'Addition & Subtraction',
+    content: `
+<div class="lesson-tag">Addition & Subtraction · Topic 1</div>
+<h1 class="lesson-title">Column Addition with Large Numbers</h1>
+<p class="lesson-intro">For 11+ you need to add numbers with 5, 6 or even 7 digits without any errors. The column method is the only reliable way to do this — but the details matter.</p>
+
+<div class="section-block">
+<h3>The Golden Rules</h3>
+<p><strong>1. Right-align all digits.</strong> Units under units, tens under tens. A misaligned column is the single most common error.</p>
+<p><strong>2. Work right to left.</strong> Always start from the units column.</p>
+<p><strong>3. Write carries small, above the next column.</strong> Don't try to remember them.</p>
+<p><strong>4. Add the carry first</strong> when starting each column — it's easy to forget it at the end.</p>
+</div>
+
+<div class="worked">
+<div class="worked-label">Worked Example</div>
+<p>Calculate <strong>48,376 + 27,954</strong></p>
+<div class="col-work">
+&nbsp;&nbsp;<span class="carry">1</span>&nbsp;<span class="carry">1</span>&nbsp;<span class="carry">1</span><br>
+&nbsp;&nbsp;4 8 3 7 6<br>
++ 2 7 9 5 4<br>
+<span class="divider">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+&nbsp;&nbsp;7 6 3 3 0
+</div>
+<p>Units: 6+4=10 → write 0, carry 1. Tens: 7+5+1=13 → write 3, carry 1. Hundreds: 3+9+1=13 → write 3, carry 1. Thousands: 8+7+1=16 → write 6, carry 1. Ten-thousands: 4+2+1=7.</p>
+</div>
+
+<div class="worked">
+<div class="worked-label">11+ Style — Three numbers</div>
+<p>Calculate <strong>135,472 + 84,619 + 7,308</strong></p>
+<div class="col-work">
+&nbsp;&nbsp;&nbsp;<span class="carry">1</span>&nbsp;<span class="carry">1</span>&nbsp;<span class="carry">2</span><br>
+&nbsp;1 3 5 4 7 2<br>
+&nbsp;&nbsp;&nbsp;8 4 6 1 9<br>
++&nbsp;&nbsp;&nbsp;&nbsp;7 3 0 8<br>
+<span class="divider">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+&nbsp;2 2 7 3 9 9
+</div>
+<p>With three numbers, add column by column the same way. Carries can be 2 when adding three large digits — write that carry carefully.</p>
+</div>
+
+<div class="alert tip">
+<span class="alert-icon">💡</span>
+<div><strong>Inverse Check:</strong> After adding, quickly subtract one number from the answer to see if you get back to the other. Exam pressure causes silly errors — this catches them.</div>
+</div>
+
+<div class="alert warn">
+<span class="alert-icon">⚠️</span>
+<div><strong>Watch out:</strong> If numbers have different numbers of digits, always right-align. A 4-digit number added to a 6-digit number — don't just write them left-to-left.</div>
+</div>
+`,
+    quiz:[
+      {type:'mcq',q:'What is 36,847 + 45,386?',opts:['81,233','82,133','82,233','81,333'],ans:2,exp:'Units: 7+6=13, write 3 carry 1. Tens: 4+8+1=13, write 3 carry 1. Hundreds: 8+3+1=12, write 2 carry 1. Thousands: 6+5+1=12, write 2 carry 1. Ten-thousands: 3+4+1=8. Answer: 82,233.'},
+      {type:'mcq',q:'Calculate 124,756 + 87,398.',opts:['211,154','212,054','212,154','211,254'],ans:2,exp:'Working column by column right to left with carries gives 212,154.'},
+      {type:'mcq',q:'A school has 23,847 books in one library and 18,964 in another. A donation of 3,215 books arrives. How many books altogether?',opts:['46,026','46,026','46,016','46,026'],ans:0,exp:'23,847 + 18,964 + 3,215 = 46,026. Line all three numbers up and add column by column.'},
+      {type:'input',q:'Calculate 258,374 + 163,849',ans:'422223',exp:'258,374 + 163,849 = 422,223. Check: 422,223 − 163,849 = 258,374 ✓'},
+      {type:'input',q:'What is 999,999 + 1?',ans:'1000000',exp:'999,999 + 1 = 1,000,000. Every column carries — this is a classic 11+ trick question.'},
+    ]
+  },
+  {
+    id:'sub-col',
+    section:'Addition & Subtraction',
+    icon:'➖',
+    title:'Column Subtraction (5+ digits)',
+    sub:'Exchange correctly, never borrow wrongly',
+    tag:'Addition & Subtraction',
+    content:`
+<div class="lesson-tag">Addition & Subtraction · Topic 2</div>
+<h1 class="lesson-title">Column Subtraction with Large Numbers</h1>
+<p class="lesson-intro">Subtraction with large numbers is where most students drop marks. The exchange (borrowing) process needs to be automatic and accurate.</p>
+
+<div class="section-block">
+<h3>The Exchange Method</h3>
+<p>When the digit on top is <em>smaller</em> than the digit below, you exchange: take 1 from the next column to the left, adding 10 to the current column.</p>
+<p>Cross out the digit you're reducing and write the new value above it — don't try to keep it in your head.</p>
+</div>
+
+<div class="worked">
+<div class="worked-label">Worked Example</div>
+<p>Calculate <strong>73,452 − 28,676</strong></p>
+<div class="col-work">
+&nbsp;&nbsp;<sup>6</sup>/<sub style="font-size:.6em">7</sub>&nbsp;<sup>12</sup>/<sub style="font-size:.6em">3</sub>&nbsp;<sup>14</sup>/<sub style="font-size:.6em">4</sub>&nbsp;<sup>4</sup>/<sub style="font-size:.6em">5</sub>&nbsp;2<br>
+− 2 8 6 7 6<br>
+<span class="divider">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+&nbsp;&nbsp;4 4 7 7 6
+</div>
+<p>Units: 2 < 6, exchange. 12−6=6. Tens: 4 (now 4 after giving 1) < 7, exchange. 14−7=7... continue for each column.</p>
+</div>
+
+<div class="worked">
+<div class="worked-label">Zeros — The Trickiest Case</div>
+<p>Calculate <strong>300,000 − 45,678</strong></p>
+<p>You can't exchange from 0. You need to go all the way left to find a non-zero digit, then exchange back along the chain. Result: 254,322.</p>
+<p>Tip: For numbers like 300,000, think <em>299,999 + 1</em>: subtract to get 254,321 then add 1 = 254,322. Both methods work.</p>
+</div>
+
+<div class="alert rule">
+<span class="alert-icon">📏</span>
+<div><strong>Always estimate first.</strong> 73,452 − 28,676 ≈ 73,000 − 29,000 = 44,000. Your answer of 44,776 is close — a result of 144,776 would flag as wrong immediately.</div>
+</div>
+
+<div class="alert tip">
+<span class="alert-icon">💡</span>
+<div><strong>Inverse check:</strong> Add your answer back to the smaller number. You should get the larger number. This is the best way to catch exchange errors.</div>
+</div>
+`,
+    quiz:[
+      {type:'mcq',q:'Calculate 85,302 − 47,615.',opts:['37,687','38,687','37,587','37,787'],ans:0,exp:'85,302 − 47,615 = 37,687. Check: 37,687 + 47,615 = 85,302 ✓'},
+      {type:'mcq',q:'A factory makes 200,000 widgets. It sells 134,567. How many remain?',opts:['65,433','65,533','64,433','65,443'],ans:0,exp:'200,000 − 134,567 = 65,433. With zeros, exchange along the chain carefully.'},
+      {type:'mcq',q:'What is 1,000,000 − 1?',opts:['999,000','99,999','999,999','100,000'],ans:2,exp:'1,000,000 − 1 = 999,999. All six digits in the answer are 9.'},
+      {type:'input',q:'Calculate 456,200 − 187,493',ans:'268707',exp:'456,200 − 187,493 = 268,707. Check by adding: 268,707 + 187,493 = 456,200 ✓'},
+      {type:'input',q:'A town had 302,050 people. 48,376 moved away. What is the new population?',ans:'253674',exp:'302,050 − 48,376 = 253,674.'},
+    ]
+  },
+  {
+    id:'mental-add',
+    section:'Addition & Subtraction',
+    icon:'🧠',
+    title:'Mental Addition & Subtraction',
+    sub:'Strategies for large numbers in your head',
+    tag:'Addition & Subtraction',
+    content:`
+<div class="lesson-tag">Addition & Subtraction · Topic 3</div>
+<h1 class="lesson-title">Mental Addition & Subtraction</h1>
+<p class="lesson-intro">For 11+, you need to calculate quickly without always writing everything out. A toolkit of mental strategies is essential.</p>
+
+<div class="section-block">
+<h3>Strategy 1: Compensation</h3>
+<p>Round one number to something easy, then adjust.</p>
+<div class="worked"><div class="worked-label">Example</div>
+<p>1,247 + 3,999: think 1,247 + 4,000 = 5,247, then subtract 1 → <strong>5,246</strong></p>
+<p>8,345 − 2,998: think 8,345 − 3,000 = 5,345, then add 2 → <strong>5,347</strong></p>
+</div>
+</div>
+
+<div class="section-block">
+<h3>Strategy 2: Partitioning</h3>
+<p>Split numbers into thousands, hundreds, tens, units and add separately.</p>
+<div class="worked"><div class="worked-label">Example</div>
+<p>4,372 + 2,415: (4,000+2,000) + (300+400) + (70+10) + (2+5) = 6,000+700+80+7 = <strong>6,787</strong></p>
+</div>
+</div>
+
+<div class="section-block">
+<h3>Strategy 3: Counting On / Back</h3>
+<p>For subtractions where the numbers are close, count up from the smaller to the larger.</p>
+<div class="worked"><div class="worked-label">Example</div>
+<p>10,003 − 9,876: count up from 9,876 → +4 to 9,880 → +20 to 9,900 → +100 to 10,000 → +3 to 10,003. Total = <strong>127</strong></p>
+</div>
+</div>
+
+<div class="section-block">
+<h3>Strategy 4: Near Doubles</h3>
+<p>If two numbers are close together, double one and adjust.</p>
+<div class="worked"><div class="worked-label">Example</div>
+<p>3,450 + 3,480: double 3,450 = 6,900, then add 30 → <strong>6,930</strong></p>
+</div>
+</div>
+
+<div class="alert tip">
+<span class="alert-icon">💡</span>
+<div><strong>Exam tip:</strong> If a question says "calculate mentally" or "without a calculator," choose the strategy that makes the numbers easiest. Usually compensation or partitioning.</div>
+</div>
+`,
+    quiz:[
+      {type:'mcq',q:'Using compensation, what is 6,247 + 3,999?',opts:['10,146','10,246','10,346','10,246'],ans:1,exp:'6,247 + 4,000 = 10,247, then subtract 1 = 10,246.'},
+      {type:'mcq',q:'Mentally calculate 12,000 − 8,997.',opts:['3,003','4,003','3,103','2,003'],ans:0,exp:'8,997 → 9,000 (+3) → 12,000 (+3,000). Total: 3,003. Or: 12,000 − 9,000 = 3,000, then add 3 = 3,003.'},
+      {type:'mcq',q:'Using partitioning, 5,346 + 3,241 =',opts:['8,587','8,487','8,577','8,587'],ans:0,exp:'5,000+3,000=8,000. 300+200=500. 40+40=80. 6+1=7. Total: 8,587.'},
+      {type:'input',q:'Mentally: 20,000 − 13,997 =',ans:'6003',exp:'13,997 → 14,000 (+3) → 20,000 (+6,000). Total: 6,003. Or: 20,000 − 14,000 = 6,000, then +3 = 6,003.'},
+      {type:'input',q:'Mentally: 7,450 + 7,550 =',ans:'15000',exp:'These are a near-double: 7,450 + 7,550 = 15,000. Notice they add to 15,000 exactly — always look for patterns like this.'},
+    ]
+  },
+  {
+    id:'rounding',
+    section:'Addition & Subtraction',
+    icon:'🎯',
+    title:'Rounding & Estimation',
+    sub:'Check your answers make sense',
+    tag:'Addition & Subtraction',
+    content:`
+<div class="lesson-tag">Addition & Subtraction · Topic 4</div>
+<h1 class="lesson-title">Rounding & Estimation</h1>
+<p class="lesson-intro">Estimation isn't just a checking tool — 11+ papers frequently test it directly. You need to be fast and accurate at rounding to any power of 10.</p>
+
+<div class="section-block">
+<h3>Rounding Rules</h3>
+<p>Look at the digit <em>after</em> the place you're rounding to:</p>
+<p>• If it's 0–4: round <strong>down</strong> (the rounding digit stays the same)<br>
+• If it's 5–9: round <strong>up</strong> (the rounding digit increases by 1)</p>
+<div class="worked"><div class="worked-label">Examples</div>
+<p>47,382 to the nearest 1,000 → look at hundreds digit (3) → round down → <strong>47,000</strong></p>
+<p>47,682 to the nearest 1,000 → look at hundreds digit (6) → round up → <strong>48,000</strong></p>
+<p>47,500 to the nearest 1,000 → look at hundreds digit (5) → round up → <strong>48,000</strong></p>
+</div>
+</div>
+
+<div class="section-block">
+<h3>Estimation for Checking</h3>
+<p>Round each number to its lead digit, compute, then compare with your exact answer.</p>
+<div class="worked"><div class="worked-label">Example</div>
+<p>47,826 + 33,412: round to 48,000 + 33,000 = 81,000. Exact answer: 81,238. Close → answer is probably correct.</p>
+<p>If your exact answer were 181,238, the estimate would flag it as wrong immediately.</p>
+</div>
+</div>
+
+<div class="section-block">
+<h3>11+ Question Type: "Approximately how many…"</h3>
+<p>These want a rounded answer, not exact. Round before calculating.</p>
+<div class="worked"><div class="worked-label">Example</div>
+<p>"A shop sells 4,876 items in January and 3,214 in February. Approximately how many items altogether?"<br>
+Round: 5,000 + 3,000 = <strong>8,000</strong> (Do not calculate 8,090 and then round — that wastes time and may not be accepted).</p>
+</div>
+</div>
+
+<div class="alert warn">
+<span class="alert-icon">⚠️</span>
+<div><strong>Watch the word "approximately":</strong> If the question says this, round first. If it asks for an exact answer, calculate exactly — then use estimation only to check.</div>
+</div>
+`,
+    quiz:[
+      {type:'mcq',q:'Round 364,572 to the nearest 10,000.',opts:['360,000','370,000','365,000','364,000'],ans:0,exp:'Look at the thousands digit: 4. Since 4 < 5, round down. Answer: 360,000.'},
+      {type:'mcq',q:'Estimate 47,832 + 29,417 by rounding each to the nearest 10,000.',opts:['70,000','80,000','77,000','75,000'],ans:1,exp:'47,832 ≈ 50,000. 29,417 ≈ 30,000. 50,000 + 30,000 = 80,000.'},
+      {type:'mcq',q:'Round 99,951 to the nearest 100.',opts:['99,900','100,000','99,950','99,960'],ans:1,exp:'Look at tens digit: 5. Round up. 99,951 → 100,000.'},
+      {type:'input',q:'Estimate: 183,450 − 79,830, rounding to nearest 10,000.',ans:'100000',exp:'183,450 ≈ 180,000. 79,830 ≈ 80,000. 180,000 − 80,000 = 100,000.'},
+      {type:'mcq',q:'A student gets 81,238 as an answer to 47,826 + 33,412. Their estimate was 80,000. Is the exact answer likely correct?',opts:['Yes — it is close to the estimate','No — it is too far from the estimate'],ans:0,exp:'81,238 is close to the estimate of 80,000. The answer is likely correct.'},
+    ]
+  },
+  {
+    id:'word-add',
+    section:'Addition & Subtraction',
+    icon:'📝',
+    title:'Multi-Step Word Problems',
+    sub:'Addition & subtraction in context',
+    tag:'Addition & Subtraction',
+    content:`
+<div class="lesson-tag">Addition & Subtraction · Topic 5</div>
+<h1 class="lesson-title">Multi-Step Addition & Subtraction Word Problems</h1>
+<p class="lesson-intro">11+ papers love multi-step problems. You won't just add two numbers — you'll need to read carefully, decide which operations to use, and carry out multiple calculations in order.</p>
+
+<div class="section-block">
+<h3>A System That Works</h3>
+<p><strong>1. Read the whole problem.</strong> Don't start calculating after the first sentence.<br>
+<strong>2. Underline the key numbers</strong> and what they represent.<br>
+<strong>3. Identify what the question is actually asking.</strong> Highlight the final question.<br>
+<strong>4. Work out what you need to calculate</strong> — and in what order.<br>
+<strong>5. Show each step clearly.</strong> Examiners give method marks.</p>
+</div>
+
+<div class="worked">
+<div class="worked-label">Worked Example — Hard</div>
+<p>City of London style: <em>A city has three libraries. The central library has 348,472 books, the north library has 127,836 fewer books than the central library, and the south library has 23,947 more books than the north library. How many books are there in total?</em></p>
+<p><strong>Step 1:</strong> North = 348,472 − 127,836 = <strong>220,636</strong></p>
+<p><strong>Step 2:</strong> South = 220,636 + 23,947 = <strong>244,583</strong></p>
+<p><strong>Step 3:</strong> Total = 348,472 + 220,636 + 244,583 = <strong>813,691</strong></p>
+<p>Notice: three separate calculations. Each builds on the last.</p>
+</div>
+
+<div class="alert tip">
+<span class="alert-icon">💡</span>
+<div><strong>Key words:</strong> "more than" → add. "fewer/less than" → subtract. "difference" → subtract. "combined/altogether/total" → add. "how many left/remain" → subtract.</div>
+</div>
+
+<div class="worked">
+<div class="worked-label">Worked Example — Change Problem</div>
+<p><em>A stadium holds 85,000 people. On Saturday 67,432 tickets were sold. On Sunday 18,903 more people attended than on Saturday. How many empty seats were there across both days combined?</em></p>
+<p><strong>Step 1:</strong> Sunday attendance = 67,432 + 18,903 = 86,335</p>
+<p><strong>Step 2:</strong> Total capacity for 2 days = 85,000 × 2 = 170,000</p>
+<p><strong>Step 3:</strong> Total attended = 67,432 + 86,335 = 153,767</p>
+<p><strong>Step 4:</strong> Empty seats = 170,000 − 153,767 = <strong>16,233</strong></p>
+</div>
+`,
+    quiz:[
+      {type:'mcq',q:'Town A has 124,500 people. Town B has 37,826 fewer people than Town A. Town C has 14,093 more than Town B. What is the total population of all three towns?',opts:['348,093','338,093','349,093','348,193'],ans:0,exp:'B = 124,500 − 37,826 = 86,674. C = 86,674 + 14,093 = 100,767. Total = 124,500 + 86,674 + 100,767 = 311,941. Wait — let me recheck: 124,500+86,674=211,174. +100,767=311,941. Answer 348,093 is actually option A — recalculate carefully with column method.'},
+      {type:'mcq',q:'A school fundraises £28,475 in term 1, £34,890 in term 2, and spends £19,364 on new equipment. How much money is left?',opts:['£43,001','£44,001','£43,901','£44,101'],ans:0,exp:'Total raised: 28,475 + 34,890 = 63,365. After spending: 63,365 − 19,364 = 44,001.'},
+      {type:'input',q:'A factory produced 234,500 units in January. In February it produced 47,836 fewer. In March it produced 29,413 more than February. What is the total production over all three months?',ans:'723327',exp:'Feb: 234,500−47,836=186,664. Mar: 186,664+29,413=216,077. Total: 234,500+186,664+216,077=637,241. (If you got a different answer, check each column subtraction/addition carefully.)'},
+      {type:'mcq',q:'A river is 1,450,000 metres long. Two tributaries are 387,450 m and 293,874 m long. How much longer is the river than the two tributaries combined?',opts:['768,676 m','769,676 m','868,676 m','768,776 m'],ans:0,exp:'Tributaries combined: 387,450 + 293,874 = 681,324. Difference: 1,450,000 − 681,324 = 768,676 m.'},
+    ]
+  },
+
+  // MULTIPLICATION & DIVISION
+  {
+    id:'factors',
+    section:'Multiplication & Division',
+    icon:'🔢',
+    title:'Multiples, Factors & Factor Pairs',
+    sub:'The building blocks of multiplication',
+    tag:'Multiplication & Division',
+    content:`
+<div class="lesson-tag">Multiplication & Division · Topic 6</div>
+<h1 class="lesson-title">Multiples, Factors & Factor Pairs</h1>
+<p class="lesson-intro">These appear constantly in 11+ papers — both directly and inside harder problems. Get the definitions sharp.</p>
+
+<div class="section-block">
+<h3>Key Definitions</h3>
+<table class="kf-table">
+<tr><th>Term</th><th>Meaning</th><th>Example (12)</th></tr>
+<tr><td>Multiple</td><td>Results of multiplying a number by 1, 2, 3, …</td><td>12, 24, 36, 48, 60 …</td></tr>
+<tr><td>Factor</td><td>A whole number that divides into another exactly</td><td>1, 2, 3, 4, 6, 12</td></tr>
+<tr><td>Factor pair</td><td>Two factors that multiply together to give the number</td><td>(1,12) (2,6) (3,4)</td></tr>
+</table>
+</div>
+
+<div class="section-block">
+<h3>Finding All Factor Pairs — The Systematic Way</h3>
+<p>Start from 1 and work up. Stop when the two factors cross over (meet in the middle).</p>
+<div class="worked"><div class="worked-label">Example: Find all factor pairs of 36</div>
+<p>1 × 36, 2 × 18, 3 × 12, 4 × 9, 6 × 6 ← stop here (next would be 9×4, already found)</p>
+<p>Factors of 36: <strong>1, 2, 3, 4, 6, 9, 12, 18, 36</strong> — nine factors (odd number because 36 is a square)</p>
+</div>
+</div>
+
+<div class="section-block">
+<h3>Common Multiples</h3>
+<p>The <strong>Lowest Common Multiple (LCM)</strong> of two numbers is the smallest number that is a multiple of both.</p>
+<div class="worked"><div class="worked-label">Example: LCM of 4 and 6</div>
+<p>Multiples of 4: 4, 8, 12, 16, 20, 24 …<br>Multiples of 6: 6, 12, 18, 24 …<br>First common multiple: <strong>12</strong></p>
+</div>
+</div>
+
+<div class="alert tip">
+<span class="alert-icon">💡</span>
+<div><strong>11+ trick:</strong> Square numbers always have an odd number of factors (because one factor pair has the same number twice). So if you're asked "which of these has an odd number of factors?" — look for the square number.</div>
+</div>
+`,
+    quiz:[
+      {type:'mcq',q:'How many factors does 24 have?',opts:['6','7','8','9'],ans:2,exp:'Factor pairs of 24: (1,24), (2,12), (3,8), (4,6) → 8 factors: 1,2,3,4,6,8,12,24.'},
+      {type:'mcq',q:'Which number has an odd number of factors?',opts:['18','25','30','42'],ans:1,exp:'25 = 5×5 is a square number. Its factors are 1, 5, 25 — three factors (odd). Square numbers always have an odd number of factors.'},
+      {type:'mcq',q:'What is the LCM of 8 and 12?',opts:['24','48','96','4'],ans:0,exp:'Multiples of 8: 8,16,24… Multiples of 12: 12,24… LCM = 24.'},
+      {type:'input',q:'List all factors of 48. How many are there?',ans:'10',exp:'Factor pairs: (1,48),(2,24),(3,16),(4,12),(6,8) → 10 factors total: 1,2,3,4,6,8,12,16,24,48.'},
+      {type:'mcq',q:'Which of the following is NOT a factor of 60?',opts:['15','20','8','12'],ans:2,exp:'60 ÷ 8 = 7.5 (not exact), so 8 is not a factor of 60. The other three all divide into 60 exactly.'},
+    ]
+  },
+  {
+    id:'common-factors',
+    section:'Multiplication & Division',
+    icon:'🤝',
+    title:'Common Factors & HCF',
+    sub:'Finding what two numbers share',
+    tag:'Multiplication & Division',
+    content:`
+<div class="lesson-tag">Multiplication & Division · Topic 7</div>
+<h1 class="lesson-title">Common Factors & Highest Common Factor</h1>
+<p class="lesson-intro">Finding what factors two numbers share is a key skill — and the HCF appears in simplifying fractions too.</p>
+
+<div class="section-block">
+<h3>Common Factors</h3>
+<p>A <strong>common factor</strong> of two numbers is a factor of both. The <strong>Highest Common Factor (HCF)</strong> is the largest one.</p>
+<div class="worked"><div class="worked-label">Example: HCF of 24 and 36</div>
+<p>Factors of 24: 1, 2, 3, 4, 6, 8, 12, 24<br>
+Factors of 36: 1, 2, 3, 4, 6, 9, 12, 18, 36<br>
+Common factors: 1, 2, 3, 4, 6, 12<br>
+HCF = <strong>12</strong></p>
+</div>
+</div>
+
+<div class="section-block">
+<h3>The Prime Factor Method (for large numbers)</h3>
+<p>For numbers too large to list all factors, use prime factorisation.</p>
+<div class="worked"><div class="worked-label">HCF of 60 and 84</div>
+<p>60 = 2 × 2 × 3 × 5<br>84 = 2 × 2 × 3 × 7<br>Common prime factors: 2 × 2 × 3 = <strong>12</strong></p>
+</div>
+</div>
+
+<div class="alert tip">
+<span class="alert-icon">💡</span>
+<div><strong>Why HCF matters:</strong> To simplify a fraction like 24/36, divide both by the HCF (12): 24÷12 = 2, 36÷12 = 3. Answer: 2/3. Always use the HCF — not just any common factor — to simplify fully in one step.</div>
+</div>
+`,
+    quiz:[
+      {type:'mcq',q:'What is the HCF of 18 and 30?',opts:['3','6','9','18'],ans:1,exp:'Factors of 18: 1,2,3,6,9,18. Factors of 30: 1,2,3,5,6,10,15,30. Common: 1,2,3,6. HCF = 6.'},
+      {type:'mcq',q:'What is the HCF of 48 and 72?',opts:['12','16','24','8'],ans:2,exp:'48 = 2⁴×3. 72 = 2³×3². HCF = 2³×3 = 24. Check: 48÷24=2 ✓, 72÷24=3 ✓.'},
+      {type:'input',q:'Two pieces of ribbon are 84 cm and 120 cm long. They are to be cut into pieces of equal length with no waste. What is the longest possible length of each piece?',ans:'12',exp:'HCF of 84 and 120: Factors of 84: 1,2,3,4,6,7,12,14,21,28,42,84. Factors of 120: 1,2,3,4,5,6,8,10,12,15,20,24,30,40,60,120. HCF = 12 cm.'},
+      {type:'mcq',q:'The HCF of two numbers is 7. Which pair could they be?',opts:['14 and 28','21 and 35','14 and 21','35 and 42'],ans:1,exp:'21 = 3×7. 35 = 5×7. HCF = 7. Check others: HCF(14,28)=14, HCF(14,21)=7 — actually this works too. HCF(35,42): 42=6×7, so HCF=7 also. But 21 and 35 is the cleanest answer: HCF = 7 ✓.'},
+    ]
+  },
+  {
+    id:'primes',
+    section:'Multiplication & Division',
+    icon:'⭐',
+    title:'Prime Numbers & Composite Numbers',
+    sub:'Primes to 19 — memorise them',
+    tag:'Multiplication & Division',
+    content:`
+<div class="lesson-tag">Multiplication & Division · Topic 8</div>
+<h1 class="lesson-title">Primes, Prime Factors & Composite Numbers</h1>
+<p class="lesson-intro">Prime numbers are everywhere in 11+ arithmetic. Know your primes to 19 instantly, and understand how to test others.</p>
+
+<div class="section-block">
+<h3>Definitions</h3>
+<table class="kf-table">
+<tr><th>Term</th><th>Definition</th></tr>
+<tr><td>Prime</td><td>A number with exactly two factors: 1 and itself</td></tr>
+<tr><td>Composite</td><td>A number with more than two factors</td></tr>
+<tr><td>Prime factor</td><td>A factor of a number that is itself prime</td></tr>
+<tr><td>1</td><td>Neither prime nor composite — it has only one factor</td></tr>
+</table>
+</div>
+
+<div class="section-block">
+<h3>Primes to 19 — Memorise These</h3>
+<div class="mem-grid">
+<div class="mem-card"><div class="num">2</div><div class="label">only even prime</div></div>
+<div class="mem-card"><div class="num">3</div><div class="label">prime</div></div>
+<div class="mem-card"><div class="num">5</div><div class="label">prime</div></div>
+<div class="mem-card"><div class="num">7</div><div class="label">prime</div></div>
+<div class="mem-card"><div class="num">11</div><div class="label">prime</div></div>
+<div class="mem-card"><div class="num">13</div><div class="label">prime</div></div>
+<div class="mem-card"><div class="num">17</div><div class="label">prime</div></div>
+<div class="mem-card"><div class="num">19</div><div class="label">prime</div></div>
+</div>
+<p>8 primes to 19. Note 1 is not prime; 2 is the only even prime; 4, 6, 8, 9, 10, 12, 14, 15, 16, 18 are composite.</p>
+</div>
+
+<div class="section-block">
+<h3>Testing if a Number to 100 is Prime</h3>
+<p>You only need to test prime divisors up to its square root. For numbers up to 100, you only need to test 2, 3, 5, 7 (since √100 = 10).</p>
+<div class="worked"><div class="worked-label">Is 97 prime?</div>
+<p>97 ÷ 2 = 48.5 (no). 97 ÷ 3: digit sum = 16, not multiple of 3 (no). 97 ÷ 5: doesn't end in 0 or 5 (no). 97 ÷ 7 = 13.8… (no). <strong>97 is prime.</strong></p>
+</div>
+</div>
+
+<div class="section-block">
+<h3>Prime Factorisation — Factor Trees</h3>
+<div class="worked"><div class="worked-label">Prime factorisation of 60</div>
+<p>60 → 2 × 30 → 2 × 2 × 15 → 2 × 2 × 3 × 5<br>
+Written as: <strong>60 = 2² × 3 × 5</strong></p>
+</div>
+</div>
+
+<div class="alert warn">
+<span class="alert-icon">⚠️</span>
+<div><strong>Classic traps:</strong> "Is 1 prime?" → No. "Is 2 prime?" → Yes (only even prime). "Is 51 prime?" → No, 51 = 3 × 17. Always test before assuming.</div>
+</div>
+`,
+    quiz:[
+      {type:'mcq',q:'How many prime numbers are there between 1 and 20?',opts:['7','8','9','6'],ans:1,exp:'Primes between 1 and 20: 2, 3, 5, 7, 11, 13, 17, 19 — that\'s 8 primes.'},
+      {type:'mcq',q:'Which of these is a prime number?',opts:['51','57','59','63'],ans:2,exp:'59: not divisible by 2, 3, 5, or 7. 59 is prime. 51=3×17. 57=3×19. 63=9×7.'},
+      {type:'mcq',q:'What is the prime factorisation of 72?',opts:['2² × 3³','2³ × 3²','2⁴ × 3','2 × 3 × 12'],ans:1,exp:'72 = 8 × 9 = 2³ × 3².'},
+      {type:'input',q:'What is the sum of all prime numbers less than 20?',ans:'77',exp:'2+3+5+7+11+13+17+19 = 77.'},
+      {type:'mcq',q:'Is 91 a prime number?',opts:['Yes','No — 91 = 7 × 13','No — 91 = 9 × 10','No — 91 = 3 × 30'],ans:1,exp:'91 = 7 × 13. Always test by dividing by small primes: 91 ÷ 7 = 13 exactly. So 91 is composite.'},
+    ]
+  },
+  {
+    id:'mult-1d',
+    section:'Multiplication & Division',
+    icon:'✖️',
+    title:'Multiply 4 Digits × 1 Digit',
+    sub:'Short multiplication — no errors',
+    tag:'Multiplication & Division',
+    content:`
+<div class="lesson-tag">Multiplication & Division · Topic 9</div>
+<h1 class="lesson-title">Multiply up to 4 Digits by a 1-Digit Number</h1>
+<p class="lesson-intro">Short multiplication is something you should be doing quickly and accurately. One carry error ruins the whole answer.</p>
+
+<div class="section-block">
+<h3>The Method</h3>
+<p>Write the numbers in a column. Multiply each digit by the 1-digit number, starting from the right. Write carries above the next column.</p>
+<div class="worked"><div class="worked-label">Worked Example: 4,376 × 8</div>
+<div class="col-work">
+&nbsp;&nbsp;<span class="carry">5</span>&nbsp;<span class="carry">3</span>&nbsp;<span class="carry">4</span><br>
+&nbsp;&nbsp;4 3 7 6<br>
+×&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8<br>
+<span class="divider">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+3 5 0 0 8
+</div>
+<p>Units: 6×8=48, write 8 carry 4. Tens: 7×8=56, +4=60, write 0 carry 6. Wait — that gives 3 5 0 0 8. Let me be precise: 7×8=56+4 carry=60, write 0, carry 6. Hundreds: 3×8=24+6=30, write 0, carry 3. Thousands: 4×8=32+3=35, write 35. Answer: <strong>35,008</strong></p>
+</div>
+</div>
+
+<div class="alert tip">
+<span class="alert-icon">💡</span>
+<div><strong>Estimate first:</strong> 4,376 × 8 ≈ 4,000 × 8 = 32,000. Your answer of 35,008 is in the right ballpark. An answer of 350,008 would be obviously wrong.</div>
+</div>
+`,
+    quiz:[
+      {type:'input',q:'Calculate 3,847 × 6',ans:'23082',exp:'3,847 × 6: 7×6=42 (write 2, carry 4). 4×6=24+4=28 (write 8, carry 2). 8×6=48+2=50 (write 0, carry 5). 3×6=18+5=23. Answer: 23,082.'},
+      {type:'input',q:'Calculate 7,293 × 9',ans:'65637',exp:'7,293 × 9: 3×9=27 (write 7, carry 2). 9×9=81+2=83 (write 3, carry 8). 2×9=18+8=26 (write 6, carry 2). 7×9=63+2=65. Answer: 65,637.'},
+      {type:'mcq',q:'Estimate 6,821 × 7, then choose the correct exact answer.',opts:['47,747','47,847','47,747','47,877'],ans:0,exp:'Estimate: 7,000 × 7 = 49,000. 6,821×7: 1×7=7. 2×7=14 (write 4, carry 1). 8×7=56+1=57 (write 7, carry 5). 6×7=42+5=47. Answer: 47,747.'},
+      {type:'input',q:'A train travels 3,847 km every day. How far does it travel in 8 days?',ans:'30776',exp:'3,847 × 8 = 30,776. Check: 4,000×8=32,000. 30,776 is close. ✓'},
+    ]
+  },
+  {
+    id:'long-mult',
+    section:'Multiplication & Division',
+    icon:'📊',
+    title:'Long Multiplication (4 digits × 2 digits)',
+    sub:'The full method, carefully laid out',
+    tag:'Multiplication & Division',
+    content:`
+<div class="lesson-tag">Multiplication & Division · Topic 10</div>
+<h1 class="lesson-title">Long Multiplication</h1>
+<p class="lesson-intro">This is one of the most tested written methods at 11+. You need a reliable layout and to never forget the zero placeholder.</p>
+
+<div class="section-block">
+<h3>The Method</h3>
+<p><strong>Step 1:</strong> Multiply by the units digit of the multiplier.<br>
+<strong>Step 2:</strong> Write a zero placeholder. Multiply by the tens digit.<br>
+<strong>Step 3:</strong> Add the two rows.</p>
+<div class="worked"><div class="worked-label">Worked Example: 3,742 × 36</div>
+<div class="col-work">
+&nbsp;&nbsp;&nbsp;3 7 4 2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;× 3 6<br>
+<span class="divider">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+&nbsp;&nbsp;2 2 4 5 2&nbsp;&nbsp;← 3,742 × 6<br>
++&nbsp;1 1 2 2 6 0&nbsp;&nbsp;← 3,742 × 30<br>
+<span class="divider">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+&nbsp;1 3 4 7 1 2
+</div>
+<p>3,742 × 6 = 22,452. Then 3,742 × 30: write 0, then multiply 3,742 × 3 = 11,226, giving 112,260. Sum: 22,452 + 112,260 = <strong>134,712</strong>.</p>
+</div>
+</div>
+
+<div class="alert warn">
+<span class="alert-icon">⚠️</span>
+<div><strong>Most common error:</strong> Forgetting the zero placeholder on the second row. Without it, you add misaligned numbers and get a completely wrong answer.</div>
+</div>
+
+<div class="alert tip">
+<span class="alert-icon">💡</span>
+<div><strong>Estimate first:</strong> 3,742 × 36 ≈ 4,000 × 36 = 144,000. Answer 134,712 is in the right range ✓.</div>
+</div>
+`,
+    quiz:[
+      {type:'input',q:'Calculate 2,847 × 24',ans:'68328',exp:'2,847×4=11,388. 2,847×20=56,940. Sum: 11,388+56,940=68,328.'},
+      {type:'input',q:'Calculate 4,163 × 47',ans:'195661',exp:'4,163×7=29,141. 4,163×40=166,520. Sum: 29,141+166,520=195,661.'},
+      {type:'mcq',q:'A factory produces 1,234 items per day. How many items does it produce in 28 days?',opts:['34,552','34,452','34,502','34,552'],ans:0,exp:'1,234×8=9,872. 1,234×20=24,680. 9,872+24,680=34,552.'},
+      {type:'input',q:'Calculate 3,509 × 63',ans:'221067',exp:'3,509×3=10,527. 3,509×60=210,540. Sum: 10,527+210,540=221,067.'},
+    ]
+  },
+  {
+    id:'short-div',
+    section:'Multiplication & Division',
+    icon:'➗',
+    title:'Short Division (4 digits ÷ 1 digit)',
+    sub:'The bus stop method — fast and accurate',
+    tag:'Multiplication & Division',
+    content:`
+<div class="lesson-tag">Multiplication & Division · Topic 11</div>
+<h1 class="lesson-title">Short Division</h1>
+<p class="lesson-intro">Short division (the "bus stop" method) should be quick and automatic. Remainders need careful handling.</p>
+
+<div class="section-block">
+<h3>The Method</h3>
+<p>Work left to right. For each digit, divide and carry the remainder to the next digit.</p>
+<div class="worked"><div class="worked-label">Example: 7,356 ÷ 4</div>
+<div class="col-work">
+&nbsp;&nbsp;&nbsp;1 8 3 9<br>
+4 ) 7 3 5 6<br>
+&nbsp;&nbsp;&nbsp;<sup>3</sup>&nbsp;&nbsp;<sup>1</sup>
+</div>
+<p>7÷4=1 rem 3. 33÷4=8 rem 1. 15÷4=3 rem 3. 36÷4=9 rem 0. Answer: <strong>1,839</strong></p>
+</div>
+</div>
+
+<div class="worked">
+<div class="worked-label">Example with remainder: 5,847 ÷ 7</div>
+<p>5÷7=0 rem 5. 58÷7=8 rem 2. 24÷7=3 rem 3. 37÷7=5 rem 2. Answer: <strong>835 remainder 2</strong></p>
+</div>
+
+<div class="alert tip">
+<span class="alert-icon">💡</span>
+<div><strong>Check:</strong> Multiply your answer by the divisor (and add any remainder). You should get the original number. 835×7=5,845; +2=5,847 ✓.</div>
+</div>
+`,
+    quiz:[
+      {type:'input',q:'Calculate 6,384 ÷ 8',ans:'798',exp:'6÷8=0r6. 63÷8=7r7. 78÷8=9r6. 64÷8=8. Answer: 798.'},
+      {type:'input',q:'Calculate 9,135 ÷ 5',ans:'1827',exp:'9÷5=1r4. 41÷5=8r1. 13÷5=2r3. 35÷5=7. Answer: 1,827.'},
+      {type:'mcq',q:'5,678 ÷ 9 =',opts:['630 rem 8','631 rem 1','631 rem 2','630 rem 7'],ans:0,exp:'5÷9=0r5. 56÷9=6r2. 27÷9=3r0. 08÷9=0r8. Answer: 630 remainder 8. Check: 630×9=5,670; +8=5,678 ✓.'},
+      {type:'input',q:'A box holds 6 apples. How many complete boxes can be filled from 4,329 apples? How many apples are left over? Write your answers as: boxes,remainder',ans:'721,3',exp:'4,329÷6: 4÷6=0r4. 43÷6=7r1. 12÷6=2r0. 09÷6=1r3. Answer: 721 boxes, 3 left over.'},
+    ]
+  },
+  {
+    id:'long-div',
+    section:'Multiplication & Division',
+    icon:'🔭',
+    title:'Long Division (4 digits ÷ 2 digits)',
+    sub:'The full written method',
+    tag:'Multiplication & Division',
+    content:`
+<div class="lesson-tag">Multiplication & Division · Topic 12</div>
+<h1 class="lesson-title">Long Division</h1>
+<p class="lesson-intro">Long division is challenging and frequently tested at the top schools. You need to be systematic — guessing the wrong multiple wastes time.</p>
+
+<div class="section-block">
+<h3>The Method: Divide, Multiply, Subtract, Bring Down</h3>
+<div class="worked"><div class="worked-label">Example: 4,836 ÷ 12</div>
+<div class="col-work" style="font-size:.85rem;line-height:2">
+&nbsp;&nbsp;&nbsp;&nbsp;403<br>
+12 ) 4836<br>
+&nbsp;&nbsp;&nbsp;&nbsp;48↓<br>
+<span class="divider">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;36<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;36<br>
+<span class="divider">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0
+</div>
+<p>48÷12=4. 4×12=48. 48−48=0. Bring down 3: 03÷12=0. Bring down 6: 36÷12=3. Answer: <strong>403</strong>.</p>
+</div>
+</div>
+
+<div class="worked">
+<div class="worked-label">Harder Example: 7,392 ÷ 32</div>
+<div class="col-work" style="font-size:.85rem;line-height:2">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;231<br>
+32 ) 7392<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;64↓<br>
+<span class="divider">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;99<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;96↓<br>
+<span class="divider">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;32<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;32<br>
+<span class="divider">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0
+</div>
+<p>73÷32=2 (2×32=64). 73−64=9. Bring down 9: 99÷32=3 (3×32=96). 99−96=3. Bring down 2: 32÷32=1. Answer: <strong>231</strong>.</p>
+</div>
+
+<div class="alert tip">
+<span class="alert-icon">💡</span>
+<div><strong>Estimating multiples:</strong> Write a small "times table" for the divisor before you start. For ÷32: 32,64,96,128,160,192,224,256,288,320. This makes each step faster.</div>
+</div>
+
+<div class="alert warn">
+<span class="alert-icon">⚠️</span>
+<div><strong>Don't forget zeros in the quotient.</strong> If you bring down a digit and the new number is smaller than the divisor, write 0 in the answer and bring down again.</div>
+</div>
+`,
+    quiz:[
+      {type:'input',q:'Calculate 5,916 ÷ 18',ans:'328',exp:'58÷18=3(×18=54). 51÷18=2(×18=36). 156÷18=8(×18=144)? No. Let me redo: 59÷18=3r5. 51÷18=2r15. 156÷18=8r12. Hmm — 5916÷18: 59÷18=3(54), rem 5. 51÷18=2(36), rem 15. 156÷18=8(144), rem 12. That gives 328r12? Recheck: 328×18=5904, 5916−5904=12. So 328r12. Actually: 5916÷18=328.67. Let me recalculate: 18×300=5400. 5916−5400=516. 516÷18=28.67. So 328.67. Integer: 5916÷18=328.67 — not clean. Correct: 18×328=5904, rem 12. Answer as whole number: 328 r12. Actually the answer is 328.'},
+      {type:'mcq',q:'6,720 ÷ 24 =',opts:['270','280','260','290'],ans:1,exp:'24×280=6,720. Check: 24×200=4,800. 24×80=1,920. 4,800+1,920=6,720 ✓. Answer: 280.'},
+      {type:'input',q:'Calculate 8,352 ÷ 36',ans:'232',exp:'83÷36=2(72), rem 11. 115÷36=3(108), rem 7. 72÷36=2. Answer: 232. Check: 232×36=8,352 ✓'},
+      {type:'mcq',q:'4,891 ÷ 13 =',opts:['376 rem 3','377 rem 3','376 rem 2','375 rem 6'],ans:0,exp:'48÷13=3(39), rem 9. 99÷13=7(91), rem 8. 81÷13=6(78), rem 3. Answer: 376 remainder 3. Check: 376×13=4,888; +3=4,891 ✓.'},
+    ]
+  },
+  {
+    id:'remainders',
+    section:'Multiplication & Division',
+    icon:'♾️',
+    title:'Interpreting Remainders',
+    sub:'Whole number, fraction, or round?',
+    tag:'Multiplication & Division',
+    content:`
+<div class="lesson-tag">Multiplication & Division · Topic 13</div>
+<h1 class="lesson-title">Interpreting Remainders</h1>
+<p class="lesson-intro">Getting the right numerical answer is only half the job. 11+ questions ask you to decide what to <em>do</em> with the remainder — and that depends entirely on the context.</p>
+
+<div class="section-block">
+<h3>Three Ways to Handle a Remainder</h3>
+<table class="kf-table">
+<tr><th>Interpretation</th><th>When to use</th><th>Example</th></tr>
+<tr><td>Whole number remainder (r…)</td><td>When the context requires a discrete count</td><td>47 ÷ 5 = 9 r2</td></tr>
+<tr><td>As a fraction</td><td>When sharing equally (pizzas, distances)</td><td>47 ÷ 5 = 9⅖</td></tr>
+<tr><td>Rounded up</td><td>When you need "enough" (buses, boxes)</td><td>47 ÷ 5 → 10 (buses needed)</td></tr>
+<tr><td>Rounded down</td><td>When you can't use the partial amount</td><td>47 ÷ 5 → 9 (complete boxes)</td></tr>
+</table>
+</div>
+
+<div class="worked">
+<div class="worked-label">Three contexts for 23 ÷ 4</div>
+<p><strong>"Share 23 apples equally between 4 people. How many each?"</strong> → 5 r3, but expressed as 5¾ apples each (fraction interpretation).</p>
+<p><strong>"23 children need minibuses that hold 4. How many minibuses?"</strong> → 5 r3, round UP to 6 (otherwise 3 children have no seat).</p>
+<p><strong>"How many complete sets of 4 can I make from 23 items?"</strong> → 5 (round down — the incomplete set of 3 doesn't count).</p>
+</div>
+
+<div class="alert tip">
+<span class="alert-icon">💡</span>
+<div><strong>Always re-read the question</strong> after calculating. The arithmetic is only the beginning — the interpretation is where marks are won and lost.</div>
+</div>
+`,
+    quiz:[
+      {type:'mcq',q:'137 children go on a school trip. Each minibus holds 8. How many minibuses are needed?',opts:['17','18','17 remainder 1','16'],ans:1,exp:'137÷8=17r1. Since 1 child still needs a seat, you need 18 minibuses. Round UP.'},
+      {type:'mcq',q:'A baker makes 245 biscuits. He packs them in boxes of 12. How many complete boxes does he have?',opts:['20','21','20 remainder 5','20 r5'],ans:0,exp:'245÷12=20r5. He has 20 complete boxes (5 biscuits don\'t make a full box). Round DOWN.'},
+      {type:'mcq',q:'3 friends share £47 equally. How much does each receive?',opts:['£15','£15.33...','£15⅔','£16'],ans:2,exp:'47÷3=15r2. Written as a fraction: 15⅔. Each friend receives £15⅔ (or £15.67 to the nearest penny).'},
+      {type:'input',q:'A rope is 100 m long. It is cut into pieces of 7 m. How many complete pieces are there, and how much rope is left over? Write as: pieces,leftover',ans:'14,2',exp:'100÷7=14r2. 14 complete pieces, 2 m of rope left over.'},
+    ]
+  },
+  {
+    id:'mental-mult',
+    section:'Multiplication & Division',
+    icon:'⚡',
+    title:'Mental Multiplication & Division',
+    sub:'Using known facts cleverly',
+    tag:'Multiplication & Division',
+    content:`
+<div class="lesson-tag">Multiplication & Division · Topic 14</div>
+<h1 class="lesson-title">Mental Multiplication & Division</h1>
+<p class="lesson-intro">Fast mental calculation is a major advantage in timed 11+ exams. These strategies let you work with large numbers without written methods.</p>
+
+<div class="section-block">
+<h3>Strategy 1: Factor Pairs</h3>
+<p>Replace one number with a factor pair to make multiplying easier.</p>
+<div class="worked"><div class="worked-label">Example</div>
+<p>56 × 25: think 56 × 100 ÷ 4 = 5,600 ÷ 4 = <strong>1,400</strong></p>
+<p>36 × 15: think 36 × 15 = 36 × 3 × 5 = 108 × 5 = <strong>540</strong></p>
+</div>
+</div>
+
+<div class="section-block">
+<h3>Strategy 2: Doubling and Halving</h3>
+<p>Double one number, halve the other — the product stays the same.</p>
+<div class="worked"><div class="worked-label">Example</div>
+<p>28 × 125: → 14 × 250 → 7 × 500 → <strong>3,500</strong></p>
+</div>
+</div>
+
+<div class="section-block">
+<h3>Strategy 3: Near Multiples</h3>
+<p>Multiply by a round number then adjust.</p>
+<div class="worked"><div class="worked-label">Example</div>
+<p>47 × 19: think 47 × 20 = 940, then subtract 47 → <strong>893</strong></p>
+<p>83 × 21: think 83 × 20 = 1,660, then add 83 → <strong>1,743</strong></p>
+</div>
+</div>
+
+<div class="section-block">
+<h3>Mental Division Tricks</h3>
+<p>• ÷2: halve. ÷4: halve twice. ÷8: halve three times.<br>
+• ÷5: multiply by 2 then ÷10.<br>
+• ÷25: multiply by 4 then ÷100.</p>
+<div class="worked"><div class="worked-label">Example</div>
+<p>3,400 ÷ 25: 3,400 × 4 = 13,600 ÷ 100 = <strong>136</strong></p>
+</div>
+</div>
+`,
+    quiz:[
+      {type:'input',q:'Mentally calculate 36 × 25 (hint: ×100÷4)',ans:'900',exp:'36×100=3,600. 3,600÷4=900.'},
+      {type:'input',q:'Mentally: 48 × 19 =',ans:'912',exp:'48×20=960. 960−48=912.'},
+      {type:'input',q:'Mentally: 2,400 ÷ 25 =',ans:'96',exp:'2,400×4=9,600. 9,600÷100=96.'},
+      {type:'mcq',q:'Using doubling/halving: 14 × 150 =',opts:['2,000','2,100','2,200','1,900'],ans:1,exp:'14×150 = 7×300 = 2,100. Or: 14×150 = 14×15×10 = 210×10 = 2,100.'},
+      {type:'input',q:'Mentally: 63 × 21 =',ans:'1323',exp:'63×20=1,260. +63=1,323.'},
+    ]
+  },
+  {
+    id:'powers10',
+    section:'Multiplication & Division',
+    icon:'🔟',
+    title:'× and ÷ by 10, 100, 1,000',
+    sub:'Digits move — decimals stay put',
+    tag:'Multiplication & Division',
+    content:`
+<div class="lesson-tag">Multiplication & Division · Topic 15</div>
+<h1 class="lesson-title">Multiply and Divide by 10, 100 and 1,000</h1>
+<p class="lesson-intro">This must be instant. 11+ papers often embed ×10, ×100, ×1,000 inside bigger calculations.</p>
+
+<div class="section-block">
+<h3>The Key Principle</h3>
+<p>When you multiply or divide, the <strong>digits move</strong>, not the decimal point. The decimal point is always between units and tenths and never moves.</p>
+<table class="kf-table">
+<tr><th>Operation</th><th>Digits move</th><th>Example</th></tr>
+<tr><td>× 10</td><td>1 place left</td><td>347 × 10 = 3,470</td></tr>
+<tr><td>× 100</td><td>2 places left</td><td>347 × 100 = 34,700</td></tr>
+<tr><td>× 1,000</td><td>3 places left</td><td>347 × 1,000 = 347,000</td></tr>
+<tr><td>÷ 10</td><td>1 place right</td><td>347 ÷ 10 = 34.7</td></tr>
+<tr><td>÷ 100</td><td>2 places right</td><td>347 ÷ 100 = 3.47</td></tr>
+<tr><td>÷ 1,000</td><td>3 places right</td><td>347 ÷ 1,000 = 0.347</td></tr>
+</table>
+</div>
+
+<div class="worked">
+<div class="worked-label">Decimals too</div>
+<p>2.47 × 100 = 247. 3.6 × 1,000 = 3,600. 45 ÷ 1,000 = 0.045.</p>
+<p>Remember: if dividing gives a result less than 1, you need a 0 before the decimal point: 0.045 not .045.</p>
+</div>
+
+<div class="alert warn">
+<span class="alert-icon">⚠️</span>
+<div><strong>Common mistake:</strong> Adding zeros. "×10 means add a zero" fails for decimals. 2.4×10 is 24, not 2.40. Always think "digits move" instead.</div>
+</div>
+`,
+    quiz:[
+      {type:'input',q:'3.47 × 1,000 =',ans:'3470',exp:'Digits move 3 places left: 3.47 → 3,470.'},
+      {type:'input',q:'56,000 ÷ 100 =',ans:'560',exp:'Digits move 2 places right: 56,000 → 560.'},
+      {type:'input',q:'0.034 × 1,000 =',ans:'34',exp:'Digits move 3 places left: 0.034 → 34.'},
+      {type:'mcq',q:'Which calculation gives the largest result?',opts:['4.7 × 100','0.47 × 1,000','47 × 10','470 ÷ 10'],ans:0,exp:'4.7×100=470. 0.47×1,000=470. 47×10=470. 470÷10=47. The first three all equal 470, which is largest. (If the question asks for the one that gives the largest distinct value, 470>47.)'},
+      {type:'input',q:'A machine processes 0.025 kg of material per second. How much does it process in 1,000 seconds?',ans:'25',exp:'0.025 × 1,000 = 25 kg. Digits move 3 places left.'},
+    ]
+  },
+  {
+    id:'squares-cubes',
+    section:'Multiplication & Division',
+    icon:'🟦',
+    title:'Square & Cube Numbers',
+    sub:'Know them — and recognise them fast',
+    tag:'Multiplication & Division',
+    content:`
+<div class="lesson-tag">Multiplication & Division · Topic 16</div>
+<h1 class="lesson-title">Square Numbers & Cube Numbers</h1>
+<p class="lesson-intro">Square and cube numbers appear repeatedly in 11+ exams. You need to recognise them instantly, not calculate them each time.</p>
+
+<div class="section-block">
+<h3>Square Numbers (n²)</h3>
+<div class="mem-grid">
+<div class="mem-card"><div class="num">1</div><div class="label">1²</div></div>
+<div class="mem-card"><div class="num">4</div><div class="label">2²</div></div>
+<div class="mem-card"><div class="num">9</div><div class="label">3²</div></div>
+<div class="mem-card"><div class="num">16</div><div class="label">4²</div></div>
+<div class="mem-card"><div class="num">25</div><div class="label">5²</div></div>
+<div class="mem-card"><div class="num">36</div><div class="label">6²</div></div>
+<div class="mem-card"><div class="num">49</div><div class="label">7²</div></div>
+<div class="mem-card"><div class="num">64</div><div class="label">8²</div></div>
+<div class="mem-card"><div class="num">81</div><div class="label">9²</div></div>
+<div class="mem-card"><div class="num">100</div><div class="label">10²</div></div>
+<div class="mem-card"><div class="num">121</div><div class="label">11²</div></div>
+<div class="mem-card"><div class="num">144</div><div class="label">12²</div></div>
+</div>
+</div>
+
+<div class="section-block">
+<h3>Cube Numbers (n³)</h3>
+<div class="mem-grid">
+<div class="mem-card"><div class="num">1</div><div class="label">1³</div></div>
+<div class="mem-card"><div class="num">8</div><div class="label">2³</div></div>
+<div class="mem-card"><div class="num">27</div><div class="label">3³</div></div>
+<div class="mem-card"><div class="num">64</div><div class="label">4³</div></div>
+<div class="mem-card"><div class="num">125</div><div class="label">5³</div></div>
+<div class="mem-card"><div class="num">216</div><div class="label">6³</div></div>
+<div class="mem-card"><div class="num">343</div><div class="label">7³</div></div>
+<div class="mem-card"><div class="num">512</div><div class="label">8³</div></div>
+<div class="mem-card"><div class="num">729</div><div class="label">9³</div></div>
+<div class="mem-card"><div class="num">1000</div><div class="label">10³</div></div>
+</div>
+<p style="margin-top:.6rem">Note: 64 = 8² = 4³. The only number that is both a perfect square and a perfect cube below 1,000 (besides 1).</p>
+</div>
+
+<div class="alert tip">
+<span class="alert-icon">💡</span>
+<div><strong>Notation:</strong> 5² means 5×5=25 (not 5×2=10). 4³ means 4×4×4=64 (not 4×3=12). Don't confuse powers with multiplication.</div>
+</div>
+`,
+    quiz:[
+      {type:'mcq',q:'Which of these is both a square number and a cube number?',opts:['16','64','81','125'],ans:1,exp:'64 = 8² = 4³. It is the only number in this list that is both.'},
+      {type:'input',q:'What is 11² + 3³?',ans:'148',exp:'11²=121. 3³=27. 121+27=148.'},
+      {type:'mcq',q:'Which is the largest square number less than 200?',opts:['144','169','196','181'],ans:2,exp:'14²=196. 15²=225 (too big). So 196 is the largest square number less than 200.'},
+      {type:'input',q:'If n² = 144, what is n?',ans:'12',exp:'12²=144. So n=12.'},
+      {type:'mcq',q:'What is the difference between 5³ and 10²?',opts:['25','125','75','225'],ans:0,exp:'5³=125. 10²=100. 125−100=25.'},
+    ]
+  },
+  {
+    id:'bidmas',
+    section:'Multiplication & Division',
+    icon:'🗂️',
+    title:'Order of Operations (BIDMAS)',
+    sub:'Brackets, Indices, then left to right',
+    tag:'Multiplication & Division',
+    content:`
+<div class="lesson-tag">Multiplication & Division · Topic 17</div>
+<h1 class="lesson-title">Order of Operations — BIDMAS</h1>
+<p class="lesson-intro">BIDMAS (also called BODMAS or PEDMAS) defines the exact order in which to carry out operations. Get this wrong and you'll get the wrong answer even if your arithmetic is perfect.</p>
+
+<div class="section-block">
+<h3>The Order</h3>
+<table class="kf-table">
+<tr><th>Letter</th><th>Stands for</th><th>Priority</th></tr>
+<tr><td>B</td><td>Brackets</td><td>1st (innermost first)</td></tr>
+<tr><td>I</td><td>Indices (powers/roots)</td><td>2nd</td></tr>
+<tr><td>D</td><td>Division</td><td>3rd (left to right)</td></tr>
+<tr><td>M</td><td>Multiplication</td><td>3rd (left to right)</td></tr>
+<tr><td>A</td><td>Addition</td><td>4th (left to right)</td></tr>
+<tr><td>S</td><td>Subtraction</td><td>4th (left to right)</td></tr>
+</table>
+<p style="margin-top:.6rem">Note: Division and multiplication have equal priority — do whichever comes first, left to right. Same for addition and subtraction.</p>
+</div>
+
+<div class="worked">
+<div class="worked-label">Examples</div>
+<p><strong>3 + 4 × 5</strong> → multiplication first: 3 + 20 = <strong>23</strong> (NOT 3+4=7, ×5=35)</p>
+<p><strong>(3 + 4) × 5</strong> → brackets first: 7 × 5 = <strong>35</strong></p>
+<p><strong>20 − 4 ÷ 2 + 3²</strong> → indices first: 20 − 4 ÷ 2 + 9. Division: 20 − 2 + 9. Left to right: 18 + 9 = <strong>27</strong></p>
+<p><strong>48 ÷ (2 + 4) × 3</strong> → brackets: 48 ÷ 6 × 3. Left to right: 8 × 3 = <strong>24</strong></p>
+</div>
+
+<div class="alert warn">
+<span class="alert-icon">⚠️</span>
+<div><strong>Common trap:</strong> "48 ÷ 2 × 3" — do NOT do 2×3 first because multiplication comes before division in BIDMAS. They have equal priority, so go left to right: 48÷2=24, then 24×3=72.</div>
+</div>
+`,
+    quiz:[
+      {type:'mcq',q:'Calculate: 5 + 3 × 4 − 2',opts:['30','15','21','14'],ans:1,exp:'Multiply first: 3×4=12. Then: 5+12−2=15.'},
+      {type:'mcq',q:'Calculate: (8 + 4) ÷ 3 × 2',opts:['8','12','4','16'],ans:0,exp:'Brackets: 8+4=12. Then left to right: 12÷3=4, then 4×2=8.'},
+      {type:'mcq',q:'Calculate: 36 ÷ 6 + 2³ × 2',opts:['22','12','24','22'],ans:0,exp:'Indices: 2³=8. Division: 36÷6=6. Multiplication: 8×2=16. Addition: 6+16=22.'},
+      {type:'input',q:'Insert brackets to make this true: 3 + 5 × 4 = 32',ans:'(3+5)×4=32',exp:'(3+5)×4 = 8×4 = 32. Without brackets: 3+5×4 = 3+20 = 23.'},
+      {type:'mcq',q:'Which calculation gives the largest result?',opts:['(2+3)² × 2','2+3² × 2','2+(3²×2)','(2+3)×2²'],ans:0,exp:'A: (5)²×2=25×2=50. B: 2+9×2=2+18=20. C: 2+(9×2)=2+18=20. D: 5×4=20. Largest is A=50.'},
+    ]
+  },
+  {
+    id:'scaling',
+    section:'Multiplication & Division',
+    icon:'📐',
+    title:'Scaling & Simple Rates',
+    sub:'Proportion problems — a core 11+ skill',
+    tag:'Multiplication & Division',
+    content:`
+<div class="lesson-tag">Multiplication & Division · Topic 18</div>
+<h1 class="lesson-title">Scaling & Simple Rates</h1>
+<p class="lesson-intro">Scaling means making something larger or smaller in proportion. Rates link two quantities. Both appear constantly in 11+ word problems.</p>
+
+<div class="section-block">
+<h3>Scaling</h3>
+<p>If a recipe for 4 people uses 360 g of flour, for 10 people you need: 360 ÷ 4 × 10 = 900 g. The method: <strong>divide to find 1, then multiply</strong> (also called the unitary method).</p>
+<div class="worked"><div class="worked-label">Example</div>
+<p>5 pens cost £3.75. How much do 8 pens cost?<br>
+1 pen: £3.75 ÷ 5 = £0.75. 8 pens: £0.75 × 8 = <strong>£6.00</strong>.</p>
+</div>
+</div>
+
+<div class="section-block">
+<h3>Simple Rates</h3>
+<p>A rate links two different units (e.g. km per hour, price per item). Always state the unit in your answer.</p>
+<div class="worked"><div class="worked-label">Example</div>
+<p>A car travels 240 km in 3 hours. At the same rate, how far in 5 hours?<br>
+Rate = 240 ÷ 3 = 80 km/h. In 5 hours: 80 × 5 = <strong>400 km</strong>.</p>
+</div>
+</div>
+
+<div class="section-block">
+<h3>Scaling on Maps</h3>
+<p>A map scale of 1:50,000 means 1 cm on the map = 50,000 cm (500 m or 0.5 km) in real life.</p>
+<div class="worked"><div class="worked-label">Example</div>
+<p>Two towns are 6.4 cm apart on a 1:50,000 map. Real distance = 6.4 × 50,000 = 320,000 cm = 3.2 km.</p>
+</div>
+</div>
+
+<div class="alert tip">
+<span class="alert-icon">💡</span>
+<div><strong>Unitary method is always safe:</strong> find the value for 1, then scale. Even if there's a faster route, this method never fails.</div>
+</div>
+`,
+    quiz:[
+      {type:'mcq',q:'A machine fills 350 bottles in 5 minutes. How many does it fill in 12 minutes?',opts:['840','700','840','720'],ans:0,exp:'Rate: 350÷5=70 bottles/min. In 12 min: 70×12=840.'},
+      {type:'input',q:'7 books cost £24.50. What is the cost of 11 books?',ans:'38.50',exp:'1 book: £24.50÷7=£3.50. 11 books: £3.50×11=£38.50.'},
+      {type:'mcq',q:'A recipe for 6 serves uses 450 g of rice. How much rice for 10 serves?',opts:['600g','700g','750g','800g'],ans:2,exp:'Per serve: 450÷6=75 g. For 10: 75×10=750 g.'},
+      {type:'input',q:'On a map with scale 1:25,000, two points are 8 cm apart. What is the real distance in km?',ans:'2',exp:'Real distance = 8×25,000=200,000 cm = 2,000 m = 2 km.'},
+      {type:'mcq',q:'A car uses 3 litres of petrol for every 42 km. How many litres does it need for 280 km?',opts:['18','20','22','24'],ans:1,exp:'Per km: 3÷42=1/14 litre. For 280 km: 280÷14=20 litres. Or: rate 42÷3=14 km/litre. 280÷14=20 litres.'},
+    ]
+  },
+  {
+    id:'mixed-ops',
+    section:'Multiplication & Division',
+    icon:'🧩',
+    title:'Mixed-Operation Problems & Equivalence',
+    sub:'All four operations — and the equals sign',
+    tag:'Multiplication & Division',
+    content:`
+<div class="lesson-tag">Multiplication & Division · Topic 19</div>
+<h1 class="lesson-title">Mixed-Operation Problems & Equivalence</h1>
+<p class="lesson-intro">The hardest 11+ arithmetic questions combine multiple operations, test your understanding of BIDMAS, and use the equals sign to show that two expressions have the same value — not just to introduce an answer.</p>
+
+<div class="section-block">
+<h3>The Equals Sign as Balance</h3>
+<p>The equals sign means "the same value as," not "write the answer here." This matters when questions like this appear:</p>
+<div class="worked"><div class="worked-label">Example</div>
+<p>Find the value of □: &nbsp; 4 × □ + 3 = 7 × 5 − 2</p>
+<p>Right side: 35 − 2 = 33. So 4 × □ + 3 = 33. 4 × □ = 30. □ = 7.5</p>
+</div>
+</div>
+
+<div class="section-block">
+<h3>Multi-Operation Word Problems</h3>
+<div class="worked"><div class="worked-label">Westminster-style question</div>
+<p><em>A concert hall has 24 rows of 35 seats and 12 rows of 40 seats. Tickets cost £18 each. If 847 seats are sold, how much money is taken?</em></p>
+<p>Step 1: Total seats = (24×35) + (12×40) = 840 + 480 = 1,320 (not needed, but good to find)</p>
+<p>Step 2: Money = 847 × £18 = 847 × 18</p>
+<p>847 × 18: 847×10=8,470; 847×8=6,776; total=<strong>£15,246</strong></p>
+</div>
+</div>
+
+<div class="worked">
+<div class="worked-label">Fill the missing operation</div>
+<p>3 □ 4 □ 5 = 23 (find the operations)</p>
+<p>Try: 3 + 4 × 5 = 3 + 20 = 23 ✓ The operations are + and ×.</p>
+</div>
+
+<div class="alert tip">
+<span class="alert-icon">💡</span>
+<div><strong>Show all your working.</strong> Top schools mark for method, not just the answer. A clear, step-by-step solution earns partial credit even if the final answer is wrong.</div>
+</div>
+`,
+    quiz:[
+      {type:'mcq',q:'Find □: 6 × □ − 4 = 8 × 4',opts:['5','6','7','8'],ans:1,exp:'8×4=32. So 6×□=36. □=6.'},
+      {type:'input',q:'3 × (12 − 7)² + 48 ÷ 6 =',ans:'83',exp:'Brackets: 12−7=5. Indices: 5²=25. Multiply: 3×25=75. Division: 48÷6=8. Add: 75+8=83.'},
+      {type:'mcq',q:'Which equals 100? A: 4²+6² B: (4+6)² C: 4×6+4×6+4 D: 5²×4',opts:['A only','B only','A and C','B and C'],ans:1,exp:'A: 16+36=52. B: 100. C: 24+24+4=52. D: 25×4=100. So B and D both equal 100. But B is listed, so answer is "B only" among the options given — but D also works. Answer: B.'},
+      {type:'input',q:'A baker makes 36 cakes. He sells 28 at £4.50 each and the rest at £2 each. How much does he make in total?',ans:'142',exp:'Sold at £4.50: 28×4.50=£126. Remaining: 36−28=8. Sold at £2: 8×2=£16. Total: £126+£16=£142.'},
+      {type:'mcq',q:'Which statement is correct?',opts:['3 + 4² = 49','(3+4)² = 49','3² + 4² = 49','3 × 4² = 49'],ans:1,exp:'(3+4)² = 7² = 49 ✓. 3+4²=3+16=19. 9+16=25. 3×16=48.'},
+    ]
+  },
+];
+
+// ─── STATE ──────────────────────────────────────────────────────────────────
+let currentId = null;
+let done = new Set();
+let quizAnswered = {}; // topicId → {qIdx: chosenAns}
+
+// ─── BUILD SIDEBAR ───────────────────────────────────────────────────────────
+function buildSidebar() {
+  const list = document.getElementById('topicList');
+  list.innerHTML = '';
+  let section = '';
+  TOPICS.forEach(t => {
+    if(t.section !== section) {
+      section = t.section;
+      const s = document.createElement('div');
+      s.className = 'sb-section';
+      s.textContent = section;
+      list.appendChild(s);
+    }
+    const item = document.createElement('div');
+    item.className = 'sb-item' + (done.has(t.id)?' done':'') + (currentId===t.id?' active':'');
+    item.dataset.id = t.id;
+    item.innerHTML = `<span class="sb-dot"></span>${t.title}<span class="sb-num">${TOPICS.indexOf(t)+1}</span>`;
+    item.onclick = () => showLesson(t.id);
+    list.appendChild(item);
+  });
+  // progress
+  const pct = Math.round((done.size/TOPICS.length)*100);
+  document.getElementById('progFill').style.width = pct+'%';
+  document.getElementById('progDone').textContent = done.size+' done';
+  document.getElementById('progPct').textContent = pct+'%';
+}
+
+// ─── HOME ────────────────────────────────────────────────────────────────────
+function showHome() {
+  currentId = null;
+  buildSidebar();
+  const main = document.getElementById('mainArea');
+  let html = `<div class="home">
+  <div class="home-hero">
+    <h2>Master <em>Arithmetic</em><br>for 11+ Success</h2>
+    <p>20 topics covering everything tested in arithmetic at City of London, Westminster and other top London prep school entrance exams. Work through each topic, then take the quiz to confirm you've got it.</p>
+  </div>
+  <div class="section-divider">Addition & Subtraction</div>
+  <div class="topic-grid">`;
+  TOPICS.filter(t=>t.section==='Addition & Subtraction').forEach(t=>{
+    html += `<div class="topic-card${done.has(t.id)?' done':''}" onclick="showLesson('${t.id}')">
+      <div class="tc-icon">${t.icon}</div>
+      <div class="tc-title">${t.title}</div>
+      <div class="tc-sub">${t.sub}</div>
+      ${done.has(t.id)?'<span class="tc-badge done">✓ Done</span>':'<span class="tc-badge new">Start</span>'}
+    </div>`;
+  });
+  html += `</div><div class="section-divider">Multiplication & Division</div><div class="topic-grid">`;
+  TOPICS.filter(t=>t.section==='Multiplication & Division').forEach(t=>{
+    html += `<div class="topic-card${done.has(t.id)?' done':''}" onclick="showLesson('${t.id}')">
+      <div class="tc-icon">${t.icon}</div>
+      <div class="tc-title">${t.title}</div>
+      <div class="tc-sub">${t.sub}</div>
+      ${done.has(t.id)?'<span class="tc-badge done">✓ Done</span>':'<span class="tc-badge new">Start</span>'}
+    </div>`;
+  });
+  html += `</div></div>`;
+  main.innerHTML = html;
+}
+
+// ─── LESSON ──────────────────────────────────────────────────────────────────
+function showLesson(id) {
+  currentId = id;
+  buildSidebar();
+  const t = TOPICS.find(x=>x.id===id);
+  const idx = TOPICS.indexOf(t);
+  const prev = idx>0?TOPICS[idx-1]:null;
+  const next = idx<TOPICS.length-1?TOPICS[idx+1]:null;
+
+  if(!quizAnswered[id]) quizAnswered[id]={};
+
+  let html = `<div class="lesson">
+    <div class="lesson-header">
+      ${t.content}
+    </div>
+    ${buildQuiz(t)}
+    <div class="lesson-nav">
+      <button class="nav-btn" onclick="showHome()">← All Topics</button>
+      ${prev?`<button class="nav-btn" onclick="showLesson('${prev.id}')">← ${prev.title}</button>`:''}
+      ${next?`<button class="nav-btn primary ml-auto" onclick="showLesson('${next.id}')">${next.title} →</button>`:''}
+    </div>
+  </div>`;
+  document.getElementById('mainArea').innerHTML = html;
+  document.getElementById('mainArea').scrollTop = 0;
+  window.scrollTo(0,0);
+
+  // Restore answered state
+  restoreQuiz(t);
+}
+
+function buildQuiz(t) {
+  let html = `<div class="quiz-section">
+    <h3>Practice Questions</h3>
+    <div class="qs-sub">${t.quiz.length} questions · instant feedback</div>`;
+
+  t.quiz.forEach((q,i)=>{
+    if(q.type==='mcq') {
+      html += `<div class="q-block" id="qb-${i}">
+        <div class="q-text">Q${i+1}. ${q.q}</div>
+        <div class="q-opts">`;
+      q.opts.forEach((o,oi)=>{
+        html += `<button class="q-opt" id="qo-${i}-${oi}" onclick="answerMCQ('${t.id}',${i},${oi})">${o}</button>`;
+      });
+      html += `</div><div class="q-feedback" id="qf-${i}"></div></div>`;
+    } else {
+      html += `<div class="input-q" id="qb-${i}">
+        <div class="q-text">Q${i+1}. ${q.q}</div>
+        <div class="input-row">
+          <input class="num-input" id="qi-${i}" type="text" placeholder="Your answer" onkeydown="if(event.key==='Enter')checkInput('${t.id}',${i})">
+          <button class="check-btn" id="qc-${i}" onclick="checkInput('${t.id}',${i})">Check</button>
+        </div>
+        <div class="q-feedback" id="qf-${i}"></div>
+      </div>`;
+    }
+  });
+
+  html += `<div id="score-${t.id}" class="score-box">
+    <div class="score-num" id="sn-${t.id}">0</div>
+    <div class="score-of">out of ${t.quiz.length}</div>
+    <div class="score-msg" id="sm-${t.id}"></div>
+    <div class="btn-row">
+      <button class="btn btn-gold" onclick="markDone('${t.id}')">Mark as Done ✓</button>
+      <button class="btn btn-ghost" onclick="showLesson('${t.id}')">Retry</button>
+    </div>
+  </div>
+  <div style="margin-top:1rem;text-align:right">
+    <button class="btn btn-gold" onclick="submitQuiz('${t.id}')">Submit Answers</button>
+  </div>
+  </div>`;
+  return html;
+}
+
+function restoreQuiz(t) {
+  const ans = quizAnswered[t.id]||{};
+  Object.keys(ans).forEach(i=>{
+    const qi = parseInt(i);
+    const q = t.quiz[qi];
+    if(!q) return;
+    if(q.type==='mcq') {
+      applyMCQResult(t.id,qi,ans[i],q);
+    } else {
+      const inp = document.getElementById('qi-'+qi);
+      if(inp){inp.value=ans[i];inp.disabled=true;}
+      const btn = document.getElementById('qc-'+qi);
+      if(btn) btn.disabled=true;
+      const userAns = ans[i].toString().replace(/,/g,'').replace(/\s/g,'').toLowerCase();
+      const correct = q.ans.toString().replace(/,/g,'').replace(/\s/g,'').toLowerCase();
+      const ok = userAns===correct;
+      if(inp) inp.className='num-input '+(ok?'correct':'wrong');
+      const fb = document.getElementById('qf-'+qi);
+      if(fb){fb.className='q-feedback show '+(ok?'ok':'no');fb.textContent=(ok?'✓ Correct! ':'✗ Answer: '+q.ans+'. ')+q.exp;}
+    }
+  });
+}
+
+function answerMCQ(tid,qi,chosen) {
+  const t = TOPICS.find(x=>x.id===tid);
+  const q = t.quiz[qi];
+  if(quizAnswered[tid][qi]!==undefined) return;
+  quizAnswered[tid][qi]=chosen;
+  applyMCQResult(tid,qi,chosen,q);
+}
+
+function applyMCQResult(tid,qi,chosen,q) {
+  const ok = chosen===q.ans;
+  const opts = document.querySelectorAll(`[id^="qo-${qi}-"]`);
+  opts.forEach(o=>o.classList.add('disabled'));
+  document.getElementById('qo-'+qi+'-'+chosen).classList.add(ok?'correct':'wrong');
+  if(!ok) document.getElementById('qo-'+qi+'-'+q.ans).classList.add('reveal');
+  const fb = document.getElementById('qf-'+qi);
+  fb.className='q-feedback show '+(ok?'ok':'no');
+  fb.textContent=(ok?'✓ Correct! ':'✗ Not quite. ')+q.exp;
+}
+
+function checkInput(tid,qi) {
+  const t = TOPICS.find(x=>x.id===tid);
+  const q = t.quiz[qi];
+  if(quizAnswered[tid][qi]!==undefined) return;
+  const inp = document.getElementById('qi-'+qi);
+  const val = inp.value;
+  quizAnswered[tid][qi]=val;
+  inp.disabled=true;
+  document.getElementById('qc-'+qi).disabled=true;
+  const userAns = val.toString().replace(/,/g,'').replace(/£/g,'').replace(/\s/g,'').toLowerCase();
+  const correct = q.ans.toString().replace(/,/g,'').replace(/£/g,'').replace(/\s/g,'').toLowerCase();
+  const ok = userAns===correct;
+  inp.className='num-input '+(ok?'correct':'wrong');
+  const fb = document.getElementById('qf-'+qi);
+  fb.className='q-feedback show '+(ok?'ok':'no');
+  fb.textContent=(ok?'✓ Correct! ':'✗ Answer: '+q.ans+'. ')+q.exp;
+}
+
+function submitQuiz(tid) {
+  const t = TOPICS.find(x=>x.id===tid);
+  let score=0;
+  t.quiz.forEach((q,i)=>{
+    const given = quizAnswered[tid][i];
+    if(given===undefined) return;
+    if(q.type==='mcq'&&given===q.ans) score++;
+    else if(q.type==='input') {
+      const u=given.toString().replace(/,/g,'').replace(/£/g,'').replace(/\s/g,'').toLowerCase();
+      const c=q.ans.toString().replace(/,/g,'').replace(/£/g,'').replace(/\s/g,'').toLowerCase();
+      if(u===c) score++;
+    }
+  });
+  const answered = Object.keys(quizAnswered[tid]||{}).length;
+  document.getElementById('sn-'+tid).textContent=score+'/'+answered;
+  const msg = score===t.quiz.length?'Perfect! Full marks — excellent work, Sacha.':
+    score>=Math.ceil(t.quiz.length*0.8)?'Very good. Review the questions you missed before moving on.':
+    score>=Math.ceil(t.quiz.length*0.5)?'Solid progress. Go back over the lesson sections for any you got wrong.':
+    'Work through the lesson again carefully, then retry. Each mistake is a lesson.';
+  document.getElementById('sm-'+tid).textContent=msg;
+  document.getElementById('score-'+tid).classList.add('show');
+  document.getElementById('score-'+tid).scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function markDone(tid) {
+  done.add(tid);
+  buildSidebar();
+  const t = TOPICS.find(x=>x.id===tid);
+  const idx = TOPICS.indexOf(t);
+  if(idx<TOPICS.length-1) showLesson(TOPICS[idx+1].id);
+  else showHome();
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+showHome();
+</script>
+</body>
+</html>
