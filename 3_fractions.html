@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fractions — Sacha's 11+ Prep</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+:root {
+  --navy: #0f2240;
+  --navy-mid: #1a3a6b;
+  --gold: #c8922a;
+  --gold-light: #f0c060;
+  --cream: #faf8f3;
+  --cream-dark: #f2ede3;
+  --text: #1a1a2e;
+  --text-soft: #5a5a7a;
+  --text-faint: #9090aa;
+  --border: #e0d8cc;
+  --green: #1d7a4a;
+  --green-bg: #edfaf2;
+  --red: #b91c1c;
+  --red-bg: #fef2f2;
+  --blue-bg: #eff4ff;
+  --blue: #2d5db5;
+  --amber-bg: #fffbeb;
+  --amber: #92400e;
+  --radius: 10px;
+  --shadow: 0 2px 16px rgba(15,34,64,0.09);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ── LAYOUT ── */
+.app { display: flex; height: 100vh; overflow: hidden; }
+.sidebar {
+  width: 270px; min-width: 270px;
+  background: var(--navy);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+/* ── SIDEBAR ── */
+.sidebar-head {
+  padding: 22px 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.sidebar-head h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 18px; color: #fff;
+  line-height: 1.3; margin-bottom: 3px;
+}
+.sidebar-head p { font-size: 11px; color: rgba(255,255,255,0.45); }
+
+.prog-wrap { margin-top: 14px; }
+.prog-track {
+  height: 4px; background: rgba(255,255,255,0.12);
+  border-radius: 99px; overflow: hidden;
+}
+.prog-fill {
+  height: 4px; background: var(--gold-light);
+  border-radius: 99px; transition: width 0.5s ease;
+}
+.prog-label { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 5px; }
+
+.topic-list { flex: 1; overflow-y: auto; padding: 10px 0; }
+.topic-list::-webkit-scrollbar { width: 4px; }
+.topic-list::-webkit-scrollbar-track { background: transparent; }
+.topic-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+
+.t-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 18px; cursor: pointer;
+  border-left: 3px solid transparent;
+  transition: background 0.15s, border-color 0.15s;
+}
+.t-item:hover { background: rgba(255,255,255,0.05); }
+.t-item.active { background: rgba(200,146,42,0.12); border-left-color: var(--gold-light); }
+.t-item.locked { opacity: 0.38; cursor: not-allowed; }
+
+.t-num {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.5);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 1px;
+}
+.t-item.active .t-num { background: var(--gold); color: #fff; }
+.t-item.done .t-num { background: #1d7a4a; color: #fff; }
+
+.t-info { flex: 1; min-width: 0; }
+.t-name { font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.8); line-height: 1.35; }
+.t-item.active .t-name { color: #fff; }
+.t-tag {
+  font-size: 10px; color: rgba(255,255,255,0.35);
+  margin-top: 2px; display: block;
+}
+.t-check { font-size: 13px; margin-top: 2px; }
+
+/* ── MAIN HEADER ── */
+.main-head {
+  padding: 16px 28px;
+  border-bottom: 1px solid var(--border);
+  background: #fff;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
+}
+.main-head h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 18px; color: var(--navy);
+  line-height: 1.3;
+}
+.curr-badge {
+  font-size: 10px; font-weight: 600; letter-spacing: 0.3px;
+  text-transform: uppercase; color: var(--gold);
+  background: var(--amber-bg);
+  padding: 3px 9px; border-radius: 99px;
+  border: 1px solid #f0d090;
+  white-space: nowrap; margin-left: 12px;
+}
+
+/* ── TABS ── */
+.tabs {
+  display: flex; gap: 0;
+  padding: 0 28px;
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.tab-btn {
+  padding: 10px 18px; font-size: 13px; font-weight: 500;
+  color: var(--text-soft); background: none; border: none;
+  cursor: pointer; border-bottom: 2px solid transparent;
+  margin-bottom: -1px; transition: color 0.15s, border-color 0.15s;
+}
+.tab-btn.active { color: var(--navy); border-bottom-color: var(--gold); }
+
+/* ── SCROLL AREA ── */
+.panel { flex: 1; overflow-y: auto; padding: 24px 28px 40px; }
+.panel::-webkit-scrollbar { width: 5px; }
+.panel::-webkit-scrollbar-track { background: transparent; }
+.panel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+/* ── LESSON CONTENT ── */
+.lesson-intro { font-size: 14px; color: var(--text-soft); margin-bottom: 20px; line-height: 1.7; }
+
+.block {
+  border-radius: var(--radius); padding: 16px 18px; margin-bottom: 14px;
+  font-size: 14px; line-height: 1.85;
+}
+.block-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.6px;
+  text-transform: uppercase; margin-bottom: 8px;
+}
+.block.concept { background: var(--blue-bg); border-left: 3px solid var(--blue); }
+.block.concept .block-label { color: var(--blue); }
+.block.example { background: var(--amber-bg); border-left: 3px solid var(--gold); }
+.block.example .block-label { color: var(--amber); }
+.block.tip { background: var(--green-bg); border-left: 3px solid var(--green); }
+.block.tip .block-label { color: var(--green); }
+
+.frac {
+  display: inline-flex; flex-direction: column; align-items: center;
+  font-weight: 600; vertical-align: middle; line-height: 1.1;
+  margin: 0 2px; font-size: 0.95em;
+}
+.frac span:first-child { border-bottom: 1.5px solid currentColor; padding: 0 3px 1px; }
+.frac span:last-child { padding: 1px 3px 0; }
+
+.start-quiz-btn {
+  display: block; width: 100%; padding: 13px;
+  background: var(--navy); color: #fff;
+  border: none; border-radius: var(--radius);
+  font-size: 14px; font-weight: 600; cursor: pointer;
+  margin-top: 20px; transition: background 0.15s;
+  font-family: 'DM Sans', sans-serif;
+}
+.start-quiz-btn:hover { background: var(--navy-mid); }
+
+/* ── QUIZ ── */
+.quiz-wrap { display: flex; flex-direction: column; gap: 20px; }
+.q-card {
+  background: #fff; border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 18px 20px;
+  box-shadow: var(--shadow);
+}
+.q-num { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-faint); margin-bottom: 8px; }
+.q-text { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 14px; line-height: 1.55; }
+.q-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.q-opt {
+  padding: 11px 12px; border: 1.5px solid var(--border);
+  border-radius: 8px; background: #fff;
+  font-size: 14px; font-weight: 500; cursor: pointer;
+  text-align: center; transition: border-color 0.12s, background 0.12s;
+  font-family: 'DM Sans', sans-serif; color: var(--text);
+  line-height: 1.4;
+}
+.q-opt:not(:disabled):hover { border-color: var(--navy); background: var(--blue-bg); }
+.q-opt:disabled { cursor: default; }
+.q-opt.sc { border-color: var(--green) !important; background: var(--green-bg) !important; color: var(--green) !important; }
+.q-opt.sw { border-color: var(--red) !important; background: var(--red-bg) !important; color: var(--red) !important; }
+.q-opt.rv { border-color: var(--green) !important; background: var(--green-bg) !important; color: var(--green) !important; }
+
+.q-fb {
+  margin-top: 11px; padding: 10px 13px;
+  border-radius: 8px; font-size: 13px; line-height: 1.6;
+  display: none;
+}
+.q-fb.show { display: block; }
+.q-fb.cf { background: var(--green-bg); color: var(--green); border: 1px solid #a7f3c8; }
+.q-fb.wf { background: var(--red-bg); color: var(--red); border: 1px solid #fca5a5; }
+
+.hint-btn {
+  margin-top: 8px; padding: 6px 12px;
+  background: none; border: 1px solid var(--border);
+  border-radius: 6px; font-size: 12px; font-weight: 500;
+  color: var(--text-soft); cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  display: none; transition: border-color 0.12s;
+}
+.hint-btn:hover { border-color: var(--gold); color: var(--gold); }
+.hint-row { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+.hint-text {
+  margin-top: 8px; padding: 10px 13px;
+  background: var(--amber-bg); border: 1px solid #f0d090;
+  border-radius: 8px; font-size: 13px; line-height: 1.6;
+  color: var(--amber); display: none;
+}
+.hint-text.show { display: block; }
+
+.spinner {
+  display: inline-block; width: 12px; height: 12px;
+  border: 2px solid rgba(146,64,14,0.25);
+  border-top-color: var(--amber);
+  border-radius: 50%; animation: spin 0.7s linear infinite;
+  margin-right: 6px; vertical-align: middle;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── SCORE BOX ── */
+.score-box {
+  background: var(--navy); border-radius: var(--radius);
+  padding: 28px 24px; text-align: center;
+  display: none; margin-top: 20px;
+}
+.score-box.show { display: block; }
+.score-emoji { font-size: 40px; margin-bottom: 10px; }
+.score-fraction { font-family: 'DM Serif Display', serif; font-size: 44px; color: #fff; }
+.score-label { font-size: 13px; color: rgba(255,255,255,0.5); margin-bottom: 12px; }
+.score-msg { font-size: 14px; color: rgba(255,255,255,0.8); margin-bottom: 20px; line-height: 1.5; }
+.score-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.score-btn {
+  padding: 9px 20px; border-radius: 8px; font-size: 13px;
+  font-weight: 600; cursor: pointer; border: none;
+  font-family: 'DM Sans', sans-serif; transition: opacity 0.15s;
+}
+.score-btn:hover { opacity: 0.85; }
+.score-btn.primary { background: var(--gold); color: #fff; }
+.score-btn.secondary { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.8); }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+  background: var(--text); color: #fff;
+  padding: 10px 20px; border-radius: 8px;
+  font-size: 13px; font-weight: 500;
+  display: none; z-index: 1000; pointer-events: none;
+  animation: fadeup 0.2s ease;
+}
+@keyframes fadeup { from { opacity: 0; transform: translateX(-50%) translateY(4px); } }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 640px) {
+  .app { flex-direction: column; }
+  .sidebar { width: 100%; min-width: unset; height: auto; }
+  .topic-list { max-height: 180px; }
+  .q-opts { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-head">
+      <h1>Fractions<br>Masterclass</h1>
+      <p>11+ Prep · Sacha · 13 Topics</p>
+      <div class="prog-wrap">
+        <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+        <div class="prog-label" id="progLabel">0 of 13 complete</div>
+      </div>
+    </div>
+    <div class="topic-list" id="topicList"></div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="main-head">
+      <h2 id="mainTitle">Loading…</h2>
+      <span class="curr-badge" id="currBadge"></span>
+    </div>
+    <div class="tabs">
+      <button class="tab-btn active" id="tabLesson" onclick="switchTab('lesson')">📖 Lesson</button>
+      <button class="tab-btn" id="tabQuiz" onclick="switchTab('quiz')">✏️ Quiz</button>
+    </div>
+    <div class="panel" id="panel"></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ── fraction helper ──────────────────────────────────────────────────────────
+function f(n,d){ return `<span class="frac"><span>${n}</span><span>${d}</span></span>`; }
+function mf(w,n,d){ return `${w}${f(n,d)}`; }
+
+// ── TOPIC DATA ───────────────────────────────────────────────────────────────
+const TOPICS = [
+{
+  name:"Compare & order fractions\n(related denominators)",
+  tag:"Year 5",
+  lesson(){return`
+<p class="lesson-intro">When one denominator divides exactly into the other, you only need to convert <em>one</em> fraction. Find the multiplier, apply it to both numerator and denominator, then compare the numerators directly.</p>
+
+<div class="block concept">
+  <div class="block-label">📌 The Method</div>
+  Compare ${f(3,4)} and ${f(5,8)}.<br><br>
+  4 goes into 8 (×2), so convert ${f(3,4)}: multiply top and bottom by 2 → ${f(6,8)}<br>
+  Now compare ${f(6,8)} vs ${f(5,8)}: since 6 > 5, &nbsp;<strong>${f(3,4)} > ${f(5,8)}</strong>
+</div>
+
+<div class="block example">
+  <div class="block-label">🔢 Worked example — ordering four fractions</div>
+  Order ${f(1,2)}, ${f(5,6)}, ${f(2,3)}, ${f(7,12)} from smallest to largest.<br><br>
+  LCM of 2, 6, 3 and 12 is <strong>12</strong>.<br>
+  ${f(1,2)} = ${f(6,12)} &nbsp; ${f(5,6)} = ${f(10,12)} &nbsp; ${f(2,3)} = ${f(8,12)} &nbsp; ${f(7,12)} = ${f(7,12)}<br><br>
+  Numerators: 6, 7, 8, 10 → <strong>${f(1,2)} &lt; ${f(7,12)} &lt; ${f(2,3)} &lt; ${f(5,6)}</strong>
+</div>
+
+<div class="block tip">
+  <div class="block-label">💡 Exam tip</div>
+  Always write your final answer using the <em>original</em> fractions, not the converted ones. And double-check the direction — "smallest to largest" and "largest to smallest" are different questions.
+</div>`;},
+  questions:[
+    {q:`Which is larger: ${f(3,4)} or ${f(7,8)}?`, opts:[`${f(3,4)}`,`${f(7,8)}`,"They are equal","Cannot tell"], ans:1, exp:`Convert ${f(3,4)} to eighths: ×2 gives ${f(6,8)}. Compare with ${f(7,8)}: 7 > 6, so ${f(7,8)} is larger.`},
+    {q:`Order smallest first: ${f(1,3)}, ${f(5,6)}, ${f(1,2)}`, opts:[`${f(1,3)}, ${f(1,2)}, ${f(5,6)}`,`${f(5,6)}, ${f(1,2)}, ${f(1,3)}`,`${f(1,2)}, ${f(1,3)}, ${f(5,6)}`,`${f(1,3)}, ${f(5,6)}, ${f(1,2)}`], ans:0, exp:`LCM = 6. ${f(1,3)}=${f(2,6)}, ${f(1,2)}=${f(3,6)}, ${f(5,6)}=${f(5,6)}. Numerators 2, 3, 5 give the order.`},
+    {q:`Which is smallest: ${f(3,5)}, ${f(7,10)}, ${f(4,5)}?`, opts:[`${f(4,5)}`,`${f(7,10)}`,`${f(3,5)}`,"They are equal"], ans:2, exp:`Common denominator 10: ${f(3,5)}=${f(6,10)}, ${f(7,10)}=${f(7,10)}, ${f(4,5)}=${f(8,10)}. Smallest numerator is 6.`},
+    {q:`Order largest to smallest: ${f(2,3)}, ${f(3,9)}, ${f(5,9)}`, opts:[`${f(2,3)}, ${f(5,9)}, ${f(3,9)}`,`${f(3,9)}, ${f(5,9)}, ${f(2,3)}`,`${f(5,9)}, ${f(2,3)}, ${f(3,9)}`,`${f(3,9)}, ${f(2,3)}, ${f(5,9)}`], ans:0, exp:`LCM = 9. ${f(2,3)}=${f(6,9)}. Numerators 6, 5, 3 give order: ${f(2,3)} > ${f(5,9)} > ${f(3,9)}.`},
+    {q:`True or false: ${f(3,8)} < ${f(5,16)}`, opts:["True","False","They are equal","Cannot tell"], ans:1, exp:`${f(3,8)} = ${f(6,16)}. 6 > 5, so ${f(3,8)} > ${f(5,16)}. The statement is false.`},
+  ]
+},
+{
+  name:"Equivalent fractions",
+  tag:"Year 5",
+  lesson(){return`
+<p class="lesson-intro">Two fractions are equivalent if they represent the same amount. Create equivalents by multiplying <em>or</em> dividing both numerator and denominator by the same non-zero number. The value does not change.</p>
+
+<div class="block concept">
+  <div class="block-label">📌 The Rule</div>
+  ${f(1,2)} = ${f(2,4)} = ${f(3,6)} = ${f(50,100)} &nbsp; (all equal one half)<br><br>
+  Divide: ${f(12,16)} ÷4 on top and bottom → ${f(3,4)} (a simpler equivalent)
+</div>
+
+<div class="block example">
+  <div class="block-label">🔢 Finding a missing numerator</div>
+  ${f(3,5)} = ?/20<br><br>
+  Ask: what did 5 become? 5 × <strong>4</strong> = 20.<br>
+  Do the same to the top: 3 × 4 = <strong>12</strong>.<br>
+  Answer: ${f(3,5)} = ${f(12,20)} ✓
+</div>
+
+<div class="block example">
+  <div class="block-label">🔢 Finding a missing denominator</div>
+  ${f(4,6)} = ${f(2,"?")} — top went 4 → 2: divided by 2.<br>
+  Do the same below: 6 ÷ 2 = 3. Answer: ${f(4,6)} = ${f(2,3)} ✓
+</div>
+
+<div class="block tip">
+  <div class="block-label">💡 Cross-multiply check</div>
+  Two fractions are equivalent when cross-multiplying gives equal products.<br>
+  ${f(2,3)} and ${f(6,9)}: 2×9 = 18 and 3×6 = 18. Equal ✓ — they're equivalent.
+</div>`;},
+  questions:[
+    {q:`Which is equivalent to ${f(2,3)}?`, opts:[`${f(3,4)}`,`${f(4,6)}`,`${f(3,6)}`,`${f(5,8)}`], ans:1, exp:`Multiply top and bottom of ${f(2,3)} by 2: 2×2=4, 3×2=6 → ${f(4,6)}.`},
+    {q:`Fill in: ${f(3,5)} = ?/35`, opts:["15","18","21","12"], ans:2, exp:`5 × 7 = 35, so multiply the top by 7 too: 3 × 7 = 21.`},
+    {q:`Which is NOT equivalent to ${f(1,4)}?`, opts:[`${f(2,8)}`,`${f(3,12)}`,`${f(4,16)}`,`${f(3,16)}`], ans:3, exp:`Denominator 16 = 4×4, so numerator must be 1×4 = 4. ${f(3,16)} has numerator 3, so it is not equivalent.`},
+    {q:`${f(18,24)} = ${f(3,"?")}`, opts:["3","4","6","8"], ans:1, exp:`18 ÷ 6 = 3, so the denominator must also be divided by 6: 24 ÷ 6 = 4.`},
+    {q:`Are ${f(5,8)} and ${f(15,24)} equivalent?`, opts:["Yes","No","Cannot tell","Only if simplified"], ans:0, exp:`Cross-multiply: 5×24 = 120 and 8×15 = 120. Equal — they are equivalent. ✓`},
+  ]
+},
+{
+  name:"Improper fractions ↔\nmixed numbers",
+  tag:"Year 5",
+  lesson(){return`
+<p class="lesson-intro">Improper fractions (numerator ≥ denominator) and mixed numbers are two ways of writing the same value. You need to convert fluently in both directions.</p>
+
+<div class="block concept">
+  <div class="block-label">📌 Mixed number → Improper fraction</div>
+  Multiply the whole number by the denominator, then <strong>add</strong> the numerator. Keep the denominator.<br><br>
+  ${mf(2,3,5)} → (2 × 5) + 3 = 13 → ${f(13,5)}<br><br>
+  <em>Picture: 2 full pizzas cut into 5 = 10 slices, plus 3 more = 13 slices total.</em>
+</div>
+
+<div class="block concept">
+  <div class="block-label">📌 Improper fraction → Mixed number</div>
+  Divide numerator by denominator. Quotient = whole number, remainder = new numerator.<br><br>
+  ${f(17,4)}: 17 ÷ 4 = <strong>4</strong> remainder <strong>1</strong> → ${mf(4,1,4)}
+</div>
+
+<div class="block example">
+  <div class="block-label">🔢 Common mistake to avoid</div>
+  Converting ${mf(3,2,7)}:<br>
+  ✗ Wrong: (3×2)+7 = 13 → ${f(13,7)} &nbsp; (numerator and denominator swapped!)<br>
+  ✓ Right: (3×7)+2 = 23 → ${f(23,7)}
+</div>
+
+<div class="block tip">
+  <div class="block-label">💡 Quick check</div>
+  After converting, verify: does your improper fraction ÷ denominator give back the right whole number?<br>
+  ${f(23,7)}: 23 ÷ 7 = 3 remainder 2 → ${mf(3,2,7)} ✓
+</div>`;},
+  questions:[
+    {q:`Convert ${mf(3,2,7)} to an improper fraction.`, opts:[`${f(20,7)}`,`${f(23,7)}`,`${f(21,7)}`,`${f(14,7)}`], ans:1, exp:`(3×7)+2 = 21+2 = 23. Answer: ${f(23,7)}.`},
+    {q:`Convert ${f(19,5)} to a mixed number.`, opts:[`${mf(4,1,5)}`,`${mf(3,4,5)}`,`${mf(3,3,5)}`,`${mf(4,4,5)}`], ans:1, exp:`19 ÷ 5 = 3 remainder 4. Answer: ${mf(3,4,5)}.`},
+    {q:`Which mixed number equals ${f(31,6)}?`, opts:[`${mf(5,1,6)}`,`${mf(6,1,6)}`,`${mf(5,5,6)}`,`${mf(4,5,6)}`], ans:0, exp:`31 ÷ 6 = 5 remainder 1. Answer: ${mf(5,1,6)}.`},
+    {q:`Convert ${mf(6,3,8)} to an improper fraction.`, opts:[`${f(48,8)}`,`${f(51,8)}`,`${f(54,8)}`,`${f(45,8)}`], ans:1, exp:`(6×8)+3 = 48+3 = 51. Answer: ${f(51,8)}.`},
+    {q:`A ribbon is ${f(27,4)} cm long. Write this as a mixed number.`, opts:[`${mf(7,1,4)}`,`${mf(6,3,4)}`,`${mf(7,3,4)}`,`${mf(6,1,4)}`], ans:1, exp:`27 ÷ 4 = 6 remainder 3. Answer: ${mf(6,3,4)} cm.`},
+  ]
+},
+{
+  name:"Add & subtract —\nsame denominator",
+  tag:"Year 5",
+  lesson(){return`
+<p class="lesson-intro">The simplest case: when fractions share a denominator, add or subtract the numerators. The denominator stays the same. Always simplify your answer.</p>
+
+<div class="block concept">
+  <div class="block-label">📌 The Rule</div>
+  ${f(3,8)} + ${f(2,8)} = ${f(5,8)}<br><br>
+  ${f(7,9)} − ${f(4,9)} = ${f(3,9)} = ${f(1,3)} &nbsp; (always simplify!)
+</div>
+
+<div class="block example">
+  <div class="block-label">🔢 When the answer exceeds 1</div>
+  ${f(5,6)} + ${f(4,6)} = ${f(9,6)} → convert → ${mf(1,3,6)} → simplify → <strong>${mf(1,1,2)}</strong>
+</div>
+
+<div class="block example">
+  <div class="block-label">🔢 With mixed numbers (same denominator)</div>
+  ${mf(3,5,7)} + ${mf(1,3,7)}<br><br>
+  Whole: 3+1 = 4 &nbsp; Fractions: ${f(5,7)}+${f(3,7)} = ${f(8,7)} = ${mf(1,1,7)}<br>
+  Total: 4 + ${mf(1,1,7)} = <strong>${mf(5,1,7)}</strong>
+</div>
+
+<div class="block tip">
+  <div class="block-label">💡 Exam habit</div>
+  <strong>Always</strong> simplify your final answer. Leaving ${f(4,8)} instead of ${f(1,2)} will cost you the mark at Westminster or City.
+</div>`;},
+  questions:[
+    {q:`${f(3,7)} + ${f(2,7)} = ?`, opts:[`${f(5,14)}`,`${f(5,7)}`,`${f(6,7)}`,`${f(1,7)}`], ans:1, exp:`Same denominator: 3+2 = 5. Answer: ${f(5,7)}.`},
+    {q:`${f(9,11)} − ${f(4,11)} = ?`, opts:[`${f(5,22)}`,`${f(13,11)}`,`${f(5,11)}`,`${f(4,11)}`], ans:2, exp:`9−4 = 5. Answer: ${f(5,11)}.`},
+    {q:`${f(5,8)} + ${f(6,8)} = ?`, opts:[`${f(11,16)}`,`${mf(1,3,8)}`,`${mf(1,1,8)}`,`${mf(1,3,4)}`], ans:1, exp:`5+6 = 11. ${f(11,8)} = ${mf(1,3,8)}.`},
+    {q:`${f(7,10)} − ${f(3,10)} simplified = ?`, opts:[`${f(4,10)}`,`${f(2,5)}`,`${f(4,20)}`,`${f(1,3)}`], ans:1, exp:`7−3 = 4. ${f(4,10)} ÷ 2 = ${f(2,5)}.`},
+    {q:`${mf(2,5,9)} + ${mf(1,7,9)} = ?`, opts:[`${mf(3,12,9)}`,`${mf(4,3,9)}`,`${mf(4,1,3)}`,`${mf(3,4,3)}`], ans:2, exp:`Whole: 2+1=3. Fractions: ${f(5,9)}+${f(7,9)}=${f(12,9)}=${mf(1,3,9)}=${mf(1,1,3)}. Total: ${mf(4,1,3)}.`},
+  ]
+},
+{
+  name:"Add & subtract —\nrelated denominators",
+  tag:"Year 5",
+  lesson(){return`
+<p class="lesson-intro">When one denominator is a multiple of the other, only one fraction needs converting. The larger denominator becomes the common denominator.</p>
+
+<div class="block concept">
+  <div class="block-label">📌 Method</div>
+  ${f(1,3)} + ${f(5,12)}<br><br>
+  3 goes into 12 (×4), so convert ${f(1,3)}: ×4 top and bottom → ${f(4,12)}<br>
+  Now: ${f(4,12)} + ${f(5,12)} = ${f(9,12)} = ${f(3,4)}
+</div>
+
+<div class="block example">
+  <div class="block-label">🔢 Subtraction</div>
+  ${f(7,8)} − ${f(1,4)}<br><br>
+  4×2 = 8, so convert ${f(1,4)} → ${f(2,8)}<br>
+  ${f(7,8)} − ${f(2,8)} = ${f(5,8)}
+</div>
+
+<div class="block example">
+  <div class="block-label">🔢 With mixed numbers</div>
+  ${mf(1,2,3)} + ${mf(2,5,6)}<br><br>
+  Convert ${f(2,3)} → ${f(4,6)}<br>
+  Fractions: ${f(4,6)} + ${f(5,6)} = ${f(9,6)} = ${mf(1,3,6)} = ${mf(1,1,2)}<br>
+  Whole: 1+2 = 3 &nbsp;&nbsp; Total: <strong>${mf(4,1,2)}</strong>
+</div>
+
+<div class="block tip">
+  <div class="block-label">💡 Spot related denominators</div>
+  Denominators 4 and 12 → related (12 = 4×3), convert one. ✓<br>
+  Denominators 4 and 6 → <em>not</em> related — need the full LCM method (Topic 8).
+</div>`;},
+  questions:[
+    {q:`${f(1,4)} + ${f(3,8)} = ?`, opts:[`${f(4,12)}`,`${f(5,8)}`,`${f(5,12)}`,`${f(4,8)}`], ans:1, exp:`Convert ${f(1,4)} to eighths: ${f(2,8)}. Then ${f(2,8)}+${f(3,8)}=${f(5,8)}.`},
+    {q:`${f(5,6)} − ${f(1,3)} = ?`, opts:[`${f(4,3)}`,`${f(4,6)}`,`${f(1,2)}`,`${f(2,3)}`], ans:2, exp:`Convert ${f(1,3)} → ${f(2,6)}. Then ${f(5,6)}−${f(2,6)}=${f(3,6)}=${f(1,2)}.`},
+    {q:`${f(7,10)} + ${f(2,5)} = ?`, opts:[`${f(9,15)}`,`${mf(1,1,10)}`,`${f(11,10)}`,`${f(9,10)}`], ans:1, exp:`${f(2,5)}=${f(4,10)}. Then ${f(7,10)}+${f(4,10)}=${f(11,10)}=${mf(1,1,10)}.`},
+    {q:`${mf(2,3,4)} − ${mf(1,1,8)} = ?`, opts:[`${mf(1,5,8)}`,`${mf(1,2,4)}`,`${mf(1,3,8)}`,`${mf(1,7,8)}`], ans:0, exp:`Convert ${f(3,4)}→${f(6,8)}. Fractions: ${f(6,8)}−${f(1,8)}=${f(5,8)}. Whole: 2−1=1. Answer: ${mf(1,5,8)}.`},
+    {q:`${mf(3,1,6)} + ${mf(1,5,12)} = ?`, opts:[`${mf(4,7,12)}`,`${mf(4,6,18)}`,`${mf(5,1,12)}`,`${mf(4,1,2)}`], ans:0, exp:`${f(1,6)}=${f(2,12)}. Fractions: ${f(2,12)}+${f(5,12)}=${f(7,12)}. Whole: 3+1=4. Answer: ${mf(4,7,12)}.`},
+  ]
+},
+{
+  name:"Multiply fractions by\nwhole numbers",
+  tag:"Year 5",
+  lesson(){return`
+<p class="lesson-intro">Multiplying a fraction by a whole number is the same as repeated addition. Multiply the numerator by the whole number and keep the denominator.</p>
+
+<div class="block concept">
+  <div class="block-label">📌 Proper fraction × whole number</div>
+  ${f(3,7)} × 5 = ${f("3×5",7)} = ${f(15,7)} = ${mf(2,1,7)}<br><br>
+  Only the <strong>numerator</strong> is multiplied. Denominator stays put.
+</div>
+
+<div class="block example">
+  <div class="block-label">🔢 Mixed number × whole number — two methods</div>
+  ${mf(2,1,4)} × 3<br><br>
+  <strong>Method 1 — convert first:</strong> ${f(9,4)} × 3 = ${f(27,4)} = ${mf(6,3,4)}<br><br>
+  <strong>Method 2 — distribute:</strong> (2×3) + (${f(1,4)}×3) = 6 + ${f(3,4)} = ${mf(6,3,4)}
+</div>
+
+<div class="block tip">
+  <div class="block-label">💡 Simplify early</div>
+  Before multiplying, check if the whole number and denominator share a factor:<br>
+  ${f(3,8)} × 4: 4 and 8 share factor 4 → simplify to ${f(3,2)} × 1 = ${mf(1,1,2)} — far fewer steps.
+</div>`;},
+  questions:[
+    {q:`${f(2,5)} × 4 = ?`, opts:[`${f(8,20)}`,`${f(8,5)}`,`${mf(1,3,5)}`,`${f(6,5)}`], ans:2, exp:`2×4=8. ${f(8,5)}=${mf(1,3,5)}.`},
+    {q:`${f(3,8)} × 6 = ?`, opts:[`${f(18,8)}`,`${mf(2,4,8)}`,`${mf(2,1,4)}`,`${f(9,4)}`], ans:2, exp:`3×6=18. ${f(18,8)}=${mf(2,2,8)}=${mf(2,1,4)}.`},
+    {q:`${mf(1,2,3)} × 4 = ?`, opts:[`${mf(4,8,3)}`,`${mf(5,2,3)}`,`${mf(6,2,3)}`,`${mf(4,2,3)}`], ans:2, exp:`Convert: ${f(5,3)}×4=${f(20,3)}=${mf(6,2,3)}.`},
+    {q:`${f(5,6)} × 3 = ?`, opts:[`${f(15,18)}`,`${mf(2,1,2)}`,`${mf(2,5,6)}`,`${f(5,2)}`], ans:1, exp:`5×3=15. ${f(15,6)}=${mf(2,3,6)}=${mf(2,1,2)}.`},
+    {q:`A recipe needs ${mf(1,3,4)} cups of flour. How much for 5 batches?`, opts:[`${mf(5,3,4)}`,`${mf(8,3,4)}`,`9`,`${mf(6,1,4)}`], ans:1, exp:`${f(7,4)}×5=${f(35,4)}=${mf(8,3,4)} cups.`},
+  ]
+},
+{
+  name:"Simplify using\ncommon factors",
+  tag:"Year 6",
+  lesson(){return`
+<p class="lesson-intro">A fraction is in its <strong>simplest form</strong> when the numerator and denominator share no common factor other than 1. Use the Highest Common Factor (HCF) to simplify in one step.</p>
+
+<div class="block concept">
+  <div class="block-label">📌 Method — HCF</div>
+  Simplify ${f(24,36)}:<br><br>
+  Factors of 24: 1, 2, 3, 4, 6, 8, <u>12</u>, 24<br>
+  Factors of 36: 1, 2, 3, 4, 6, 9, <u>12</u>, 18, 36<br>
+  HCF = 12 → 24÷12 = 2, 36÷12 = 3 → <strong>${f(2,3)}</strong> ✓
+</div>
+
+<div class="block example">
+  <div class="block-label">⚡ Step-by-step (if HCF not obvious)</div>
+  ${f(30,45)}: ÷3 → ${f(10,15)} → ÷5 → ${f(2,3)} ✓<br><br>
+  After each step, ask: is there still a common factor? Keep going until no.
+</div>
+
+<div class="block tip">
+  <div class="block-label">💡 Final check</div>
+  Try dividing top and bottom by 2, then 3, then 5. If none work, the fraction is fully simplified. Examiners at Westminster and City expect fully simplified answers every time.
+</div>`;},
+  questions:[
+    {q:`Simplify ${f(15,20)} fully.`, opts:[`${f(3,4)}`,`${f(5,7)}`,`${f(1,2)}`,`${f(6,8)}`], ans:0, exp:`HCF(15,20)=5. 15÷5=3, 20÷5=4. Answer: ${f(3,4)}.`},
+    {q:`Simplify ${f(36,48)} fully.`, opts:[`${f(9,12)}`,`${f(2,3)}`,`${f(3,4)}`,`${f(18,24)}`], ans:2, exp:`HCF(36,48)=12. 36÷12=3, 48÷12=4. Answer: ${f(3,4)}. The others are not fully simplified.`},
+    {q:`Which is already fully simplified?`, opts:[`${f(6,14)}`,`${f(4,9)}`,`${f(9,15)}`,`${f(10,14)}`], ans:1, exp:`4 and 9 share no common factor other than 1. The others: ${f(6,14)}=${f(3,7)}, ${f(9,15)}=${f(3,5)}, ${f(10,14)}=${f(5,7)}.`},
+    {q:`Simplify ${f(72,96)}.`, opts:[`${f(3,4)}`,`${f(8,12)}`,`${f(6,8)}`,`${f(9,12)}`], ans:0, exp:`HCF(72,96)=24. 72÷24=3, 96÷24=4. Answer: ${f(3,4)}.`},
+    {q:`30 of 42 pupils walk to school. What fraction is this, fully simplified?`, opts:[`${f(30,42)}`,`${f(5,7)}`,`${f(5,6)}`,`${f(15,21)}`], ans:1, exp:`HCF(30,42)=6. 30÷6=5, 42÷6=7. Answer: ${f(5,7)}.`},
+  ]
+},
+{
+  name:"Common denominators\nusing LCM",
+  tag:"Year 6",
+  lesson(){return`
+<p class="lesson-intro">When denominators are unrelated (neither is a multiple of the other), use the Lowest Common Multiple (LCM) to find a common denominator. This is the foundation skill for adding, subtracting and comparing any two fractions.</p>
+
+<div class="block concept">
+  <div class="block-label">📌 Finding the LCM</div>
+  LCM of 4 and 6:<br>
+  Multiples of 4: 4, 8, <u>12</u>, 16…<br>
+  Multiples of 6: 6, <u>12</u>, 18…<br>
+  LCM = <strong>12</strong><br><br>
+  ${f(1,4)} = ${f(3,12)} &nbsp;·&nbsp; ${f(1,6)} = ${f(2,12)}
+</div>
+
+<div class="block example">
+  <div class="block-label">🔢 Three fractions</div>
+  Express ${f(1,3)}, ${f(1,4)}, ${f(1,6)} with a common denominator.<br><br>
+  LCM(3,4,6) = 12<br>
+  ${f(1,3)} = ${f(4,12)} &nbsp; ${f(1,4)} = ${f(3,12)} &nbsp; ${f(1,6)} = ${f(2,12)}
+</div>
+
+<div class="block tip">
+  <div class="block-label">💡 Shortcut</div>
+  LCM(a,b) = (a×b) ÷ HCF(a,b)<br>
+  LCM(4,6) = 24 ÷ 2 = 12 ✓ — useful when the multiples list gets long.
+</div>`;},
+  questions:[
+    {q:`What is the LCM of 4 and 6?`, opts:["8","10","12","24"], ans:2, exp:`Multiples of 4: 4,8,12… Multiples of 6: 6,12… First common value = 12.`},
+    {q:`Express ${f(2,3)} and ${f(3,4)} with a common denominator.`, opts:[`${f(6,9)} and ${f(9,12)}`,`${f(8,12)} and ${f(9,12)}`,`${f(4,6)} and ${f(6,8)}`,`${f(2,12)} and ${f(3,12)}`], ans:1, exp:`LCM(3,4)=12. ${f(2,3)}=${f(8,12)}, ${f(3,4)}=${f(9,12)}.`},
+    {q:`What is the LCM of 5 and 8?`, opts:["15","24","40","80"], ans:2, exp:`5 and 8 share no common factor, so LCM = 5×8 = 40.`},
+    {q:`Which common denominator is correct for ${f(5,6)} and ${f(3,8)}?`, opts:["12","14","24","48"], ans:2, exp:`LCM(6,8): multiples of 8: 8,16,24… Multiples of 6: 6,12,18,24… LCM = 24.`},
+    {q:`What is the LCM of 4, 6 and 3?`, opts:["6","8","12","24"], ans:2, exp:`Multiples of 4: 4,8,12… of 6: 6,12… of 3: 3,6,9,12… First common value = 12.`},
+  ]
+},
+{
+  name:"Compare & order fractions\ngreater than 1",
+  tag:"Year 6",
+  lesson(){return`
+<p class="lesson-intro">When fractions exceed 1, compare the whole number parts first. Only if whole numbers are equal do you compare the fraction parts using a common denominator.</p>
+
+<div class="block concept">
+  <div class="block-label">📌 Method</div>
+  Order ${mf(2,3,4)}, ${mf(3,1,5)}, ${mf(2,5,6)}<br><br>
+  Step 1: ${mf(3,1,5)} is immediately largest (whole number 3 > 2).<br>
+  Step 2: Compare ${mf(2,3,4)} and ${mf(2,5,6)} — same whole, compare fractions.<br>
+  LCM(4,6)=12: ${f(3,4)}=${f(9,12)}, ${f(5,6)}=${f(10,12)}. Since 10>9: ${mf(2,5,6)} > ${mf(2,3,4)}<br><br>
+  <strong>Order: ${mf(2,3,4)} &lt; ${mf(2,5,6)} &lt; ${mf(3,1,5)}</strong>
+</div>
+
+<div class="block example">
+  <div class="block-label">🔢 Improper fractions — convert first</div>
+  Compare ${f(11,4)} and ${f(7,3)}:<br>
+  ${f(11,4)} = ${mf(2,3,4)} and ${f(7,3)} = ${mf(2,1,3)}<br>
+  LCM(4,3)=12: ${f(3,4)}=${f(9,12)}, ${f(1,3)}=${f(4,12)}. Since 9>4:<br>
+  <strong>${f(11,4)} > ${f(7,3)}</strong>
+</div>
+
+<div class="block tip">
+  <div class="block-label">💡 Exam tip</div>
+  If you have a mix of mixed numbers and improper fractions, convert everything to mixed numbers first. Much easier to see the order at a glance.
+</div>`;},
+  questions:[
+    {q:`Which is larger: ${mf(3,2,5)} or ${mf(3,3,7)}?`, opts:[`${mf(3,2,5)}`,`${mf(3,3,7)}`,"They are equal","Cannot tell"], ans:1, exp:`Same whole number. LCM(5,7)=35. ${f(2,5)}=${f(14,35)}, ${f(3,7)}=${f(15,35)}. 15>14, so ${mf(3,3,7)} is larger.`},
+    {q:`Order smallest to largest: ${mf(2,1,2)}, ${mf(1,3,4)}, ${mf(2,1,3)}`, opts:[`${mf(1,3,4)}, ${mf(2,1,3)}, ${mf(2,1,2)}`,`${mf(2,1,2)}, ${mf(2,1,3)}, ${mf(1,3,4)}`,`${mf(1,3,4)}, ${mf(2,1,2)}, ${mf(2,1,3)}`,`${mf(2,1,3)}, ${mf(2,1,2)}, ${mf(1,3,4)}`], ans:0, exp:`${mf(1,3,4)} is smallest (whole=1). For the twos: LCM(2,3)=6. ${f(1,3)}=${f(2,6)}, ${f(1,2)}=${f(3,6)}. So ${mf(2,1,3)} < ${mf(2,1,2)}.`},
+    {q:`True or false: ${mf(4,2,3)} > ${mf(4,3,5)}`, opts:["True","False"], ans:0, exp:`Same whole. LCM(3,5)=15. ${f(2,3)}=${f(10,15)}, ${f(3,5)}=${f(9,15)}. 10>9, so ${mf(4,2,3)} > ${mf(4,3,5)}. True.`},
+    {q:`Which is greatest: ${f(9,4)}, ${mf(2,1,3)}, ${f(7,3)}?`, opts:[`${f(9,4)}`,`${mf(2,1,3)}`,`${f(7,3)}`,`${mf(2,1,3)} and ${f(7,3)} are equal`], ans:3, exp:`${f(7,3)}=${mf(2,1,3)}, so those two are equal. ${f(9,4)}=${mf(2,1,4)}. ${f(1,3)}>${f(1,4)}, so ${mf(2,1,3)} is larger than ${mf(2,1,4)}. Greatest: ${mf(2,1,3)} and ${f(7,3)} (equal).`},
+    {q:`Order largest to smallest: ${mf(3,1,4)}, ${mf(2,7,8)}, ${mf(3,3,16)}`, opts:[`${mf(3,1,4)}, ${mf(3,3,16)}, ${mf(2,7,8)}`,`${mf(3,3,16)}, ${mf(3,1,4)}, ${mf(2,7,8)}`,`${mf(2,7,8)}, ${mf(3,1,4)}, ${mf(3,3,16)}`,`${mf(3,1,4)}, ${mf(2,7,8)}, ${mf(3,3,16)}`], ans:0, exp:`${mf(2,7,8)} is smallest (whole=2). For the threes: LCM(4,16)=16. ${f(1,4)}=${f(4,16)}, ${f(3,16)}=${f(3,16)}. 4>3 → ${mf(3,1,4)} > ${mf(3,3,16)}.`},
+  ]
+},
+{
+  name:"Add & subtract —\ndifferent denominators",
+  tag:"Year 6",
+  lesson(){return`
+<p class="lesson-intro">When denominators are unrelated, you need the full method: find the LCM, convert both fractions, then add or subtract. This is the most tested fraction skill at 11+ level.</p>
+
+<div class="block concept">
+  <div class="block-label">📌 The Full Method</div>
+  ${f(2,3)} + ${f(3,4)}<br><br>
+  Step 1: LCM(3,4) = 12<br>
+  Step 2: ${f(2,3)} = ${f(8,12)}, ${f(3,4)} = ${f(9,12)}<br>
+  Step 3: ${f(8,12)} + ${f(9,12)} = ${f(17,12)} = ${mf(1,5,12)}
+</div>
+
+<div class="block example">
+  <div class="block-label">🔢 Mixed numbers</div>
+  ${mf(3,1,4)} + ${mf(1,5,6)}<br><br>
+  LCM(4,6)=12: ${f(1,4)}=${f(3,12)}, ${f(5,6)}=${f(10,12)}<br>
+  Fractions: ${f(3,12)}+${f(10,12)}=${f(13,12)}=${mf(1,1,12)}<br>
+  Whole: 3+1=4 &nbsp;&nbsp; Total: <strong>${mf(5,1,12)}</strong>
+</div>
+
+<div class="block example">
+  <div class="block-label">🔢 Subtraction with borrowing</div>
+  ${mf(4,1,6)} − ${mf(2,3,4)}<br><br>
+  LCM(6,4)=12: ${f(1,6)}=${f(2,12)}, ${f(3,4)}=${f(9,12)}<br>
+  Can't do ${f(2,12)}−${f(9,12)}, so <em>borrow 1</em>: 3${f(14,12)} − 2${f(9,12)} = <strong>${mf(1,5,12)}</strong>
+</div>
+
+<div class="block tip">
+  <div class="block-label">💡 Borrowing rule</div>
+  Borrow 1 from the whole number and add it as ${f("denom","denom")} to the fraction.<br>
+  E.g. borrow 1 → add ${f(12,12)} → ${f(2,12)} becomes ${f(14,12)}.
+</div>`;},
+  questions:[
+    {q:`${f(1,3)} + ${f(1,4)} = ?`, opts:[`${f(2,7)}`,`${f(7,12)}`,`${f(5,12)}`,`${f(2,12)}`], ans:1, exp:`LCM(3,4)=12. ${f(1,3)}=${f(4,12)}, ${f(1,4)}=${f(3,12)}. 4+3=7. Answer: ${f(7,12)}.`},
+    {q:`${f(3,4)} − ${f(2,3)} = ?`, opts:[`${f(1,12)}`,`${f(1,7)}`,`${f(5,12)}`,`${f(6,7)}`], ans:0, exp:`LCM(4,3)=12. ${f(3,4)}=${f(9,12)}, ${f(2,3)}=${f(8,12)}. 9−8=1. Answer: ${f(1,12)}.`},
+    {q:`${mf(2,1,2)} + ${mf(1,2,3)} = ?`, opts:[`${mf(3,3,5)}`,`${mf(3,7,6)}`,`${mf(4,1,6)}`,`${mf(3,1,6)}`], ans:2, exp:`LCM(2,3)=6. ${f(1,2)}=${f(3,6)}, ${f(2,3)}=${f(4,6)}. Fractions: ${f(7,6)}=${mf(1,1,6)}. Whole: 3. Total: ${mf(4,1,6)}.`},
+    {q:`${mf(5,1,4)} − ${mf(2,5,6)} = ?`, opts:[`${mf(2,5,12)}`,`${mf(3,1,12)}`,`${mf(2,5,6)}`,`${mf(2,11,12)}`], ans:0, exp:`LCM(4,6)=12. ${f(1,4)}=${f(3,12)}, ${f(5,6)}=${f(10,12)}. Borrow: 4${f(15,12)}−2${f(10,12)}=${mf(2,5,12)}.`},
+    {q:`In a class, ${f(2,5)} walk and ${f(1,3)} cycle to school. What fraction travel by other means?`, opts:[`${f(3,8)}`,`${f(4,15)}`,`${f(11,15)}`,`${f(4,8)}`], ans:1, exp:`Walk+cycle: LCM(5,3)=15. ${f(6,15)}+${f(5,15)}=${f(11,15)}. Other = 1−${f(11,15)}=${f(4,15)}.`},
+  ]
+},
+{
+  name:"Multiply pairs of\nproper fractions",
+  tag:"Year 6",
+  lesson(){return`
+<p class="lesson-intro">Multiply numerators together and denominators together. No common denominator needed. The answer is always <em>smaller</em> than either fraction — the opposite of whole-number multiplication.</p>
+
+<div class="block concept">
+  <div class="block-label">📌 The Rule</div>
+  ${f("a","b")} × ${f("c","d")} = ${f("a×c","b×d")}<br><br>
+  ${f(2,3)} × ${f(3,5)} = ${f("2×3","3×5")} = ${f(6,15)} = ${f(2,5)}
+</div>
+
+<div class="block example">
+  <div class="block-label">⚡ Cross-cancelling — saves time in exams</div>
+  ${f(4,9)} × ${f(3,8)}<br><br>
+  Look diagonally: 4 and 8 share factor 4 → 4÷4=1, 8÷4=2<br>
+  9 and 3 share factor 3 → 9÷3=3, 3÷3=1<br><br>
+  Now: ${f(1,3)} × ${f(1,2)} = ${f(1,6)} &nbsp; (same answer, much cleaner!)
+</div>
+
+<div class="block tip">
+  <div class="block-label">💡 Why is it smaller?</div>
+  ${f(1,2)} × ${f(1,3)} = ${f(1,6)}: "half of a third is a sixth." When you multiply two proper fractions, the result is always smaller than both originals.
+</div>`;},
+  questions:[
+    {q:`${f(2,3)} × ${f(3,4)} = ?`, opts:[`${f(5,7)}`,`${f(6,12)}`,`${f(1,2)}`,`${f(2,4)}`], ans:2, exp:`2×3=6, 3×4=12. ${f(6,12)}=${f(1,2)}. Or cross-cancel the 3s first.`},
+    {q:`${f(3,5)} × ${f(5,9)} = ?`, opts:[`${f(15,45)}`,`${f(1,3)}`,`${f(8,14)}`,`${f(3,9)}`], ans:1, exp:`Cross-cancel the 5s: ${f(3,1)}×${f(1,9)}=${f(3,9)}=${f(1,3)}.`},
+    {q:`${f(5,8)} × ${f(4,5)} = ?`, opts:[`${f(20,40)}`,`${f(1,2)}`,`${f(9,13)}`,`${f(4,8)}`], ans:1, exp:`Cross-cancel 5s, then 4 and 8: ${f(1,2)}×${f(1,1)}=${f(1,2)}.`},
+    {q:`${f(2,7)} × ${f(3,5)} = ?`, opts:[`${f(5,12)}`,`${f(6,35)}`,`${f(6,12)}`,`${f(5,35)}`], ans:1, exp:`2×3=6, 7×5=35. No cross-cancelling possible. Answer: ${f(6,35)}.`},
+    {q:`A field is ${f(3,4)} km long and ${f(2,5)} km wide. What is its area?`, opts:[`${f(6,20)}`,`${f(5,9)}`,`${f(3,10)}`,`${f(6,9)}`], ans:2, exp:`Area = ${f(3,4)}×${f(2,5)}=${f(6,20)}=${f(3,10)} km².`},
+  ]
+},
+{
+  name:"Divide proper fractions\nby whole numbers",
+  tag:"Year 6",
+  lesson(){return`
+<p class="lesson-intro">Dividing a fraction by a whole number means sharing it into equal parts — the result is smaller. Use KFC: <strong>K</strong>eep the fraction · <strong>F</strong>lip the whole number (write it as 1 over itself) · <strong>C</strong>hange ÷ to ×.</p>
+
+<div class="block concept">
+  <div class="block-label">📌 KFC method</div>
+  ${f(3,4)} ÷ 6 = ${f(3,4)} × ${f(1,6)} = ${f(3,24)} = ${f(1,8)}
+</div>
+
+<div class="block concept">
+  <div class="block-label">📌 Shortcut — multiply the denominator</div>
+  ${f(1,2)} ÷ 3 = ${f(1,"2×3")} = ${f(1,6)}<br><br>
+  Works cleanly when the numerator isn't divisible by the whole number.
+</div>
+
+<div class="block example">
+  <div class="block-label">🔢 Cross-cancelling helps</div>
+  ${f(4,5)} ÷ 8 = ${f(4,5)} × ${f(1,8)}<br>
+  Cancel 4 and 8 (÷4): ${f(1,5)} × ${f(1,2)} = ${f(1,10)}
+</div>
+
+<div class="block tip">
+  <div class="block-label">💡 Real-life check</div>
+  ${f(3,4)} of a pizza shared equally among 3 people — each gets ${f(1,4)}.<br>
+  ${f(3,4)} ÷ 3 = ${f(3,12)} = ${f(1,4)} ✓
+</div>`;},
+  questions:[
+    {q:`${f(1,3)} ÷ 4 = ?`, opts:[`${f(4,3)}`,`${f(1,12)}`,`${f(4,12)}`,`${f(1,7)}`], ans:1, exp:`${f(1,3)}×${f(1,4)}=${f(1,12)}.`},
+    {q:`${f(3,5)} ÷ 3 = ?`, opts:[`${f(9,5)}`,`${f(1,5)}`,`${f(3,15)}`,`${f(1,15)}`], ans:1, exp:`${f(3,5)}×${f(1,3)}=${f(3,15)}=${f(1,5)}. Or: numerator 3÷3=1, so ${f(1,5)}.`},
+    {q:`${f(5,6)} ÷ 5 = ?`, opts:[`${f(5,30)}`,`${f(1,6)}`,`${f(25,6)}`,`${f(6,25)}`], ans:1, exp:`${f(5,6)}×${f(1,5)}: cross-cancel the 5s → ${f(1,6)}.`},
+    {q:`${f(2,3)} ÷ 8 = ?`, opts:[`${f(16,3)}`,`${f(2,24)}`,`${f(1,12)}`,`${f(6,8)}`], ans:2, exp:`${f(2,3)}×${f(1,8)}=${f(2,24)}=${f(1,12)}.`},
+    {q:`A piece of ribbon ${f(5,8)} m long is cut into 5 equal pieces. How long is each?`, opts:[`${f(25,8)} m`,`${f(1,8)} m`,`${f(5,40)} m`,`${f(1,40)} m`], ans:1, exp:`${f(5,8)}÷5=${f(5,8)}×${f(1,5)}: cancel the 5s → ${f(1,8)} m.`},
+  ]
+},
+{
+  name:"Fractions as operators —\nfractions of quantities",
+  tag:"Year 6",
+  lesson(){return`
+<p class="lesson-intro">"Of" means multiply. To find a fraction of a quantity: <strong>divide by the denominator first, then multiply by the numerator.</strong> This comes up constantly in 11+ exam papers, including reverse problems where you find the original whole.</p>
+
+<div class="block concept">
+  <div class="block-label">📌 The Method</div>
+  Find ${f(3,4)} of 60:<br><br>
+  Step 1: 60 ÷ 4 = 15 &nbsp; (divide by denominator)<br>
+  Step 2: 15 × 3 = <strong>45</strong> &nbsp; (multiply by numerator)
+</div>
+
+<div class="block example">
+  <div class="block-label">🔢 Working backwards — finding the whole</div>
+  ${f(3,5)} of a number is 18. What is the number?<br><br>
+  ${f(1,5)} of the number = 18 ÷ 3 = 6<br>
+  The whole = 6 × 5 = <strong>30</strong><br><br>
+  Check: ${f(3,5)} of 30 = 18 ✓
+</div>
+
+<div class="block tip">
+  <div class="block-label">💡 11+ exam staple</div>
+  "Find the original value" problems are extremely common. Always find ${f(1,"denominator")} first (divide the amount by the numerator), then multiply by the denominator to get the whole.
+</div>`;},
+  questions:[
+    {q:`Find ${f(3,4)} of 48.`, opts:["12","36","32","16"], ans:1, exp:`48÷4=12. 12×3=36.`},
+    {q:`${f(2,5)} of 70 = ?`, opts:["14","35","28","21"], ans:2, exp:`70÷5=14. 14×2=28.`},
+    {q:`${f(5,6)} of a number is 30. What is the number?`, opts:["25","36","24","42"], ans:1, exp:`${f(1,6)} of the number = 30÷5=6. Whole = 6×6=36.`},
+    {q:`A school has 360 pupils. ${f(5,9)} are girls. How many are boys?`, opts:["160","200","180","140"], ans:0, exp:`Girls = 360÷9×5=200. Boys = 360−200=160.`},
+    {q:`A shopkeeper has 240 oranges. He sells ${f(3,8)} in the morning. How many remain?`, opts:["90","150","140","160"], ans:1, exp:`Sold = 240÷8×3=90. Remaining = 240−90=150.`},
+  ]
+},
+];
+
+// ── STATE ────────────────────────────────────────────────────────────────────
+let cur = 0;
+let done = new Array(TOPICS.length).fill(false);
+let tab = 'lesson';
+let answered = {};
+let scores = {};
+
+// ── BUILD SIDEBAR ─────────────────────────────────────────────────────────────
+function buildSidebar() {
+  const list = document.getElementById('topicList');
+  list.innerHTML = TOPICS.map((t,i) => {
+    const lines = t.name.split('\n');
+    const locked = i > 0 && !done[i-1] && i !== cur;
+    const cls = ['t-item', i===cur?'active':'', done[i]?'done':'', locked?'locked':''].filter(Boolean).join(' ');
+    const numCls = done[i] ? 'done' : i===cur ? 'active' : '';
+    const check = done[i] ? '✓' : '';
+    return `<div class="${cls}" id="ti${i}" onclick="tryNav(${i})">
+      <div class="t-num ${numCls}">${done[i]?'✓':(i+1)}</div>
+      <div class="t-info">
+        <div class="t-name">${lines[0]}${lines[1]?'<br><span style="font-weight:400;color:rgba(255,255,255,0.5)">'+lines[1]+'</span>':''}</div>
+        <span class="t-tag">${t.tag}</span>
+      </div>
+    </div>`;
+  }).join('');
+  const d = done.filter(Boolean).length;
+  const pct = Math.round(d/TOPICS.length*100);
+  document.getElementById('progFill').style.width = pct+'%';
+  document.getElementById('progLabel').textContent = d+' of '+TOPICS.length+' complete';
+}
+
+function tryNav(i) {
+  if (i === cur) return;
+  if (i > 0 && !done[i-1]) { showToast('🔒 Complete the previous topic first'); return; }
+  cur = i; answered = {}; tab = 'lesson';
+  buildSidebar(); renderMain();
+}
+
+// ── MAIN RENDER ───────────────────────────────────────────────────────────────
+function renderMain() {
+  const t = TOPICS[cur];
+  document.getElementById('mainTitle').textContent = t.name.replace('\n',' ');
+  document.getElementById('currBadge').textContent = t.tag;
+  document.getElementById('tabLesson').className = 'tab-btn' + (tab==='lesson'?' active':'');
+  document.getElementById('tabQuiz').className = 'tab-btn' + (tab==='quiz'?' active':'');
+  if (tab === 'lesson') renderLesson();
+  else renderQuiz();
+}
+
+function switchTab(t) {
+  tab = t; renderMain();
+}
+
+function renderLesson() {
+  const t = TOPICS[cur];
+  document.getElementById('panel').innerHTML =
+    t.lesson() +
+    `<button class="start-quiz-btn" onclick="switchTab('quiz')">✏️ Start Quiz — ${t.questions.length} questions</button>`;
+}
+
+// ── QUIZ ──────────────────────────────────────────────────────────────────────
+function renderQuiz() {
+  const t = TOPICS[cur];
+  let html = '<div class="quiz-wrap">';
+  t.questions.forEach((q,qi) => {
+    const ans = answered[qi];
+    const isAnswered = ans !== undefined;
+    html += `<div class="q-card" id="qcard${qi}">
+      <div class="q-num">Question ${qi+1} of ${t.questions.length}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="q-opts">`;
+    q.opts.forEach((o,j) => {
+      let cls = 'q-opt';
+      if (isAnswered) {
+        if (j === ans && ans === q.ans) cls += ' sc';
+        else if (j === ans && ans !== q.ans) cls += ' sw';
+        else if (j === q.ans && ans !== q.ans) cls += ' rv';
+      }
+      html += `<button class="${cls}" ${isAnswered?'disabled':''} onclick="answer(${qi},${j})">${o}</button>`;
+    });
+    html += `</div>`;
+    if (isAnswered) {
+      const ok = ans === q.ans;
+      html += `<div class="q-fb show ${ok?'cf':'wf'}">${ok?'✓ Correct!':'✗ Not quite.'} ${q.exp}</div>`;
+      if (!ok) {
+        html += `<div class="hint-row">
+          <button class="hint-btn" id="hbtn${qi}" style="display:inline-block" onclick="getHint(${qi})">💡 Ask Claude for help</button>
+        </div>
+        <div class="hint-text" id="hint${qi}"></div>`;
+      }
+    } else {
+      html += `<div class="q-fb" id="fb${qi}"></div>
+        <div class="hint-row">
+          <button class="hint-btn" id="hbtn${qi}" onclick="getHint(${qi})">💡 Ask Claude for help</button>
+        </div>
+        <div class="hint-text" id="hint${qi}"></div>`;
+    }
+    html += `</div>`;
+  });
+  // Score box
+  const allDone = Object.keys(answered).length === t.questions.length;
+  const score = allDone ? Object.entries(answered).filter(([i,c])=>+c===t.questions[+i].ans).length : 0;
+  html += `<div class="score-box${allDone?' show':''}" id="scoreBox">`;
+  if (allDone) {
+    const emojis = ['💪','📚','👍','🎯','⭐'];
+    const msgs = [
+      'Keep going — re-read the lesson carefully, then retry.',
+      'Getting there! Review the questions you missed, then try again.',
+      'Solid effort. One more run should get you there.',
+      'Really strong — just one slip!',
+      'Perfect score! Topic mastered.'
+    ];
+    const idx = Math.min(score, 4);
+    html += `<div class="score-emoji">${emojis[idx]}</div>
+      <div class="score-fraction">${score}/${t.questions.length}</div>
+      <div class="score-label">questions correct</div>
+      <div class="score-msg">${msgs[idx]}</div>
+      <div class="score-btns">
+        <button class="score-btn secondary" onclick="retryQuiz()">🔄 Try Again</button>
+        <button class="score-btn secondary" onclick="switchTab('lesson')">📖 Review Lesson</button>
+        ${score >= Math.ceil(t.questions.length*0.6) && cur < TOPICS.length-1
+          ? `<button class="score-btn primary" onclick="nextTopic()">Next Topic →</button>`
+          : score === t.questions.length && cur === TOPICS.length-1
+            ? `<button class="score-btn primary" onclick="tryNav(0)">🏆 Start Over</button>` : ''}
+      </div>`;
+  }
+  html += `</div></div>`;
+  document.getElementById('panel').innerHTML = html;
+}
+
+function answer(qi, j) {
+  if (answered[qi] !== undefined) return;
+  answered[qi] = j;
+  const t = TOPICS[cur];
+  const q = t.questions[qi];
+  const ok = j === q.ans;
+
+  // Update buttons
+  t.questions[qi].opts.forEach((_,k) => {
+    const btn = document.querySelector(`#qcard${qi} .q-opts button:nth-child(${k+1})`);
+    if (btn) {
+      btn.disabled = true;
+      if (k===j && ok) btn.classList.add('sc');
+      else if (k===j && !ok) btn.classList.add('sw');
+      else if (k===q.ans && !ok) btn.classList.add('rv');
+    }
+  });
+  // Feedback
+  const fb = document.getElementById(`fb${qi}`);
+  if (fb) { fb.className='q-fb show '+(ok?'cf':'wf'); fb.innerHTML=(ok?'✓ Correct!':'✗ Not quite.')+' '+q.exp; }
+  // Hint button
+  const hbtn = document.getElementById(`hbtn${qi}`);
+  if (hbtn && !ok) hbtn.style.display='inline-block';
+
+  // Check if all answered
+  if (Object.keys(answered).length === t.questions.length) {
+    const score = Object.entries(answered).filter(([i,c])=>+c===t.questions[+i].ans).length;
+    if (score === t.questions.length) done[cur] = true;
+    scores[cur] = score / t.questions.length;
+    buildSidebar();
+    // Show score box
+    setTimeout(()=>{
+      const sb = document.getElementById('scoreBox');
+      if (sb) { renderQuiz(); document.getElementById('scoreBox').scrollIntoView({behavior:'smooth',block:'nearest'}); }
+    }, 400);
+  }
+}
+
+async function getHint(qi) {
+  const t = TOPICS[cur];
+  const q = t.questions[qi];
+  const hEl = document.getElementById(`hint${qi}`);
+  const btn = document.getElementById(`hbtn${qi}`);
+  if (!hEl || !btn) return;
+  btn.disabled = true;
+  hEl.className = 'hint-text show';
+  hEl.innerHTML = '<span class="spinner"></span>Claude is thinking…';
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:`You are a warm, encouraging maths tutor helping a 10-year-old called Sacha prepare for his 11+ exams at Westminster or City of London School. He just got a question wrong. Give a clear, friendly explanation of the correct answer in 2-3 sentences. Use simple language appropriate for age 10. No markdown formatting — just plain, flowing sentences.`,
+        messages:[{role:'user',content:`Topic: Fractions\nQuestion: ${q.q.replace(/<[^>]+>/g,'')}\nCorrect answer: ${q.opts[q.ans].replace(/<[^>]+>/g,'')}\nHint: ${q.exp.replace(/<[^>]+>/g,'')}\n\nPlease explain this kindly to Sacha.`}]
+      })
+    });
+    const data = await res.json();
+    hEl.textContent = data.content?.[0]?.text || 'Tip: '+q.exp.replace(/<[^>]+>/g,'');
+  } catch(e) {
+    hEl.textContent = 'Tip: '+q.exp.replace(/<[^>]+>/g,'');
+  }
+  btn.disabled = false;
+}
+
+function nextTopic() { tryNav(cur+1); }
+function retryQuiz() { answered={}; renderQuiz(); }
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.display='block';
+  setTimeout(()=>t.style.display='none', 2200);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+buildSidebar();
+renderMain();
+</script>
+</body>
+</html>
