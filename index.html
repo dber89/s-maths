@@ -299,6 +299,26 @@ body {
 .topic-text { flex: 1; }
 .topic-text.done { text-decoration: line-through; color: var(--light); }
 
+.btn-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  color: var(--paper);
+  background: var(--ink);
+  border: none;
+  border-radius: 2px;
+  padding: 0.3rem 0.7rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.15s;
+  margin-top: 0.6rem;
+}
+.btn-open:hover { opacity: 0.75; }
+
 /* Notes area */
 .card-notes {
   padding: 0 1.4rem 1rem;
@@ -408,17 +428,19 @@ footer {
 <div class="grid-wrap" id="grid"></div>
 
 <footer>
-  <span class="footer-note">Click any ○ to mark a topic complete. Progress saves automatically.</span>
+  <span class="footer-note">Set L / M / H confidence per topic. Click "Open course" to go to the lesson. Progress saves automatically.</span>
   <button class="btn-reset" onclick="resetAll()">Reset all progress</button>
 </footer>
 
 <script>
+const BASE = 'https://dber89.github.io/s-maths/';
 const DOMAINS = [
   {
     id: 1,
     title: 'Number',
     sub: 'Place value',
     color: '#1e3f6e',
+    url: BASE + '1_number.html',
     topics: [
       'Read, write, order and compare numbers to 1,000,000',
       'Determine the value of each digit to 1,000,000',
@@ -438,6 +460,7 @@ const DOMAINS = [
     title: 'Arithmetic',
     sub: 'Addition, subtraction, multiplication & division',
     color: '#6b2f9e',
+    url: BASE + '2_arithmetic.html',
     topics: [
       'Column addition with numbers over 4 digits',
       'Column subtraction with numbers over 4 digits',
@@ -466,6 +489,7 @@ const DOMAINS = [
     title: 'Fractions',
     sub: 'All fraction operations',
     color: '#c0392b',
+    url: BASE + '3_fractions.html',
     topics: [
       'Compare and order fractions (related denominators)',
       'Equivalent fractions',
@@ -487,6 +511,7 @@ const DOMAINS = [
     title: 'Decimals',
     sub: 'Place value, operations, rounding',
     color: '#1a6e5e',
+    url: BASE + '4_decimals.html',
     topics: [
       'Decimals as fractions (read & write)',
       'Tenths, hundredths, thousandths (recognise & relate)',
@@ -505,6 +530,7 @@ const DOMAINS = [
     title: 'Percentages',
     sub: 'Equivalences, calculation',
     color: '#7a4f1a',
+    url: BASE + '5_percentages.html',
     topics: [
       'Understand % as parts per hundred',
       'Write percentages as fractions and decimals',
@@ -517,6 +543,7 @@ const DOMAINS = [
     title: 'Ratio & Proportion',
     sub: 'Scaling, sharing, notation',
     color: '#4a1a6e',
+    url: BASE + '6_ratio_and_proportion.html',
     topics: [
       'Find missing values in proportional situations',
       'Use ratio notation to compare quantities',
@@ -529,6 +556,7 @@ const DOMAINS = [
     title: 'Algebra',
     sub: 'Formulae, sequences, unknowns',
     color: '#1a4a1a',
+    url: BASE + '7_algebra.html',
     topics: [
       'Use simple formulae',
       'Generate and describe linear number sequences',
@@ -542,6 +570,7 @@ const DOMAINS = [
     title: 'Measurement',
     sub: 'Units, conversion, perimeter, area, volume',
     color: '#1a3f5e',
+    url: BASE + '8_measurement.html',
     topics: [
       'Convert between metric units of length, mass and capacity',
       'Use approximate metric/imperial equivalences',
@@ -565,6 +594,7 @@ const DOMAINS = [
     title: 'Geometry',
     sub: 'Properties of shape, position & direction',
     color: '#5e1a3f',
+    url: BASE + '9_geometry.html',
     topics: [
       'Identify 3D shapes from 2D representations',
       'Estimate and compare acute, obtuse and reflex angles',
@@ -589,6 +619,7 @@ const DOMAINS = [
     title: 'Statistics',
     sub: 'Graphs, tables, averages',
     color: '#3f5e1a',
+    url: BASE + '10_statistics.html',
     topics: [
       'Solve comparison, sum and difference problems using line graphs',
       'Complete, read and interpret tables and timetables',
@@ -601,12 +632,27 @@ const DOMAINS = [
     title: 'Working Mathematically',
     sub: 'Vocabulary, reasoning, communication',
     color: '#5e3a1a',
+    url: BASE + '11_working_mathematically.html',
     topics: [
       'Read, spell and pronounce mathematical vocabulary correctly',
       'Use mathematical vocabulary to describe and explain',
       'Reason logically and present arguments clearly',
       'Apply mathematics to unfamiliar problems',
       'Check answers using estimation and inverse operations',
+    ]
+  },
+  {
+    id: 12,
+    title: 'Maths is Everywhere',
+    sub: 'Real-world application & problem solving',
+    color: '#2a5e5e',
+    url: BASE + 'maths-is-everywhere.html',
+    topics: [
+      'Recognise mathematics in everyday contexts',
+      'Apply multiple domains to real-world problems',
+      'Interpret data and information in context',
+      'Use mathematical reasoning to solve unfamiliar problems',
+      'Communicate mathematical thinking clearly',
     ]
   },
 ];
@@ -742,6 +788,7 @@ function render() {
           <div class="card-num">DOMAIN ${String(d.id).padStart(2,'0')}</div>
           <div class="card-title">${d.title}</div>
           <div style="font-size:0.75rem;color:var(--light);margin-top:2px">${d.sub}</div>
+          <a class="btn-open" href="${d.url}" target="_blank">↗ Open course</a>
         </div>
         <span class="card-badge ${badgeClass}">${badgeLabel}</span>
       </div>
